@@ -79,7 +79,7 @@ class _learnerLogin extends State<learnerLogin> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.all(15),
+                  padding: EdgeInsets.only(top:15,left:15,right:15,bottom:25),
                   child: Container(
                     color: Color.fromARGB(151, 255, 255, 255),
                     child: TextFormField(

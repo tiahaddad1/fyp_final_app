@@ -108,6 +108,16 @@ flutter:
     - family: RampartOne-Regular
       fonts:
         - asset: lib/assets/fonts/RampartOne-Regular.ttf
+    - family: FredokaOne-Regular
+      fonts:
+        - asset: lib/assets/fonts/FredokaOne-Regular.ttf
+    - family: Fredoka-Medium
+      fonts:
+        - asset: lib/assets/fonts/Fredoka-Medium.ttf
+    - family: Cambay-Regular
+      fonts:
+        - asset: lib/assets/fonts/Cambay-Regular.ttf
+
   # fonts:
   #   - family: Schyler
   #     fonts:

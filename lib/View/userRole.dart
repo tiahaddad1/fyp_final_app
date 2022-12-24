@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:fyp_application/View/Components/userRoleComponent.dart';
+import 'package:fyp_application/View/learnerAllScreens.dart';
 import 'package:fyp_application/View/learnerLogin.dart';
 import 'package:fyp_application/View/learnerSignup.dart';
 
@@ -60,7 +61,7 @@ class _userRoleScreenState extends State<userRoleScreen> {
                     role: "Learner",
                     image: "learnerRole",
                     borderColour: Color.fromARGB(255, 190, 166, 221),
-                    page: learnerSignup())
+                    page: learnerAllScreens())
                     // page: learnerLogin())
               ],
             )));
