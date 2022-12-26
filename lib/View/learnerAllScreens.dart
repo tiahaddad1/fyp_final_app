@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:fyp_application/View/Components/taskComponent.dart';
 import 'package:fyp_application/View/learnerHome.dart';
 import 'package:fyp_application/View/learnerProfile.dart';
 import 'package:fyp_application/View/learnerReminders.dart';
 import 'package:fyp_application/View/learnerSkills.dart';
+import 'package:fyp_application/View/taskScreen.dart';
+
+import 'accomplishScreen.dart';
 
 class learnerAllScreens extends StatefulWidget {
   const learnerAllScreens({super.key});
@@ -19,7 +23,9 @@ class _learnerAllScreensState extends State<learnerAllScreens> {
     learnerHome(),
     learnerReminders(),
     learnerSkills(),
-    learnerProfile()
+    learnerProfile(),
+    // taskScreen()
+    // accomplishScreen()
   ];
 
   @override

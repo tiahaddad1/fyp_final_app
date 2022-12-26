@@ -45,8 +45,8 @@ class _buttonComponentState extends State<buttonComponent> {
             style: ButtonStyle(
                 minimumSize: MaterialStatePropertyAll<Size>(Size.fromHeight(0)),
                 shadowColor: MaterialStatePropertyAll<Color>(
-                    Color.fromARGB(255, 47, 47, 47)),
-                elevation: MaterialStatePropertyAll<double>(10.0),
+                    Color.fromARGB(255, 134, 134, 134)),
+                elevation: MaterialStatePropertyAll<double>(5.0),
                 backgroundColor: MaterialStatePropertyAll<Color>(widget.colour),
                 shape: MaterialStateProperty.all(RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(13.0),

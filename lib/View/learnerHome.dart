@@ -33,7 +33,7 @@ Color textColor() {
   }
   if (time < 17) {
     // return Color.fromARGB(255, 1, 4, 71);
-    return Color.fromARGB(255, 0, 68, 196);
+    return Color.fromARGB(255, 8, 15, 28);
   }
   return Color.fromARGB(255, 255, 255, 255);
 }
@@ -101,14 +101,20 @@ class _learnerHomeState extends State<learnerHome> {
                 ),
               ),
             ]),
-            Container(
-                height: 100,
-                width: 100,
-                // padding: EdgeInsets.only(top: 20),
-                child: Image.asset("lib/assets/user1.png",
-                    width: 100, height: 100),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(40))))
+            ClipRRect(
+  borderRadius: BorderRadius.circular(10), // Image border
+  child: SizedBox.fromSize(
+    size: Size.fromRadius(50), // Image radius
+    child: Image.asset("lib/assets/user1.png",fit: BoxFit.cover),
+  ),
+),
+            // Container(
+            //     height: 90,
+            //     width: 100,
+            //     // padding: EdgeInsets.only(top: 20),
+            //     child: Image.asset("lib/assets/user1.png",fit: BoxFit.fill),
+            //     decoration: BoxDecoration(
+            //         borderRadius: BorderRadius.all(Radius.circular(40))))
           ]),
         ),
         Container(
