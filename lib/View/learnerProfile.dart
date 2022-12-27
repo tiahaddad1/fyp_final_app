@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:fyp_application/View/customiseScreen.dart';
+import 'package:fyp_application/View/learnerRewards.dart';
 
 import 'Components/profileContainer.dart';
 
@@ -191,6 +192,10 @@ class _learnerProfileState extends State<learnerProfile> {
                 GestureDetector(
                     onTap: () {
                       print("clicked!");
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => learnerRewards()));                        
                     },
                     child: Padding(
                       child: profileContainer(
@@ -199,7 +204,7 @@ class _learnerProfileState extends State<learnerProfile> {
                     )),
                 GestureDetector(
                     onTap: () {
-                      print("clicked!");
+                      print("clicked!");                    
                     },
                     child: Padding(
                       child: profileContainer(

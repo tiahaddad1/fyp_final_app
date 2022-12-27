@@ -33,7 +33,7 @@ class _chooseImageComponentState extends State<chooseImageComponent> {
                   BoxShadow(
                     color: imageClick == false
                         ? Colors.grey.withOpacity(0.2)
-                        : Color.fromARGB(255, 132, 223, 137)!,
+                        : Color.fromARGB(255, 132, 223, 137),
                     spreadRadius: 1,
                     blurRadius: 3,
                     offset: Offset(0, 1),
