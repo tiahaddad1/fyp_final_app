@@ -34,9 +34,10 @@ class _learnerScheduleState extends State<learnerSchedule> {
             ),
             leading: ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
+                elevation: 0.0,
                 primary: Color.fromARGB(255, 255, 255, 255),
               ),
-              icon: Icon(Icons.arrow_back, color: Color.fromARGB(255, 0, 0, 0)),
+              icon: Icon(Icons.arrow_back_ios_new, color: Color.fromARGB(255, 0, 0, 0)),
               onPressed: () => Navigator.of(context).pop(),
               label: const Text(
                 "Go Back",

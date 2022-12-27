@@ -83,13 +83,13 @@ class _learnerHomeState extends State<learnerHome> {
                     TextSpan(
                         text: greeting(),
                         style:
-                            TextStyle(fontFamily: "DMSans-Bold", fontSize: 25)),
+                            TextStyle(fontFamily: "DMSans-Bold", fontSize: 21)),
                     TextSpan(
                         text: ", USER",
                         style: TextStyle(
                             fontFamily: "DMSans-Medium",
                             fontWeight: FontWeight.bold,
-                            fontSize: 23)),
+                            fontSize: 21)),
                   ],
                 )),
               ),
@@ -102,12 +102,12 @@ class _learnerHomeState extends State<learnerHome> {
               ),
             ]),
             ClipRRect(
-  borderRadius: BorderRadius.circular(10), // Image border
-  child: SizedBox.fromSize(
-    size: Size.fromRadius(50), // Image radius
-    child: Image.asset("lib/assets/user1.png",fit: BoxFit.cover),
-  ),
-),
+              borderRadius: BorderRadius.circular(10), // Image border
+              child: SizedBox.fromSize(
+                size: Size.fromRadius(50), // Image radius
+                child: Image.asset("lib/assets/user1.png", fit: BoxFit.cover),
+              ),
+            ),
             // Container(
             //     height: 90,
             //     width: 100,
