@@ -7,6 +7,7 @@ import 'package:fyp_application/View/learnerLogin.dart';
 import 'package:fyp_application/View/learnerSignup.dart';
 import 'package:fyp_application/View/taskScreen.dart';
 
+import 'caregiverHome.dart';
 import 'caregiverWelcome.dart';
 
 class userRoleScreen extends StatefulWidget {
@@ -55,7 +56,8 @@ class _userRoleScreenState extends State<userRoleScreen> {
                     role: "Caregiver \nor Therapist",
                     image: "caregiverRole",
                     borderColour: Color.fromARGB(255, 66, 135, 123),
-                    page: caregiverWelcome(),
+                    // page: caregiverWelcome(),
+                    page: caregiverHome(),
                     width: 185,
                     height: 200),
                 userRoleComponent(

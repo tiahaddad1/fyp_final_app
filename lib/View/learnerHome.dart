@@ -94,10 +94,10 @@ class _learnerHomeState extends State<learnerHome> {
                 )),
               ),
               Padding(
-                padding: EdgeInsets.only(top: 10, bottom: 10, left: 15),
+                padding: EdgeInsets.only(top: 10, bottom: 10, left: 15,right:5),
                 child: Text(
                   "Today: " + day + " , " + date,
-                  style: TextStyle(color: textColor(), fontSize: 15),
+                  style: TextStyle(color: textColor(), fontSize: 13),
                 ),
               ),
             ]),
