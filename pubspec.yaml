@@ -123,6 +123,9 @@ flutter:
     - family: ComingSoon-Regular
       fonts:
         - asset: lib/assets/fonts/ComingSoon-Regular.ttf
+    - family: Cabin-Regular
+      fonts:
+        - asset: lib/assets/fonts/Cabin-Regular.ttf
 
   # fonts:
   #   - family: Schyler

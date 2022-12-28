@@ -285,7 +285,7 @@ class _learnerSignupState extends State<learnerSignup> {
                                     ),
                                   ),
                                   Container(
-                                    margin: EdgeInsets.only(top: 8),
+                                    margin: EdgeInsets.only(top: 8,left: 7),
                                     width: 350,
                                     height: 52,
                                     decoration: BoxDecoration(

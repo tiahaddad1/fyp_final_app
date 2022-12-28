@@ -3,6 +3,9 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:fyp_application/View/Components/logOutButton.dart';
 
+import 'Components/learnerInfoCard.dart';
+import 'learnerSignup.dart';
+
 class caregiverHome extends StatefulWidget {
   const caregiverHome({super.key});
 
@@ -11,6 +14,56 @@ class caregiverHome extends StatefulWidget {
 }
 
 class _caregiverHomeState extends State<caregiverHome> {
+  GestureDetector addNewLearnerComp() {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => learnerSignup()));
+        //navigates to add new learner screen
+      },
+      child: Container(
+          alignment: Alignment.center,
+          height: 70,
+          decoration: BoxDecoration(
+            // borderRadius: BorderRadius.only(topRight:Radius.circular(10),bottomRight:Radius.circular(10), ),
+            border: Border(
+              right: BorderSide(
+                  width: 2.0, color: Color.fromARGB(255, 80, 169, 154)),
+              bottom: BorderSide(
+                  width: 2.0, color: Color.fromARGB(255, 80, 169, 154)),
+              left: BorderSide(
+                  width: 4.0, color: Color.fromARGB(255, 80, 169, 154)),
+            ),
+            color: Colors.white,
+          ),
+          margin: EdgeInsets.all(20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: EdgeInsets.all(15),
+                child: Image.asset(
+                  "lib/assets/addNewLearner.png",
+                  width: 35,
+                  height: 35,
+                ),
+              ),
+              Padding(
+                child: Text(
+                  "Add new learner",
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: "Fredoka-Medium",
+                      decoration: TextDecoration.underline,
+                      fontSize: 17),
+                ),
+                padding: EdgeInsets.all(10),
+              )
+            ],
+          )),
+    );
+  }
+
   bool edit = false;
   @override
   Widget build(BuildContext context) {
@@ -60,7 +113,8 @@ class _caregiverHomeState extends State<caregiverHome> {
                                 "Welcome back",
                                 style: TextStyle(
                                     color: Color.fromARGB(255, 100, 100, 100),
-                                    fontSize: 15),
+                                    fontSize: 15,
+                                    fontFamily: "Cabin-Regular"),
                                 textAlign: TextAlign.left,
                               ),
                               padding: EdgeInsets.only(bottom: 20),
@@ -69,6 +123,7 @@ class _caregiverHomeState extends State<caregiverHome> {
                                 child: Text(
                               "Dr. Natalia Haddad",
                               style: TextStyle(
+                                  fontFamily: "Cabin-Regular",
                                   fontSize: 20,
                                   color: Color.fromARGB(255, 66, 135, 123),
                                   fontWeight: FontWeight.w600),
@@ -140,15 +195,13 @@ class _caregiverHomeState extends State<caregiverHome> {
                     },
                     showCursor: true,
                     cursorColor: Color.fromARGB(255, 66, 135, 123),
-                    maxLines: 2,
+                    maxLines: 5,
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText:
                           "A  certified ABA therapist for children on spectrum.",
                       hintStyle: TextStyle(
-                          color: Color.fromARGB(255, 0, 0, 0),
-                          fontFamily: "Fredoka-SemiBold",
-                          fontSize: 13),
+                          color: Color.fromARGB(255, 0, 0, 0), fontSize: 13),
                     )),
               ),
               Positioned(
@@ -188,6 +241,56 @@ class _caregiverHomeState extends State<caregiverHome> {
         )),
       ),
       backgroundColor: Color.fromARGB(255, 240, 240, 240),
+      body: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.only(right: 20, bottom: 20, top: 20),
+            height: 60,
+            child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+              GestureDetector(
+                  onTap: () {
+                    //view info guide here in a pop up
+                  },
+                  child: Image.asset(
+                    "lib/assets/infoIcon.png",
+                    height: 30,
+                    width: 30,
+                  ))
+            ]),
+          ),
+          Container(
+            padding: EdgeInsets.only(left: 25),
+            alignment: Alignment.topLeft,
+            child: Text(
+              "My learners",
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700,
+                  fontFamily: "Cabin-Regular"),
+            ),
+          ),
+          Expanded(
+              child: SafeArea(
+                  child: ListView(
+            padding: EdgeInsets.only(top: 20),
+            shrinkWrap: true,
+            scrollDirection: Axis.vertical,
+            children: [
+              Center(
+                  child: Wrap(
+                children: [
+                  learnerInfoCard(),
+                  learnerInfoCard(),
+                  learnerInfoCard(),
+                ],
+              )),
+              addNewLearnerComp()
+              //add learner here
+            ],
+          )))
+        ],
+      ),
     );
   }
 }
