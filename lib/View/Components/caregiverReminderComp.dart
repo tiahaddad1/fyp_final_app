@@ -16,7 +16,10 @@ class _caregiverReminderCompState extends State<caregiverReminderComp> {
       width: double.infinity,
       height: 60,
       decoration: BoxDecoration(boxShadow: [
-        BoxShadow(color: Color.fromARGB(255, 190, 190, 190), blurRadius: 1, spreadRadius: 1)
+        BoxShadow(
+            color: Color.fromARGB(255, 190, 190, 190),
+            blurRadius: 1,
+            spreadRadius: 1)
       ], borderRadius: BorderRadius.circular(15), color: Colors.white),
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         Padding(
@@ -39,7 +42,7 @@ class _caregiverReminderCompState extends State<caregiverReminderComp> {
                         fontSize: 15,
                         fontFamily: "Cabin-Regular"),
                   )),
-              width: 220,
+              width: 250,
               height: 70,
             )),
         Column(

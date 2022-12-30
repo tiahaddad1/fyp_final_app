@@ -13,6 +13,16 @@ class caregiverReminders extends StatefulWidget {
 }
 
 class _caregiverRemindersState extends State<caregiverReminders> {
+  bool clicked = false;
+  List<Widget> containerList = [];
+  returnComp() {
+      containerList.add(caregiverReminderComp(reminder: "Add new Reminder"));
+  }
+Widget _getListWidgets(List<Widget> yourList){
+  containerList.add(caregiverReminderComp(reminder: "Add new Reminder"));
+   return Row(children: yourList.map((i) => i).toList());
+ }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,19 +80,29 @@ class _caregiverRemindersState extends State<caregiverReminders> {
             scrollDirection: Axis.vertical,
             child: Container(
                 child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                caregiverReminderComp(reminder: "Pray daily prayers"),
-                caregiverReminderComp(reminder: "Pray daily prayers"),
-              ],
-            )),
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                    // containerList.map(((e) => e)).toList() -> a map to iterate through array
+                    //when pressed add it to array and this array has all the comp from DB too
+                    caregiverReminderComp(reminder: "Pray daily prayers"),
+                    // caregiverReminderComp(reminder: "Pray daily prayers"),
+
+         ] )),
           ),
           Container(
               child: buttonImage(
                   image: "lib/assets/bellImage.png",
                   text: "Add Reminder",
-                  function: {},
+                  function: {
+                    returnComp(),
+                    print(containerList),
+                    setState(
+                      () {
+                        clicked = true;
+                      },
+                    )
+                  },
                   color: Color.fromARGB(255, 66, 135, 123)),
               alignment: Alignment.center),
         ],
