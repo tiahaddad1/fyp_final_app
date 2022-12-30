@@ -286,7 +286,6 @@ class _caregiverHomeState extends State<caregiverHome> {
                 ],
               )),
               addNewLearnerComp()
-              //add learner here
             ],
           )))
         ],

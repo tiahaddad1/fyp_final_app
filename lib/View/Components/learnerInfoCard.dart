@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:fyp_application/View/learnerInformationScreen.dart';
 import 'package:fyp_application/View/learnerSignup.dart';
 
 class learnerInfoCard extends StatefulWidget {
@@ -15,7 +16,8 @@ class _learnerInfoCardState extends State<learnerInfoCard> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        //navigate to user page
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => learnerInfoScreen()));
       },
       child: Container(
           margin: EdgeInsets.only(left: 20, right: 20, bottom: 20),
