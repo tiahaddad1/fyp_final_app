@@ -65,7 +65,9 @@ class _caregiverSkillsState extends State<caregiverSkills> {
           SizedBox(
             height: 40,
           ),
-          SingleChildScrollView(
+          Expanded(
+              child: SafeArea(
+                child: SingleChildScrollView(
               scrollDirection: Axis.vertical,
               child: Container(
                   child: Column(
@@ -76,7 +78,7 @@ class _caregiverSkillsState extends State<caregiverSkills> {
                     caregiverSkillComp(
                         image: "lib/assets/footballClipart.png",
                         name: "Communication Skills")
-                  ]))),
+                  ]))))),
           Container(
               child: buttonImage(
                   image: "lib/assets/skill.png",

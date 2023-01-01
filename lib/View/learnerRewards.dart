@@ -162,7 +162,8 @@ class _learnerRewardsState extends State<learnerRewards> {
                   fontSize: 23),
             ),
           ),
-          Expanded(
+          
+          Expanded( 
               child: ListView(
             scrollDirection: Axis.vertical,
             children: [

@@ -113,7 +113,7 @@ class _caregiverFeelingsState extends State<caregiverFeelings> {
                     )),
                 Container(
                     width: double.infinity / 1.5,
-                    height: 400,
+                    height: 500,
                     child: Column(children: [
                       Container(
                         alignment: Alignment.topLeft,
@@ -136,21 +136,25 @@ class _caregiverFeelingsState extends State<caregiverFeelings> {
                       ),
                       Container(
                         margin: EdgeInsets.all(5),
-                        child:Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                      IconButton(
-                      iconSize: 20,
-                      icon: const Icon(Icons.download),
-                      onPressed: () {
-                      downloadCsv();
-                             },
-                      ),
-                     Padding(child: Text("Download CSV file of report",style: TextStyle(color: Colors.grey,decoration: TextDecoration.underline),),padding: EdgeInsets.all(5),),
-
-                      ],)
-
-                       ,) 
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              iconSize: 20,
+                              icon: const Icon(Icons.download),
+                              onPressed: () {
+                                downloadCsv();
+                              },
+                            ),
+                            Text(
+                              "Download a CSV file of weekly report",
+                              style: TextStyle(
+                                  color: Color.fromARGB(255, 0, 0, 0),
+                                  fontSize: 13),
+                            ),
+                          ],
+                        ),
+                      )
                     ])),
               ],
             )));
@@ -217,23 +221,14 @@ class _caregiverFeelingsState extends State<caregiverFeelings> {
       row.add(getData()[i].feelingsRate);
       rows.add(row);
     }
+    String dir = (await getApplicationDocumentsDirectory())!.absolute.path +
+        "/documents";
 
-    // await SimplePermissions.requestPermission(Permission.WriteExternalStorage);
-    // bool checkPermission = await SimplePermissions.checkPermission(
-    //     Permission.WriteExternalStorage);
-    // if (checkPermission) {
-      String dir =
-          (await getExternalStorageDirectory())!.absolute.path + "/documents";
+    String file = "$dir";
+    print(" FILE " + file);
+    File f = new File(file + "weekly_summary_$today.csv");
 
-//FIX THIS :
-      String file = "$dir";
-      print(" FILE " + file);
-      File f = new File(file+"weekly_summary_$today.csv");
-
-      String csv = const ListToCsvConverter().convert(rows);
-      f.writeAsString(csv);
-
-    // }
+    String csv = const ListToCsvConverter().convert(rows);
+    f.writeAsString(csv);
   }
-
 }
