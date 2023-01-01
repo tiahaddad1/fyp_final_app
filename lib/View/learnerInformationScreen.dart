@@ -3,6 +3,7 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:fyp_application/View/Components/deleteButton.dart';
 import 'package:fyp_application/View/Components/learnerDetailComponent.dart';
+import 'package:fyp_application/View/addTaskScreen.dart';
 import 'package:fyp_application/View/caregiverViewFeelings.dart';
 import 'package:fyp_application/View/caregiverViewReminders.dart';
 import 'package:fyp_application/View/caregiverViewRewards.dart';
@@ -55,7 +56,7 @@ class _learnerInfoScreenState extends State<learnerInfoScreen> {
                               height: 30,
                               child: IconButton(
                                 alignment: Alignment.topLeft,
-                                iconSize: 15,
+                                iconSize: 23,
                                 color: Colors.black,
                                 onPressed: () {
                                   Navigator.of(context).pop();
@@ -176,7 +177,8 @@ class _learnerInfoScreenState extends State<learnerInfoScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                  learnerDetailComp(image: "lib/assets/scheduleDetailIcon.png", name: "Schedule", page: caregiverSchedule()),
+                  learnerDetailComp(image: "lib/assets/scheduleDetailIcon.png", name: "Schedule", page: addTaskScreen()),
+                  // learnerDetailComp(image: "lib/assets/scheduleDetailIcon.png", name: "Schedule", page: caregiverSchedule()),
                   learnerDetailComp(image: "lib/assets/feelingsDetailIcon.png", name: "Feelings", page: caregiverFeelings()),
                   learnerDetailComp(image: "lib/assets/pinDetailIcon.png", name: "Reminders", page: caregiverReminders()),
                   learnerDetailComp(image: "lib/assets/skillDetailIcon.png", name: "Skills", page: caregiverSkills()),

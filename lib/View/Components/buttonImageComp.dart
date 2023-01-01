@@ -3,14 +3,14 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
 class buttonImage extends StatefulWidget {
-  final String image;
+  final String? image;
   final String text;
   final function;
   final Color color;
 
   const buttonImage(
       {super.key,
-      required this.image,
+      this.image,
       required this.text,
       required this.function,
       required this.color});
@@ -34,11 +34,11 @@ class _buttonImageState extends State<buttonImage> {
               child:
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Padding(
-                    child: Image.asset(
-                      widget.image,
+                    child: widget.image!=null?Image.asset(
+                      widget.image!,
                       width: 30,
                       height: 30,
-                    ),
+                    ):null,
                     padding: EdgeInsets.only(right: 15)),
                 Text(
                   widget.text,

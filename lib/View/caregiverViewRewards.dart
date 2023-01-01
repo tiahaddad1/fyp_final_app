@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:fyp_application/View/Components/addNewRewardCaregiver.dart';
 import 'package:fyp_application/View/Components/buttonImageComp.dart';
 
 import 'Components/caregiverRewardComp.dart';
+import 'Components/rewardStarComp.dart';
 
 class caregiverRewards extends StatefulWidget {
   const caregiverRewards({super.key});
@@ -105,7 +107,10 @@ class _caregiverRewardsState extends State<caregiverRewards> {
                     child: buttonImage(
                         image: "lib/assets/starTotal.png",
                         text: "Add Reward",
-                        function: {
+                        function:() {
+                      showDialog(
+                          context: context,
+                          builder: (context) => addNewRewardCaregiver());                         
                           //should be able to view a pop up for adding a new reward
                         },
                         color: Color.fromARGB(255, 66, 135, 123)),
@@ -137,9 +142,34 @@ class _caregiverRewardsState extends State<caregiverRewards> {
                                         fontSize: 20,
                                         color: Colors.black),
                                   )),
-                              Container(), //for the table rewards, with scrolls and everything
                               Container(
-                                margin: EdgeInsets.all(10),
+                                height: MediaQuery.of(context).size.height / 5,
+                                child:
+                                    Expanded(
+                                        child: SafeArea(
+                                            child: ListView(
+                                                padding: EdgeInsets.only(
+                                                    top: 10,
+                                                    left: 13,
+                                                    right: 13),
+                                                shrinkWrap: true,
+                                                scrollDirection: Axis.vertical,
+                                                children: [
+                                      Center(
+                                          child: Wrap(children: [
+                                            //a loop to go over the size of the rewards array of the learner and put in the reward the reward amount
+                                        rewardStarComp(reward: 5),
+                                        rewardStarComp(reward: 15),
+                                        rewardStarComp(reward: 25),
+                                        rewardStarComp(reward: 65),
+                                        rewardStarComp(reward: 5),
+                                        rewardStarComp(reward: 5),
+                                        rewardStarComp(reward: 5),
+                                      ]))
+                                    ]))),
+                              ),
+                              Container(
+                                margin: EdgeInsets.all(15),
                                 alignment: Alignment.center,
                                 child: Text(
                                   "Total points earned: " + "20",

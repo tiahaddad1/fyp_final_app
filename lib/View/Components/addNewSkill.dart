@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
+import 'doneButtonCaregiver.dart';
+
 class newSkillComp extends StatefulWidget {
   const newSkillComp({super.key});
 
@@ -40,7 +42,7 @@ class _newSkillCompState extends State<newSkillComp> {
                       "Skill:",
                       style: TextStyle(
                           fontFamily: "Cabin-Regular",
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w700,
                           fontSize: 17,
                           color: Color.fromARGB(255, 3, 20, 66)),
                     ),
@@ -78,7 +80,7 @@ class _newSkillCompState extends State<newSkillComp> {
                         "Upload image:",
                         style: TextStyle(
                             fontFamily: "Cabin-Regular",
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w700,
                             fontSize: 17,
                             color: Color.fromARGB(255, 3, 20, 66)),
                       ),
@@ -105,32 +107,7 @@ class _newSkillCompState extends State<newSkillComp> {
                 ),
                 padding: EdgeInsets.only(bottom: 20, right: 10),
               ),
-              SizedBox(
-                  width: 95,
-                  height: 40,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      //add details to db
-                      Navigator.of(context).pop;
-                    },
-                    child: Padding(
-                      child: Text("Done",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontFamily: "Fredoka-SemiBold",
-                              fontWeight: FontWeight.w600,
-                              fontSize: 15)),
-                      padding: EdgeInsets.only(
-                          left: 10, right: 10, top: 5, bottom: 5),
-                    ),
-                    style: ButtonStyle(
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20.0))),
-                        backgroundColor: MaterialStatePropertyAll<Color>(
-                            Color.fromARGB(255, 66, 135, 123))),
-                  ))
+              doneButtonCaregiver(function: (){},),
             ],
           )
           // ]),
