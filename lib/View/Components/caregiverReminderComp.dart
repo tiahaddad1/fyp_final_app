@@ -53,7 +53,7 @@ class _caregiverReminderCompState extends State<caregiverReminderComp> {
               child: Padding(
                 padding: EdgeInsets.only(top: 10, right: 7, bottom: 10),
                 child: Image.asset(
-                  "lib/assets/editChanges.png",
+                  "lib/assets/editCont.png",
                   width: 15,
                   height: 15,
                 ),

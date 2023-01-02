@@ -451,7 +451,7 @@ class _addSubtaskState extends State<addSubtask> {
                         inputFormatters: <TextInputFormatter>[
                           FilteringTextInputFormatter.digitsOnly
                         ],
-                        autofocus: true,
+                        autofocus: false,
                         cursorColor: Color.fromARGB(255, 45, 119, 223),
                         controller: subtaskDurationController,
                         style: TextStyle(
@@ -549,7 +549,7 @@ class _addSubtaskState extends State<addSubtask> {
                                   }
                                 },
                                 child: image != null
-                                    ? Image.file(image!,
+                                    ? Image.file(image,
                                         width: 280, height: 110)
                                     : imagePath),
                           ]))

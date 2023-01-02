@@ -4,16 +4,16 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
 class caregiverRewardComp extends StatefulWidget {
-
   final String text;
   final String image;
   final String reward;
 
-
-  const caregiverRewardComp({super.key,
-      required this.text,
-      required this.image,
-      required this.reward,});
+  const caregiverRewardComp({
+    super.key,
+    required this.text,
+    required this.image,
+    required this.reward,
+  });
 
   @override
   State<caregiverRewardComp> createState() => _caregiverRewardCompState();
@@ -23,7 +23,7 @@ class _caregiverRewardCompState extends State<caregiverRewardComp> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(right:5,bottom: 20,top: 10),
+      margin: EdgeInsets.only(right: 5, bottom: 20, top: 10),
       width: 320,
       height: 70,
       decoration: BoxDecoration(boxShadow: [
@@ -70,7 +70,7 @@ class _caregiverRewardCompState extends State<caregiverRewardComp> {
             ),
           ),
           Container(
-            padding: EdgeInsets.only(top:5),
+              padding: EdgeInsets.only(top: 5),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.only(
                     topRight: Radius.circular(20),
@@ -80,50 +80,49 @@ class _caregiverRewardCompState extends State<caregiverRewardComp> {
               width: 60,
               height: 70,
               alignment: Alignment.center,
-              child: 
-              Column(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-               Text("+" + widget.reward,
-                  style: TextStyle(
-                      fontFamily: "Fredoka-Medium",
-                      color: Color.fromARGB(255, 80, 169, 154),
-                      fontSize: 20)),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            GestureDetector(
-              child: Padding(
-                padding: EdgeInsets.only(top: 10, right: 7, bottom: 10),
-                child: Image.asset(
-                  "lib/assets/editChanges.png",
-                  width: 15,
-                  height: 15,
-                ),
-              ),
-              onTap: () {
-                //save to DB
-              },
-            ),
-            GestureDetector(
-              child: Padding(
-                padding: EdgeInsets.only( bottom: 5,top:5),
-                child: Image.asset(
-                  "lib/assets/delete.png",
-                  width: 15,
-                  height: 15,
-                ),
-              ),
-              onTap: () {
-                //delete from DB
-              },
-            )
-          ],
-        )
-                ],
-              )
+                  Text("+" + widget.reward,
+                      style: TextStyle(
+                          fontFamily: "Fredoka-Medium",
+                          color: Color.fromARGB(255, 80, 169, 154),
+                          fontSize: 20)),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        child: Padding(
+                          padding:
+                              EdgeInsets.only(top: 10, right: 7, bottom: 10),
+                          child: Image.asset(
+                            "lib/assets/editCont.png",
+                            width: 15,
+                            height: 15,
+                          ),
+                        ),
+                        onTap: () {
+                          //save to DB
+                        },
                       ),
+                      GestureDetector(
+                        child: Padding(
+                          padding: EdgeInsets.only(bottom: 5, top: 5),
+                          child: Image.asset(
+                            "lib/assets/delete.png",
+                            width: 15,
+                            height: 15,
+                          ),
+                        ),
+                        onTap: () {
+                          //delete from DB
+                        },
+                      )
+                    ],
+                  )
+                ],
+              )),
         ],
       ),
     );

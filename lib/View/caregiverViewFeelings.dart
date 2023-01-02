@@ -221,7 +221,7 @@ class _caregiverFeelingsState extends State<caregiverFeelings> {
       row.add(getData()[i].feelingsRate);
       rows.add(row);
     }
-    String dir = (await getApplicationDocumentsDirectory())!.absolute.path +
+    String dir = (await getApplicationDocumentsDirectory()).absolute.path +
         "/documents";
 
     String file = "$dir";

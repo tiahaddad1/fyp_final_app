@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:fyp_application/View/Components/logOutButton.dart';
+import 'package:fyp_application/View/Components/scheduleTaskComp.dart';
 
 import 'Components/learnerInfoCard.dart';
 import 'learnerSignup.dart';
