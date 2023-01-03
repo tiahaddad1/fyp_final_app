@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:fyp_application/View/editSubtasksScreen.dart';
+import 'package:fyp_application/View/editTaskScreen.dart';
 import 'package:video_player/video_player.dart';
 
 class scheduleTaskComp extends StatefulWidget {
@@ -44,7 +46,7 @@ class _scheduleTaskCompState extends State<scheduleTaskComp> {
         color: colors[randomNumber],
       ),
       padding: EdgeInsets.all(5),
-      margin: EdgeInsets.all(15),
+      margin: EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 7),
       width: double.infinity,
       height: MediaQuery.of(context).size.height / 5.5,
       child: Row(
@@ -124,20 +126,31 @@ class _scheduleTaskCompState extends State<scheduleTaskComp> {
                 ),
                 Padding(
                     padding: EdgeInsets.all(10),
-                    child: Text("View subtasks",
+                    child:
+                        // Text("View subtasks",
+                        //     style: TextStyle(
+                        //         color: Color.fromARGB(255, 62, 81, 140),
+                        //         fontFamily: "Cabin-Regular",
+                        //         decoration: TextDecoration.underline,
+                        //         fontSize: 12)),
+                        // subtasks().length>0?
+                        GestureDetector(
+                      child: Text(
+                        "View subtasks",
                         style: TextStyle(
                             color: Color.fromARGB(255, 62, 81, 140),
                             fontFamily: "Cabin-Regular",
                             decoration: TextDecoration.underline,
-                            fontSize: 12))
-                    // subtasks().length>0?
-                    // GestureDetector(child:Text("View subtasks",style: TextStyle(
-                    //     color: Color.fromARGB(255, 62, 81, 140),
-                    //     fontFamily: "Cabin-Regular",
-                    // decoration: TextDecoration.underline,
-                    //     fontSize: 12),),onTap: () {
-                    //   //go to subtasks view page
-                    // },):Text("No subtasks",),
+                            fontSize: 12),
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => editSubtaskScreen()));
+                      },
+                    )
+                    //:Text("No subtasks",),
 
                     ),
               ],
@@ -179,6 +192,10 @@ class _scheduleTaskCompState extends State<scheduleTaskComp> {
                             ),
                           ),
                           onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => editTaskScreen()));
                             //save to DB
                           },
                         ),

@@ -25,7 +25,7 @@ class _learnerScheduleState extends State<learnerSchedule> {
               child: Text(
                 "Today's Schedule",
                 style: TextStyle(
-                  fontSize: 27,
+                  fontSize: 25,
                   color: Color.fromARGB(255, 62, 81, 140),
                   fontFamily: "DMSans-Bold",
                 ),

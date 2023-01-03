@@ -18,8 +18,7 @@ class learnerInfoScreen extends StatefulWidget {
 }
 
 class _learnerInfoScreenState extends State<learnerInfoScreen> {
-
- deleteLearnerFromDB(){
+  deleteLearnerFromDB() {
     //populate code with deleting user from db
   }
 
@@ -169,27 +168,56 @@ class _learnerInfoScreenState extends State<learnerInfoScreen> {
               children: [
                 Container(
                   alignment: Alignment.topLeft,
-                  margin: EdgeInsets.only(bottom: 10,top: 20),
+                  margin: EdgeInsets.only(bottom: 10, top: 20),
                   padding: EdgeInsets.only(left: 13),
-                  child: Text("Liam's"+" information:",style: TextStyle(color: Color.fromARGB(255, 63,62,59),decoration: TextDecoration.underline,fontSize: 17,fontFamily: "lib/assets/Cabin-Regular",fontWeight: FontWeight.w600),),
+                  child: Text(
+                    "Liam's" + " information:",
+                    style: TextStyle(
+                        color: Color.fromARGB(255, 63, 62, 59),
+                        decoration: TextDecoration.underline,
+                        fontSize: 17,
+                        fontFamily: "lib/assets/Cabin-Regular",
+                        fontWeight: FontWeight.w600),
+                  ),
                 ),
-                Expanded(child:Column(
+                Expanded(
+                    child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                  learnerDetailComp(image: "lib/assets/scheduleDetailIcon.png", name: "Schedule", page: addTaskScreen()),
-                  // learnerDetailComp(image: "lib/assets/scheduleDetailIcon.png", name: "Schedule", page: caregiverSchedule()),
-                  learnerDetailComp(image: "lib/assets/feelingsDetailIcon.png", name: "Feelings", page: caregiverFeelings()),
-                  learnerDetailComp(image: "lib/assets/pinDetailIcon.png", name: "Reminders", page: caregiverReminders()),
-                  learnerDetailComp(image: "lib/assets/skillDetailIcon.png", name: "Skills", page: caregiverSkills()),
-                  learnerDetailComp(image: "lib/assets/rewardDetailIcon.png", name: "Rewards", page: caregiverRewards()),
-                ],))
+                    // learnerDetailComp(image: "lib/assets/scheduleDetailIcon.png", name: "Schedule", page: addTaskScreen()),
+                    learnerDetailComp(
+                        image: "lib/assets/scheduleDetailIcon.png",
+                        name: "Schedule",
+                        page: caregiverSchedule()),
+                    learnerDetailComp(
+                        image: "lib/assets/feelingsDetailIcon.png",
+                        name: "Feelings",
+                        page: caregiverFeelings()),
+                    learnerDetailComp(
+                        image: "lib/assets/pinDetailIcon.png",
+                        name: "Reminders",
+                        page: caregiverReminders()),
+                    learnerDetailComp(
+                        image: "lib/assets/skillDetailIcon.png",
+                        name: "Skills",
+                        page: caregiverSkills()),
+                    learnerDetailComp(
+                        image: "lib/assets/rewardDetailIcon.png",
+                        name: "Rewards",
+                        page: caregiverRewards()),
+                  ],
+                ))
               ],
             ),
           ),
           Container(
             alignment: Alignment.center,
-            child: deleteButton(text: "Delete Learner",function: deleteLearnerFromDB(),),)
+            child: deleteButton(
+              text: "Delete Learner",
+              function: deleteLearnerFromDB(),
+            ),
+          )
         ],
       ),
     );
