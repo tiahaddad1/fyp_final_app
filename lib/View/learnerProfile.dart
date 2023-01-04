@@ -1,9 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:fyp_application/View/customiseScreen.dart';
 import 'package:fyp_application/View/learnerRewards.dart';
+import 'package:fyp_application/api/firebase_api.dart';
 
 import 'Components/profileContainer.dart';
 
@@ -231,7 +233,7 @@ class _learnerProfileState extends State<learnerProfile> {
                     )),
                 GestureDetector(
                     onTap: () {
-                      print("clicked!");
+                      FirebaseAuth.instance.signOut();
                     },
                     child: Padding(
                       child: profileContainer(

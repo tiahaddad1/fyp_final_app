@@ -70,3 +70,5 @@ class _userRoleScreenState extends State<userRoleScreen> {
             )));
   }
 }
+//PUT CODE HERE WHERE IF THE USER IS LOGGED IN, THEN CHECK FOR
+//THEIR USER ROLE AND DIRECT THEM TO THEIR PAGE (SO SAME CODE AS WHATS IN MAIN.DART)

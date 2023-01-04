@@ -1,7 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:fyp_application/View/caregiverHome.dart';
 
+import '../Provider/User-provider.dart';
+import '../api/firebase_api.dart';
+import '../api/firebase_auth.dart';
 import 'Components/buttonComponent.dart';
 
 class logInCaregiver extends StatefulWidget {
@@ -15,9 +20,17 @@ final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 final emailController = TextEditingController();
 final passwordController = TextEditingController();
 final navigatorKey = GlobalKey<NavigatorState>();
-// final userRole = UserProvider.getUserRole();
 
+final userRole = UserProvider.getUserRole();
 class _logInCaregiver extends State<logInCaregiver> {
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+
+    super.dispose();
+  }
+
   @override
   initState() {
     super.initState();
@@ -67,13 +80,16 @@ class logInDetails extends StatelessWidget {
         child: Form(
             key: _formKey,
             child: Column(children: [
-              Padding(child:Container(
-                child: Image.asset(
-                  "lib/assets/welcomeBack.jpeg",
-                  width: 350,
-                  height: 250,
+              Padding(
+                child: Container(
+                  child: Image.asset(
+                    "lib/assets/welcomeBack.jpeg",
+                    width: 350,
+                    height: 250,
+                  ),
                 ),
-              ),padding: EdgeInsets.only(top:15),),
+                padding: EdgeInsets.only(top: 15),
+              ),
               Padding(
                   child: Text(
                     "Welcome Back!",
@@ -133,108 +149,106 @@ class logInDetails extends StatelessWidget {
                                 ));
                         return;
                       }
-                      // try {
-                      //   if (await FirebaseApi.returnCredentials(
-                      //           emailController.text) ==
-                      //       "") {
-                      //     showDialog(
-                      //         context: context,
-                      //         builder: (context) => AlertDialog(
-                      //               title: Text(
-                      //                 "User not found!",
-                      //                 style: TextStyle(
-                      //                     color: Color.fromARGB(
-                      //                         255, 21, 67, 194),
-                      //                     fontWeight: FontWeight.bold),
-                      //               ),
-                      //               content: Image.asset(
-                      //                 'lib/assets/userNotFound.webp',
-                      //                 alignment: Alignment.center,
-                      //                 height: 100,
-                      //               ),
-                      //               actions: [
-                      //                 TextButton(
-                      //                     child: Text("Okay"),
-                      //                     onPressed: () =>
-                      //                         Navigator.pop(context)),
-                      //               ],
-                      //             ));
-                      //   } else {
-                      //     if (await FirebaseApi.checkPassword(
-                      //             emailController.text,
-                      //             passwordController.text) ==
-                      //         true) {
-                      //       // showDialog(
-                      //       //     context: context,
-                      //       //     barrierDismissible: false,
-                      //       //     builder: (context) => Center(
-                      //       //         child: CircularProgressIndicator()));
-                      //       try {
-                      //         await FirebaseAuth.instance
-                      //             .signInWithEmailAndPassword(
-                      //                 email:
-                      //                     "C-" + emailController.text.trim(),
-                      //                 password:
-                      //                     passwordController.text.trim());
-                      //         print("Signed Up!");
-                      //         print(userRole);
-                      //       } on FirebaseAuthException catch (e) {
-                      //         print(e);
-                      //         print("Error with signing up!");
-                      //       }
-                      //       if (true) {
-                      //         // navigatorKey.currentState!.popUntil(
-                      //         //  (route) => route.isFirst);
-                      //         Navigator.push(
-                      //             context,
-                      //             MaterialPageRoute(
-                      //                 builder: (context) => mainPageAdmin()));
-                      //       }
-                      //     } else {
-                      //       showDialog(
-                      //           context: context,
-                      //           builder: (context) => AlertDialog(
-                      //                 title: Text(
-                      //                   "Incorrect Password!",
-                      //                   style: TextStyle(
-                      //                       color: Color.fromARGB(
-                      //                           255, 161, 0, 0),
-                      //                       fontWeight: FontWeight.bold),
-                      //                 ),
-                      //                 content: Text(
-                      //                     "Please enter your password correctly."),
-                      //                 actions: [
-                      //                   TextButton(
-                      //                     child: Text("Okay"),
-                      //                     onPressed: () =>
-                      //                         Navigator.pop(context),
-                      //                   ),
-                      //                 ],
-                      //               ));
-                      //     }
-                      //   }
-                      // } catch (Exception) {
-                      //   final snackBarC = SnackBar(
-                      //       content: Text(
-                      //           "An internal issue has occured! Please try again later."));
-                      //   action:
-                      //   SnackBarAction(
-                      //     label: 'Undo',
-                      //     onPressed: () {},
-                      //   );
-                      //   ScaffoldMessenger.of(context).showSnackBar(snackBarC);
-                      // }
+                      try {
+                        if (await FirebaseApi.returnCredentials(
+                                emailController.text) ==
+                            "") {
+                          showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                    title: Text(
+                                      "User not found!",
+                                      style: TextStyle(
+                                          color: Color.fromARGB(
+                                              255, 21, 67, 194),
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    content: Image.asset(
+                                      'lib/assets/userNotFound.webp',
+                                      alignment: Alignment.center,
+                                      height: 100,
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                          child: Text("Okay"),
+                                          onPressed: () =>
+                                              Navigator.pop(context)),
+                                    ],
+                                  ));
+                        } else {
+                          if (await FirebaseApi.checkPassword(
+                                  emailController.text,
+                                  passwordController.text) ==
+                              true) {
+                            showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (context) => Center(
+                                    child: CircularProgressIndicator()));
+                            try {
+                              await AuthService.login(
+                                          "C-" + emailController.text.trim(),
+                               
+                                          passwordController.text.trim(),context);
+                              print("Signed Up!");
+                              print(userRole);
+                            } on FirebaseAuthException catch (e) {
+                              print(e);
+                              print("Error with signing up!");
+                            }
+                            if (true) {
+                              // navigatorKey.currentState!.popUntil(
+                              //  (route) => route.isFirst);
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => caregiverHome()));
+                            }
+                          } else {
+                            showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                      title: Text(
+                                        "Incorrect Password!",
+                                        style: TextStyle(
+                                            color: Color.fromARGB(
+                                                255, 161, 0, 0),
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      content: Text(
+                                          "Please enter your password correctly."),
+                                      actions: [
+                                        TextButton(
+                                          child: Text("Okay"),
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                        ),
+                                      ],
+                                    ));
+                          }
+                        }
+                      } catch (Exception) {
+                        final snackBarC = SnackBar(
+                            content: Text(
+                                "An internal issue has occured! Please try again later."));
+                        action:
+                        SnackBarAction(
+                          label: 'Undo',
+                          onPressed: () {},
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBarC);
+                      }
                     },
                     child: buttonComponent(
                       colour: Color.fromARGB(255, 66, 135, 123),
                       text: "Log in",
                       function: () => {
-                        // Navigator.push(
-                        //           context,
-                        //           MaterialPageRoute(
-                        //             builder: (context) =>
-                        //             homeScreen()
-                        //             ));
+                        Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                    caregiverHome()
+                                    ))
                       },
                     ),
                   )),

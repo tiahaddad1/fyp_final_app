@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -22,7 +23,7 @@ class _logOutButton extends State<logOutButton> {
                 Color.fromARGB(255, 251, 251, 251)),
           ),
           onPressed: (() {
-            //log out session code here
+            FirebaseAuth.instance.signOut();
           }),
           child: Container(
             child: Text("Log Out",

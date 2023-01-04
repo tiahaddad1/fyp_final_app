@@ -4,7 +4,7 @@ import 'Caregiver.dart';
 
 class Learner extends User {
   String birth_date;
-  Caregiver caregiver_assigned;
+  String caregiver_assigned;
 
   Learner({
     required super.user_id,
@@ -42,7 +42,7 @@ class Learner extends User {
       };
 
 
-  Caregiver getCaregiverAssigned() {
+  String getCaregiverAssigned() {
     return this.caregiver_assigned;
   }
 
@@ -51,7 +51,7 @@ class Learner extends User {
   }
 
 
-   setCaregiverAssigned(Caregiver caregiver) {
+   setCaregiverAssigned(String caregiver) {
      this.caregiver_assigned=caregiver;
   }
 

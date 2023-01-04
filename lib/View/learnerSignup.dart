@@ -1,12 +1,24 @@
-import 'dart:ui';
+import 'dart:io';
+// import 'dart:ui';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:fyp_application/Model/Learner.dart';
+import 'package:fyp_application/View/caregiverHome.dart';
 import 'package:fyp_application/View/signUpCaregiver.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart';
+
+import '../Provider/User-provider.dart';
+import '../Provider/learner.dart';
+import '../api/firebase_api.dart';
 
 class learnerSignup extends StatefulWidget {
   const learnerSignup({super.key});
@@ -15,7 +27,7 @@ class learnerSignup extends StatefulWidget {
   State<learnerSignup> createState() => _learnerSignupState();
 }
 
-// String userEmail = UserProvider.getUserEmail();
+String userEmail = UserProvider.getUserEmail();
 bool success = false;
 String emailCreated = "";
 String urlImage = "";
@@ -34,41 +46,41 @@ Image imagePath = Image(
     image: AssetImage("lib/assets/uploadImage.png"), width: 60, height: 80);
 
 class _learnerSignupState extends State<learnerSignup> {
-  late FileImage image;
+  late File image;
 
   @override
   Widget build(BuildContext context) {
-    // Future<File> saveImagePermanently(String imagePath) async {
-    //   final directory = await getApplicationDocumentsDirectory();
-    //   final name = basename(imagePath);
-    //   final image = File('${directory.path}/$name');
-    //   return File(imagePath).copy(image.path);
-    // }
+    Future<File> saveImagePermanently(String imagePath) async {
+      final directory = await getApplicationDocumentsDirectory();
+      final name = basename(imagePath);
+      final image = File('${directory.path}/$name');
+      return File(imagePath).copy(image.path);
+    }
 
     late String urlDownload;
 
     capture() async {
-      // try {
-      //   // ignore: deprecated_member_use
-      //   final image =
-      //       await ImagePicker().pickImage(source: ImageSource.gallery);
-      //   // if (image == null) return;
+      try {
+        // ignore: deprecated_member_use
+        final image =
+            await ImagePicker().pickImage(source: ImageSource.gallery);
+        // if (image == null) return;
 
-      //   final imageTemp = File(image!.path);
-      //   final imagePermanent = await saveImagePermanently(image.path);
-      //   setState(() => this.image = imagePermanent); //was imageTemp
-      //   if (emailController != null) {
-      //     final path = "profilephoto/${emailController.text}";
-      //     final ref = FirebaseStorage.instance.ref().child(path);
-      //     final uploadFile = await ref.putFile(File(image.path));
-      //     urlDownload = (await uploadFile.ref.getDownloadURL());
-      //     return urlDownload;
-      //   }
-      //   return "error";
-      // } on PlatformException catch (e) {
-      //   print("Failed to pick image: $e");
-      //   return "error";
-      // }
+        final imageTemp = File(image!.path);
+        final imagePermanent = await saveImagePermanently(image.path);
+        setState(() => this.image = imagePermanent); //was imageTemp
+        if (emailController != null) {
+          final path = "profilephoto/${emailController.text}";
+          final ref = FirebaseStorage.instance.ref().child(path);
+          final uploadFile = await ref.putFile(File(image.path));
+          urlDownload = (await uploadFile.ref.getDownloadURL());
+          return urlDownload;
+        }
+        return "error";
+      } on PlatformException catch (e) {
+        print("Failed to pick image: $e");
+        return "error";
+      }
     }
 
     showCalendar() async {
@@ -285,7 +297,7 @@ class _learnerSignupState extends State<learnerSignup> {
                                     ),
                                   ),
                                   Container(
-                                    margin: EdgeInsets.only(top: 8,left: 7),
+                                    margin: EdgeInsets.only(top: 8, left: 7),
                                     width: 350,
                                     height: 52,
                                     decoration: BoxDecoration(
@@ -602,188 +614,190 @@ class _learnerSignupState extends State<learnerSignup> {
                             padding: EdgeInsets.only(left: 15, right: 15),
                             child: SizedBox(
                               child: new TextButton(
-                                  onPressed: () async {}
-                                  //   if (formKey.currentState!.validate()) {
-                                  //     print("Inputs are OK");
-                                  //   } else {
-                                  //     print("Inputs are incorrectly entered");
-                                  //     return;
-                                  //   }
+                                  onPressed: () async {
+                                      if (formKey.currentState!.validate()) {
+                                        print("Inputs are OK");
+                                      } else {
+                                        print("Inputs are incorrectly entered");
+                                        return;
+                                      }
 
-                                  //   if (repasswordController.text !=
-                                  //       passwordController.text) {
-                                  //     showDialog(
-                                  //         context: context,
-                                  //         builder: (context) => AlertDialog(
-                                  //               title: Text(
-                                  //                 "Incorrect Password!",
-                                  //                 style: TextStyle(
-                                  //                     color: Color.fromARGB(
-                                  //                       255,
-                                  //                       158,
-                                  //                       11,
-                                  //                       0,
-                                  //                     ),
-                                  //                     fontWeight:
-                                  //                         FontWeight.bold),
-                                  //               ),
-                                  //               content: Text(
-                                  //                   "Please re-enter your password correctly"),
-                                  //               actions: [
-                                  //                 TextButton(
-                                  //                   child: Text("Okay"),
-                                  //                   onPressed: () =>
-                                  //                       Navigator.pop(context),
-                                  //                 ),
-                                  //               ],
-                                  //             ));
-                                  //     return;
-                                  //   }
-                                  //   Learner newLearner = new Learner(
-                                  //       learnerID: "123",
-                                  //       firstName: firstNameController.text,
-                                  //       lastName: lastNameController.text,
-                                  //       email: emailController.text,
-                                  //       password: passwordController.text,
-                                  //       dateOfBirth: DateFormat.yMd()
-                                  //           .format(dateNow!)
-                                  //           .toString(),
-                                  //       caregiverAssigned: userEmail);
-                                  //   try {
-                                  //     if (await FirebaseApi.compareLearnerEmail(
-                                  //             emailController.text) ==
-                                  //         true) {
-                                  //       final snackBarC = SnackBar(
-                                  //           content: Text(
-                                  //               "This email already exists! Please try another email."));
-                                  //       action:
-                                  //       SnackBarAction(
-                                  //         label: 'Undo',
-                                  //         onPressed: () {},
-                                  //       );
-                                  //       ScaffoldMessenger.of(context)
-                                  //           .showSnackBar(snackBarC);
-                                  //     } else {
-                                  //       if (tap == true) {
-                                  //         LearnerProvider.addLearner(newLearner);
+                                      if (repasswordController.text !=
+                                          passwordController.text) {
+                                        showDialog(
+                                            context: context,
+                                            builder: (context) => AlertDialog(
+                                                  title: Text(
+                                                    "Incorrect Password!",
+                                                    style: TextStyle(
+                                                        color: Color.fromARGB(
+                                                          255,
+                                                          158,
+                                                          11,
+                                                          0,
+                                                        ),
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  content: Text(
+                                                      "Please re-enter your password correctly"),
+                                                  actions: [
+                                                    TextButton(
+                                                      child: Text("Okay"),
+                                                      onPressed: () =>
+                                                          Navigator.pop(context),
+                                                    ),
+                                                  ],
+                                                ));
+                                        return;
+                                      }
+                                      Learner newLearner = new Learner(
+                                          user_id: "123",
+                                          first_name: firstNameController.text,
+                                          last_name: lastNameController.text,
+                                          email: emailController.text,
+                                          password: passwordController.text,
+                                          profile_pic: "",
+                                          about_description: "",
+                                          birth_date: DateFormat.yMd()
+                                              .format(dateNow!)
+                                              .toString(),
+                                          caregiver_assigned: userEmail);
+                                      try {
+                                        if (await FirebaseApi.compareLearnerEmail(
+                                                emailController.text) ==
+                                            true) {
+                                          final snackBarC = SnackBar(
+                                              content: Text(
+                                                  "This email already exists! Please try another email."));
+                                          action:
+                                          SnackBarAction(
+                                            label: 'Undo',
+                                            onPressed: () {},
+                                          );
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(snackBarC);
+                                        } else {
+                                          if (tap == true) {
+                                            LearnerProvider.addLearner(newLearner);
 
-                                  //         if (true) {
-                                  //           showDialog(
-                                  //               context: context,
-                                  //               barrierDismissible: false,
-                                  //               builder: (context) => Center(
-                                  //                   child:
-                                  //                       CircularProgressIndicator()));
-                                  //           try {
-                                  //             await FirebaseAuth.instance
-                                  //                 .createUserWithEmailAndPassword(
-                                  //                     email: "L-" +
-                                  //                         emailController.text
-                                  //                             .trim(),
-                                  //                     password: passwordController
-                                  //                         .text
-                                  //                         .trim());
-                                  //             print("Signed Up!");
-                                  //           } on FirebaseAuthException catch (e) {
-                                  //             print("Error with signing up!");
-                                  //           }
-                                  //           navigatorKey.currentState!.popUntil(
-                                  //               (route) => route.isFirst);
-                                  //           FirebaseAuth.instance.signOut();
+                                            if (true) {
+                                              showDialog(
+                                                  context: context,
+                                                  barrierDismissible: false,
+                                                  builder: (context) => Center(
+                                                      child:
+                                                          CircularProgressIndicator()));
+                                              try {
+                                                await FirebaseAuth.instance
+                                                    .createUserWithEmailAndPassword(
+                                                        email: "L-" +
+                                                            emailController.text
+                                                                .trim(),
+                                                        password: passwordController
+                                                            .text
+                                                            .trim());
+                                                print("Signed Up!");
+                                              } on FirebaseAuthException catch (e) {
+                                                print("Error with signing up!");
+                                              }
+                                              navigatorKey.currentState!.popUntil(
+                                                  (route) => route.isFirst);
+                                              FirebaseAuth.instance.signOut();
 
-                                  //           setState(() {
-                                  //             success = true;
-                                  //             emailCreated = emailController.text;
-                                  //             // urlImage =
-                                  //             //     LearnerProvider.loadProfilePic(
-                                  //             //         emailCreated);
-                                  //           });
-                                  //           print(urlImage);
-                                  //           showDialog(
-                                  //               context: context,
-                                  //               builder: (context) => AlertDialog(
-                                  //                     title: Text(
-                                  //                       "Account Successfully Created!",
-                                  //                       style: TextStyle(
-                                  //                           color: Color.fromARGB(
-                                  //                               255, 4, 194, 26),
-                                  //                           fontWeight:
-                                  //                               FontWeight.bold),
-                                  //                     ),
-                                  //                     content: Padding(
-                                  //                         padding:
-                                  //                             EdgeInsets.only(
-                                  //                                 top: 10),
-                                  //                         child: Image.asset(
-                                  //                           'lib/assets/success.png',
-                                  //                           alignment:
-                                  //                               Alignment.center,
-                                  //                           height: 80,
-                                  //                         )),
-                                  //                     actions: [
-                                  //                       TextButton(
-                                  //                           child: Text("Okay!"),
-                                  //                           onPressed: () {
-                                  //                             Navigator.pop(
-                                  //                                 context);
-                                  //                             if (true) {
-                                  //                               Navigator.push(
-                                  //                                   context,
-                                  //                                   MaterialPageRoute(
-                                  //                                       builder:
-                                  //                                           (context) =>
-                                  //                                               mainPageAdmin()));
-                                  //                             }
-                                  //                           }),
-                                  //                     ],
-                                  //                   ));
-                                  //         }
-                                  //       }
-                                  //     }
-                                  //   } catch (Excpetion) {
-                                  //     final snackBarC = SnackBar(
-                                  //         content: Text(
-                                  //             "An internal issue has occured! Please try again later."));
-                                  //     action:
-                                  //     SnackBarAction(
-                                  //       label: 'Undo',
-                                  //       onPressed: () {},
-                                  //     );
-                                  //     ScaffoldMessenger.of(context)
-                                  //         .showSnackBar(snackBarC);
-                                  //   }
-                                  //   if (tap == false) {
-                                  //     showDialog(
-                                  //         context: context,
-                                  //         builder: (context) => AlertDialog(
-                                  //               title: Text(
-                                  //                 "Please upload an image of the child!",
-                                  //                 style: TextStyle(
-                                  //                     color: Color.fromARGB(
-                                  //                       255,
-                                  //                       158,
-                                  //                       11,
-                                  //                       0,
-                                  //                     ),
-                                  //                     fontWeight:
-                                  //                         FontWeight.bold),
-                                  //               ),
-                                  //               content: Image.asset(
-                                  //                   "lib/assets/profile.png",
-                                  //                   width: 100,
-                                  //                   height: 100),
-                                  //               actions: [
-                                  //                 TextButton(
-                                  //                   child: Text("Okay"),
-                                  //                   onPressed: () =>
-                                  //                       Navigator.pop(context),
-                                  //                 ),
-                                  //               ],
-                                  //             ));
-                                  //     return;
-                                  //   }
-                                  // },
-                                  ,
+                                              setState(() {
+                                                success = true;
+                                                emailCreated = emailController.text;
+                                                // urlImage =
+                                                //     LearnerProvider.loadProfilePic(
+                                                //         emailCreated);
+                                              });
+                                              print(urlImage);
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (context) => AlertDialog(
+                                                        title: Text(
+                                                          "Account Successfully Created!",
+                                                          style: TextStyle(
+                                                              color: Color.fromARGB(
+                                                                  255, 4, 194, 26),
+                                                              fontWeight:
+                                                                  FontWeight.bold),
+                                                        ),
+                                                        content: Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    top: 10),
+                                                            child: Image.asset(
+                                                              'lib/assets/success.png',
+                                                              alignment:
+                                                                  Alignment.center,
+                                                              height: 80,
+                                                            )),
+                                                        actions: [
+                                                          TextButton(
+                                                              child: Text("Okay!"),
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                                if (true) {
+                                                                  Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder:
+                                                                              (context) =>
+                                                                                  caregiverHome()));
+                                                                }
+                                                              }),
+                                                        ],
+                                                      ));
+                                            }
+                                          }
+                                        }
+                                      } catch (Excpetion) {
+                                        final snackBarC = SnackBar(
+                                            content: Text(
+                                                "An internal issue has occured! Please try again later."));
+                                        action:
+                                        SnackBarAction(
+                                          label: 'Undo',
+                                          onPressed: () {},
+                                        );
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(snackBarC);
+                                      }
+                                      if (tap == false) {
+                                        showDialog(
+                                            context: context,
+                                            builder: (context) => AlertDialog(
+                                                  title: Text(
+                                                    "Please upload an image of the child!",
+                                                    style: TextStyle(
+                                                        color: Color.fromARGB(
+                                                          255,
+                                                          158,
+                                                          11,
+                                                          0,
+                                                        ),
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  content: Image.asset(
+                                                      "lib/assets/profile.png",
+                                                      width: 100,
+                                                      height: 100),
+                                                  actions: [
+                                                    TextButton(
+                                                      child: Text("Okay"),
+                                                      onPressed: () =>
+                                                          Navigator.pop(context),
+                                                    ),
+                                                  ],
+                                                ));
+                                        return;
+                                      }
+                                    },
+                                  
                                   child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
