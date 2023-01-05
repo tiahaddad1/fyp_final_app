@@ -22,6 +22,7 @@ final passwordController = TextEditingController();
 final navigatorKey = GlobalKey<NavigatorState>();
 
 final userRole = UserProvider.getUserRole();
+
 class _logInCaregiver extends State<logInCaregiver> {
   @override
   void dispose() {
@@ -159,8 +160,8 @@ class logInDetails extends StatelessWidget {
                                     title: Text(
                                       "User not found!",
                                       style: TextStyle(
-                                          color: Color.fromARGB(
-                                              255, 21, 67, 194),
+                                          color:
+                                              Color.fromARGB(255, 21, 67, 194),
                                           fontWeight: FontWeight.bold),
                                     ),
                                     content: Image.asset(
@@ -183,13 +184,13 @@ class logInDetails extends StatelessWidget {
                             showDialog(
                                 context: context,
                                 barrierDismissible: false,
-                                builder: (context) => Center(
-                                    child: CircularProgressIndicator()));
+                                builder: (context) =>
+                                    Center(child: CircularProgressIndicator()));
                             try {
                               await AuthService.login(
-                                          "C-" + emailController.text.trim(),
-                               
-                                          passwordController.text.trim(),context);
+                                  "C-" + emailController.text.trim(),
+                                  passwordController.text.trim(),
+                                  context);
                               print("Signed Up!");
                               print(userRole);
                             } on FirebaseAuthException catch (e) {
@@ -211,8 +212,8 @@ class logInDetails extends StatelessWidget {
                                       title: Text(
                                         "Incorrect Password!",
                                         style: TextStyle(
-                                            color: Color.fromARGB(
-                                                255, 161, 0, 0),
+                                            color:
+                                                Color.fromARGB(255, 161, 0, 0),
                                             fontWeight: FontWeight.bold),
                                       ),
                                       content: Text(
@@ -244,11 +245,9 @@ class logInDetails extends StatelessWidget {
                       text: "Log in",
                       function: () => {
                         Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                    caregiverHome()
-                                    ))
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => caregiverHome()))
                       },
                     ),
                   )),

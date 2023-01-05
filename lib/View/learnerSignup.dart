@@ -1,6 +1,7 @@
 import 'dart:io';
 // import 'dart:ui';
 
+import 'package:crypt/crypt.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -656,7 +657,7 @@ class _learnerSignupState extends State<learnerSignup> {
                                           first_name: firstNameController.text,
                                           last_name: lastNameController.text,
                                           email: emailController.text,
-                                          password: passwordController.text,
+                                          password: Crypt.sha256(passwordController.text).toString(),
                                           profile_pic: "",
                                           about_description: "",
                                           birth_date: DateFormat.yMd()

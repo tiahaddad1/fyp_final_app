@@ -7,8 +7,8 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:fyp_application/Utils.dart';
 import '../Model/Learner.dart';
-import '../utils.dart';
 import '/Model/Caregiver.dart';
 
 class FirebaseApi {
@@ -283,6 +283,7 @@ class FirebaseApi {
   }
 
   static Future<bool> checkPassword(emailCon, passCon) async {
+    
     bool correct = false;
     if (await returnCredentials(emailCon) != "") {
       QuerySnapshot querySnapshot =
@@ -301,7 +302,8 @@ class FirebaseApi {
       });
       print(pass);
       for (var p in pass) {
-        if (passCon == p) {
+        bool passBool=Utils().isValid(p, passCon);
+        if (passBool == true) {
           correct = true;
           break;
         } else {
@@ -315,6 +317,7 @@ class FirebaseApi {
   }
 
   static Future<bool> checkPasswordLearner(emailCon, passCon) async {
+    
     bool correct = false;
     if (await returnCredentialsLearner(emailCon) != "") {
       QuerySnapshot querySnapshot =
@@ -332,7 +335,11 @@ class FirebaseApi {
             .trim());
       });
       for (var p in pass) {
-        if (passCon == p) {
+
+        bool passBool=Utils().isValid(p, passCon);
+
+        // if (passCon == p) {
+        if (passBool==true) {
           correct = true;
           break;
         } else {

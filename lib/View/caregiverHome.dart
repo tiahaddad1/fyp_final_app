@@ -1,8 +1,11 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:fyp_application/View/Components/logOutButton.dart';
 import 'package:fyp_application/View/Components/scheduleTaskComp.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'Components/learnerInfoCard.dart';
 import 'learnerSignup.dart';
@@ -15,6 +18,32 @@ class caregiverHome extends StatefulWidget {
 }
 
 class _caregiverHomeState extends State<caregiverHome> {
+  File? image;
+  bool tapped = false;
+  Image imagePath =
+      Image(image: AssetImage("lib/assets/photo.png"), width: 70, height: 80);
+
+        Future capture() async {
+    try {
+      // ignore: deprecated_member_use
+      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (image == null) return;
+
+      final imageTemp = File(image.path);
+      setState(() => this.image = imageTemp); //was imageTemp
+
+      // final MediaSource s = ModalRoute.of(context).media;
+      // if (media == null) {
+      //   return;
+      // } else {
+      //   fileMedia = media;
+      // }
+    } on PlatformException catch (e) {
+      print("Failed to pick image: $e");
+    }
+  }
+
+  
   GestureDetector addNewLearnerComp() {
     return GestureDetector(
       onTap: () {
@@ -133,14 +162,29 @@ class _caregiverHomeState extends State<caregiverHome> {
                         ),
                         padding: EdgeInsets.only(right: 10),
                       ),
+
                       Stack(alignment: Alignment.topRight, children: <Widget>[
                         ClipRRect(
                           borderRadius:
                               BorderRadius.circular(15), // Image border
                           child: SizedBox.fromSize(
                             size: Size.fromRadius(55), // Image radius
-                            child: Image.asset("lib/assets/user1.png",
-                                fit: BoxFit.cover),
+                            child:   
+                      Padding(
+                          padding: EdgeInsets.only(top: 20),
+                          child: Column(children: [
+                            InkWell(
+                                onTap: () {
+                                  if (tapped == false) {
+                                    capture();
+                                    tapped = true;
+                                  }
+                                },
+                                child: image != null
+                                    ? Image.file(image!,
+                                        width: 280, height: 110)
+                                    : imagePath),
+                          ]))
                           ),
                         ),
                         Positioned(
@@ -152,6 +196,7 @@ class _caregiverHomeState extends State<caregiverHome> {
                                   edit = true;
                                 });
                                 if (edit == true) {
+
                                   // upload image and save to DB!
                                 }
                                 print("clicked!");

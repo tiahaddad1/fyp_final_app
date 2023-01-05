@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crypt/crypt.dart';
 import 'package:flutter/material.dart';
 
 class Utils {
@@ -14,7 +15,7 @@ class Utils {
           sink.add(objects);
         },
       );
-  
+
   static toDateTime(Timestamp value) {
     if (value == null) return null;
     return value.toDate();
@@ -25,13 +26,14 @@ class Utils {
     return date.toUtc();
   }
 
-    static dynamic fromstringToutc(String string) {
+  static dynamic fromstringToutc(String string) {
     if (string == null) return null;
     return DateTime(int.parse(string)).toUtc();
-  }  
+  }
+
   final messengerKey = GlobalKey<ScaffoldMessengerState>();
 
-   showSnackBar(String? text) {
+  showSnackBar(String? text) {
     if (text == null) {
       return;
     }
@@ -44,5 +46,9 @@ class Utils {
     messengerKey.currentState!
       ..removeCurrentSnackBar()
       ..showSnackBar(snackBar);
+  }
+
+  bool isValid(String cryptFormatHash, String enteredPassword) {
+    return Crypt(cryptFormatHash).match(enteredPassword);
   }
 }

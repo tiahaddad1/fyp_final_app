@@ -29,7 +29,8 @@ class _userRoleScreenState extends State<userRoleScreen> {
                 backgroundColor: Color.fromARGB(255, 255, 255, 255),
                 automaticallyImplyLeading: false,
                 leadingWidth: 100),
-            body: Column(
+            body: 
+            Column(
               children: [
                 Align(
                     alignment: Alignment.center,
@@ -56,19 +57,17 @@ class _userRoleScreenState extends State<userRoleScreen> {
                     role: "Caregiver \nor Therapist",
                     image: "caregiverRole",
                     borderColour: Color.fromARGB(255, 66, 135, 123),
-                    // page: caregiverWelcome(),
-                    page: caregiverHome(),
+                    page: caregiverWelcome(),
+                    // page: caregiverHome(),
                     width: 185,
                     height: 200),
                 userRoleComponent(
                     role: "Learner",
                     image: "learnerRole",
                     borderColour: Color.fromARGB(255, 190, 166, 221),
-                    page: learnerAllScreens())
-                // page: learnerLogin())
+                    // page: learnerAllScreens())
+                page: learnerLogin())
               ],
             )));
   }
 }
-//PUT CODE HERE WHERE IF THE USER IS LOGGED IN, THEN CHECK FOR
-//THEIR USER ROLE AND DIRECT THEM TO THEIR PAGE (SO SAME CODE AS WHATS IN MAIN.DART)

@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:fyp_application/View/Components/deleteButton.dart';
@@ -9,6 +12,7 @@ import 'package:fyp_application/View/caregiverViewReminders.dart';
 import 'package:fyp_application/View/caregiverViewRewards.dart';
 import 'package:fyp_application/View/caregiverViewSchedule.dart';
 import 'package:fyp_application/View/caregiverViewSkills.dart';
+import 'package:image_picker/image_picker.dart';
 
 class learnerInfoScreen extends StatefulWidget {
   const learnerInfoScreen({super.key});
@@ -19,7 +23,32 @@ class learnerInfoScreen extends StatefulWidget {
 
 class _learnerInfoScreenState extends State<learnerInfoScreen> {
   deleteLearnerFromDB() {
+    //put in controller all CRUD operations
     //populate code with deleting user from db
+  }
+  File? image;
+  bool tapped = false;
+  Image imagePath =
+      Image(image: AssetImage("lib/assets/photo.png"), width: 70, height: 80);
+
+  Future capture() async {
+    try {
+      // ignore: deprecated_member_use
+      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (image == null) return;
+
+      final imageTemp = File(image.path);
+      setState(() => this.image = imageTemp); //was imageTemp
+
+      // final MediaSource s = ModalRoute.of(context).media;
+      // if (media == null) {
+      //   return;
+      // } else {
+      //   fileMedia = media;
+      // }
+    } on PlatformException catch (e) {
+      print("Failed to pick image: $e");
+    }
   }
 
   bool editImage = false;
@@ -117,10 +146,22 @@ class _learnerInfoScreenState extends State<learnerInfoScreen> {
                           borderRadius:
                               BorderRadius.circular(15), // Image border
                           child: SizedBox.fromSize(
-                            size: Size.fromRadius(55), // Image radius
-                            child: Image.asset("lib/assets/user1.png",
-                                fit: BoxFit.cover),
-                          ),
+                              size: Size.fromRadius(55), // Image radius
+                              child: Padding(
+                                  padding: EdgeInsets.only(top: 20),
+                                  child: Column(children: [
+                                    InkWell(
+                                        onTap: () {
+                                          if (tapped == false) {
+                                            capture();
+                                            tapped = true;
+                                          }
+                                        },
+                                        child: image != null
+                                            ? Image.file(image!,
+                                                width: 280, height: 110)
+                                            : imagePath),
+                                  ]))),
                         ),
                         Positioned(
                           bottom: 5,

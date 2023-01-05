@@ -550,11 +550,11 @@ class _addTaskScreenState extends State<addTaskScreen> {
                   )),
               GestureDetector(
                   onTap: () {
-                    if (taskTitleController == null ||
-                        taskDescriptionController == null ||
-                        dateController == null ||
-                        startTimeController == null ||
-                        endTimeController == null ||
+                    if (taskTitleController.text.isEmpty ||
+                        taskDescriptionController.text.isEmpty ||
+                        dateController.text.isEmpty ||
+                        startTimeController.text.isEmpty  ||
+                        endTimeController.text.isEmpty ||
                         _video == null) {
                       showDialog(
                           context: context,
@@ -680,25 +680,6 @@ class _addTaskScreenState extends State<addTaskScreen> {
                     alignment: Alignment.topCenter,
                   )
                   // buttonImage(text: "Add Task", function: addTaskToDB(), color: Color.fromARGB(255, 66, 135, 123)),
-
-                  // Container(
-                  //   margin:
-                  //       const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                  //   width: double.infinity,
-                  //   height: 30,
-                  //   alignment: Alignment.center,
-                  //   decoration: BoxDecoration(
-                  //       borderRadius: BorderRadius.circular(10),
-                  //       color: Color.fromARGB(255, 66, 135, 123)),
-                  //   child: Text(
-                  //     "Add Task",
-                  //     style: TextStyle(
-                  //         color: Color.fromARGB(255, 255, 255, 255),
-                  //         fontFamily: "Cabin-Regular",
-                  //         fontSize: 16),
-                  //     textAlign: TextAlign.center,
-                  //   ),
-                  // ),
                   ),
             ],
           ),

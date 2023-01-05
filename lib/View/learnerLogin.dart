@@ -103,8 +103,8 @@ class _learnerLogin extends State<learnerLogin> {
                     width: MediaQuery.of(context).size.width - 30,
                     child: new TextButton(
                         onPressed: () async {
-                          if (passwordControllerLearner.text == "" ||
-                              emailControllerLearner.text == "") {
+                          if (passwordControllerLearner.text.isEmpty ||
+                              emailControllerLearner.text.isEmpty || passwordControllerLearner.text==""||emailControllerLearner.text=="") {
                             showDialog(
                                 context: context,
                                 builder: (context) => AlertDialog(

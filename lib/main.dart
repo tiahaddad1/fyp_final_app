@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fyp_application/Utils.dart';
 import 'package:fyp_application/View/caregiverHome.dart';
 import 'package:fyp_application/View/caregiverLogin.dart';
+import 'package:fyp_application/View/learnerAllScreens.dart';
 import 'package:fyp_application/View/learnerHome.dart';
 
 import 'Provider/User-provider.dart';
@@ -29,14 +30,14 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: StreamBuilder<User?>(
           stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (context, snapshot){
+          builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState) {
               return Center(child: CircularProgressIndicator());
             } else if (snapshot.hasData) {
               if (UserProvider.getUserRole() == "C") {
                 return caregiverHome();
-              } else{
-                return learnerHome();
+              } else {
+                return learnerAllScreens();
               }
             } else if (snapshot.hasError) {
               return Container(
