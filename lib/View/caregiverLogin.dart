@@ -24,13 +24,13 @@ final navigatorKey = GlobalKey<NavigatorState>();
 final userRole = UserProvider.getUserRole();
 
 class _logInCaregiver extends State<logInCaregiver> {
-  @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
+  // @override
+  // void dispose() {
+  //   emailController.dispose();
+  //   passwordController.dispose();
 
-    super.dispose();
-  }
+  //   super.dispose();
+  // }
 
   @override
   initState() {
@@ -126,10 +126,14 @@ class logInDetails extends StatelessWidget {
               ),
               SizedBox(
                   width: MediaQuery.of(context).size.width - 30,
-                  child: new TextButton(
-                    onPressed: () async {
-                      if (passwordController.text == "" ||
-                          emailController.text == "") {
+                  // child: new TextButton(
+                  child: buttonComponent(
+                    colour: Color.fromARGB(255, 66, 135, 123),
+                    text: "Log in",
+                    function: () async {
+                      // onPressed: () async {
+                      if (passwordController.text.isEmpty ||
+                          emailController.text.isEmpty) {
                         showDialog(
                             context: context,
                             builder: (context) => AlertDialog(
@@ -198,8 +202,8 @@ class logInDetails extends StatelessWidget {
                               print("Error with signing up!");
                             }
                             if (true) {
-                              // navigatorKey.currentState!.popUntil(
-                              //  (route) => route.isFirst);
+                              navigatorKey.currentState!.popUntil(
+                               (route) => route.isFirst);
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -229,6 +233,7 @@ class logInDetails extends StatelessWidget {
                           }
                         }
                       } catch (Exception) {
+                        print(Exception);
                         final snackBarC = SnackBar(
                             content: Text(
                                 "An internal issue has occured! Please try again later."));
@@ -240,16 +245,16 @@ class logInDetails extends StatelessWidget {
                         ScaffoldMessenger.of(context).showSnackBar(snackBarC);
                       }
                     },
-                    child: buttonComponent(
-                      colour: Color.fromARGB(255, 66, 135, 123),
-                      text: "Log in",
-                      function: () => {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => caregiverHome()))
-                      },
-                    ),
+                    // child: buttonComponent(
+                    //   colour: Color.fromARGB(255, 66, 135, 123),
+                    //   text: "Log in",
+                    //   function: () => {
+                    //     Navigator.push(
+                    //         context,
+                    //         MaterialPageRoute(
+                    //             builder: (context) => caregiverHome()))
+                    //   },
+                    // ),
                   )),
             ])));
   }

@@ -211,8 +211,13 @@ class enterDetails extends StatelessWidget {
                                     ))),
                             SizedBox(
                                 width: MediaQuery.of(context).size.width - 30,
-                                child: new TextButton(
-                                  onPressed: () async {
+                                child:buttonComponent(
+                                    colour: Color.fromARGB(255, 66, 135, 123),
+                                    text: "Sign Up",
+                                    function: () async {
+                                
+                                // new TextButton(
+                                //   onPressed: () async {
                                     if (formKey.currentState!.validate()) {
                                       print("Inputs are OK");
                                     } else {
@@ -250,7 +255,7 @@ class enterDetails extends StatelessWidget {
                                       return;
                                     }
                                               Caregiver newCaregiver = new Caregiver(
-                                                  user_id: "123",
+                                                  user_id: "",
                                                   first_name: firstNameController.text,
                                                   last_name: lastNameController.text,
                                                   email: emailController.text,
@@ -359,17 +364,18 @@ class enterDetails extends StatelessWidget {
                                                     .showSnackBar(snackBarC);
                                               }
                                   },
-                                  child: buttonComponent(
-                                    colour: Color.fromARGB(255, 66, 135, 123),
-                                    text: "Sign Up",
-                                    function: () => {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  logInCaregiver()))
-                                    },
-                                  ),
+                                  // child: buttonComponent(
+                                  //   colour: Color.fromARGB(255, 66, 135, 123),
+                                  //   text: "Sign Up",
+                                  //   function: () => {
+                                  //     if(true)
+                                  //     Navigator.push(
+                                  //         context,
+                                  //         MaterialPageRoute(
+                                  //             builder: (context) =>
+                                  //                 logInCaregiver()))
+                                  //   },
+                                  // ),
                                 )),
                           ],
                         ))

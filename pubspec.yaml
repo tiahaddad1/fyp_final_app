@@ -47,6 +47,7 @@ dependencies:
   firebase_storage: ^11.0.10
   cloud_firestore: ^4.3.1
   firebase_auth: ^4.2.4
+  firebase_core: ^2.4.1
   crypt: ^4.2.1
 
   # The following adds the Cupertino Icons font to your application.
@@ -120,7 +121,7 @@ flutter:
         - asset: lib/assets/fonts/Lato-Regular.ttf
     - family: RampartOne
       fonts:
-        - asset: lib/assets/fonts/.RampartOne-Regular.ttf.icloud
+        - asset: lib/assets/fonts/RampartOne-Regular.ttf
     - family: FredokaOne-Regular
       fonts:
         - asset: lib/assets/fonts/FredokaOne-Regular.ttf

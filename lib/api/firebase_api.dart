@@ -7,6 +7,7 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:fyp_application/Provider/User-provider.dart';
 import 'package:fyp_application/Utils.dart';
 import '../Model/Learner.dart';
 import '/Model/Caregiver.dart';
@@ -112,18 +113,20 @@ class FirebaseApi {
   }
 
   static Future<String> returnCredentials(emailCon) async {
+    print("returnCredentials is the prob");
     QuerySnapshot querySnapshot =
         await _fireStore.collection('caregiver').get();
 
     // Get data from docs and convert map to List
     final allData = querySnapshot.docs.map((doc) => doc.data()).toList();
+    print(allData);
     String e = "";
     List<String> emails = [];
     allData.forEach((caregiver) {
       emails.add(caregiver
           .toString()
           .replaceAll(new RegExp(r'[{}]'), '')
-          .split(",")[0]
+          .split(",")[4]
           .split("email: ")[1]);
     });
     for (var email in emails) {
@@ -153,19 +156,19 @@ class FirebaseApi {
       emails.add(u
           .toString()
           .replaceAll(new RegExp(r'[{}]'), '')
-          .split(",")[0]
+          .split(",")[4]
           .split("email: ")[1]);
 
       names[u
               .toString()
               .replaceAll(new RegExp(r'[{}]'), '')
-              .split(",")[0]
+              .split(",")[4]
               .split("email: ")[1]] =
           (u
               .toString()
               .replaceAll(new RegExp(r'[{}]'), '')
-              .split(",")[2]
-              .split("firstName: ")[1]);
+              .split(",")[0]
+              .split("first_name: ")[1]);
     });
     // print(names[user.substring(2)]);
     // for (var email in emails) {
@@ -214,7 +217,7 @@ class FirebaseApi {
     final getAll = await getCaregivers();
     for (int i = 0; i > getAll!.length; i++) {
       if (getAll[i].email == email) {
-        user = getAll[i].first_name;
+        user = getAll[i].getFirstName();
         break;
       }
     }
@@ -229,7 +232,34 @@ class FirebaseApi {
         .ref()
         .child("profilephoto/${email}")
         .getDownloadURL();
+
     return pp;
+  }
+
+  static updateImage(String image) {
+    final docUser = FirebaseFirestore.instance
+        .collection('caregiver')
+        .doc(UserProvider.getID().toString());
+    docUser.update({'profile_pic': image});
+  }
+
+  static Future<String> getPPStatus(email) async {
+    //work on retrieving image
+    final a = await FirebaseFirestore.instance
+        .collection('caregiver')
+        .where('email', isEqualTo: email)
+        .get();
+    Caregiver c = new Caregiver(
+      user_id: a.docs[0]['caregiverID'],
+      first_name: a.docs[0]['first_name'],
+      last_name: a.docs[0]['last_name'],
+      email: a.docs[0]['email'],
+      password: a.docs[0]['password'],
+      about_description: a.docs[0]['about_description'],
+      profile_pic: a.docs[0]['profile_pic'],
+    );
+    print("PROFILE: " + c.profile_pic);
+    return c.profile_pic;
   }
 
 //KEY THAT WORKS FOR ALL IN THE CODE BELOW!!!
@@ -283,7 +313,7 @@ class FirebaseApi {
   }
 
   static Future<bool> checkPassword(emailCon, passCon) async {
-    
+    print("checkPassword is the prob");
     bool correct = false;
     if (await returnCredentials(emailCon) != "") {
       QuerySnapshot querySnapshot =
@@ -291,18 +321,19 @@ class FirebaseApi {
 
       // Get data from docs and convert map to List
       final allData = querySnapshot.docs.map((doc) => doc.data()).toList();
+      print(allData);
       List<String> pass = [];
       allData.forEach((caregiver) {
         pass.add(caregiver
             .toString()
             .replaceAll(new RegExp(r'[{}]'), '')
-            .split(",")[4]
+            .split(",")[2]
             .split("password:")[1]
             .trim());
       });
       print(pass);
       for (var p in pass) {
-        bool passBool=Utils().isValid(p, passCon);
+        bool passBool = Utils().isValid(p, passCon);
         if (passBool == true) {
           correct = true;
           break;
@@ -317,7 +348,6 @@ class FirebaseApi {
   }
 
   static Future<bool> checkPasswordLearner(emailCon, passCon) async {
-    
     bool correct = false;
     if (await returnCredentialsLearner(emailCon) != "") {
       QuerySnapshot querySnapshot =
@@ -335,11 +365,10 @@ class FirebaseApi {
             .trim());
       });
       for (var p in pass) {
-
-        bool passBool=Utils().isValid(p, passCon);
+        bool passBool = Utils().isValid(p, passCon);
 
         // if (passCon == p) {
-        if (passBool==true) {
+        if (passBool == true) {
           correct = true;
           break;
         } else {

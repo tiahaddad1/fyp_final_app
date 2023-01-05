@@ -24,6 +24,10 @@ class UserProvider extends ChangeNotifier {
     final a = await FirebaseApi.returnName(user!.email!);
     return a;
   }
+    static Future<String?> getID() async {
+    final a = await FirebaseApi.returnName(user!.uid);
+    return a;
+  }
 
   static name() {
     final n = getName().whenComplete(() {

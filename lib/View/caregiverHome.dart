@@ -1,12 +1,16 @@
 import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:fyp_application/View/Components/logOutButton.dart';
 import 'package:fyp_application/View/Components/scheduleTaskComp.dart';
+import 'package:fyp_application/api/firebase_api.dart';
 import 'package:image_picker/image_picker.dart';
-
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart';
+import '../Provider/User-provider.dart';
 import 'Components/learnerInfoCard.dart';
 import 'learnerSignup.dart';
 
@@ -18,33 +22,70 @@ class caregiverHome extends StatefulWidget {
 }
 
 class _caregiverHomeState extends State<caregiverHome> {
-  File? image;
-  bool tapped = false;
-  Image imagePath =
-      Image(image: AssetImage("lib/assets/photo.png"), width: 70, height: 80);
+  String currentUser = UserProvider.getUserEmail();
 
-        Future capture() async {
+  Future<File> saveImagePermanently(String imagePath) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final name = basename(imagePath);
+    final image = File('${directory.path}/$name');
+    return File(imagePath).copy(image.path);
+  }
+
+  late String urlDownload;
+
+  capture() async {
     try {
       // ignore: deprecated_member_use
       final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-      if (image == null) return;
+      // if (image == null) return;
 
-      final imageTemp = File(image.path);
-      setState(() => this.image = imageTemp); //was imageTemp
-
-      // final MediaSource s = ModalRoute.of(context).media;
-      // if (media == null) {
-      //   return;
-      // } else {
-      //   fileMedia = media;
-      // }
+      final imageTemp = File(image!.path);
+      final imagePermanent = await saveImagePermanently(image.path);
+      setState(() => this.image = imagePermanent); //was imageTemp
+      if (FirebaseApi.getPPStatus(currentUser) == "") {
+        final path = "profilephoto/${currentUser}";
+        final ref = FirebaseStorage.instance.ref().child(path);
+        ref.delete().then((value) => print("deleted!")).catchError((error)=>{
+            print(error)
+        });
+        final uploadFile = await ref.putFile(File(image.path));
+        urlDownload = (await uploadFile.ref.getDownloadURL());
+        FirebaseApi.updateImage(urlDownload);
+        return urlDownload;
+      }
+      return "error";
     } on PlatformException catch (e) {
       print("Failed to pick image: $e");
+      return "error";
     }
   }
 
-  
-  GestureDetector addNewLearnerComp() {
+  File? image;
+  bool tapped = false;
+  Image imagePath =
+      FirebaseApi.getPPStatus(UserProvider.getUserEmail())!=""?Image.network(FirebaseApi.getPPStatus(UserProvider.getUserEmail()).toString()):Image(image: AssetImage("lib/assets/photo.png"), width: 70, height: 80);
+
+  //       Future capture() async {
+  //   try {
+  //     // ignore: deprecated_member_use
+  //     final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+  //     if (image == null) return;
+
+  //     final imageTemp = File(image.path);
+  //     setState(() => this.image = imageTemp); //was imageTemp
+
+  //     // final MediaSource s = ModalRoute.of(context).media;
+  //     // if (media == null) {
+  //     //   return;
+  //     // } else {
+  //     //   fileMedia = media;
+  //     // }
+  //   } on PlatformException catch (e) {
+  //     print("Failed to pick image: $e");
+  //   }
+  // }
+
+  GestureDetector addNewLearnerComp(BuildContext context) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -162,33 +203,30 @@ class _caregiverHomeState extends State<caregiverHome> {
                         ),
                         padding: EdgeInsets.only(right: 10),
                       ),
-
                       Stack(alignment: Alignment.topRight, children: <Widget>[
                         ClipRRect(
                           borderRadius:
                               BorderRadius.circular(15), // Image border
                           child: SizedBox.fromSize(
-                            size: Size.fromRadius(55), // Image radius
-                            child:   
-                      Padding(
-                          padding: EdgeInsets.only(top: 20),
-                          child: Column(children: [
-                            InkWell(
-                                onTap: () {
-                                  if (tapped == false) {
-                                    capture();
-                                    tapped = true;
-                                  }
-                                },
-                                child: image != null
-                                    ? Image.file(image!,
-                                        width: 280, height: 110)
-                                    : imagePath),
-                          ]))
-                          ),
+                              size: Size.fromRadius(55), // Image radius
+                              child: Padding(
+                                  padding: EdgeInsets.only(top: 20),
+                                  child: Column(children: [
+                                    InkWell(
+                                        onTap: () {
+                                          if (tapped == false) {
+                                            capture();
+                                            tapped = true;
+                                          }
+                                        },
+                                        child: image != null
+                                            ? Image.file(image!,
+                                                width: 300, height: 90)
+                                            : imagePath),
+                                  ]))),
                         ),
                         Positioned(
-                          bottom: 5,
+                          bottom: 10,
                           right: 7,
                           child: GestureDetector(
                               onTap: () {
@@ -196,7 +234,6 @@ class _caregiverHomeState extends State<caregiverHome> {
                                   edit = true;
                                 });
                                 if (edit == true) {
-
                                   // upload image and save to DB!
                                 }
                                 print("clicked!");
@@ -331,7 +368,7 @@ class _caregiverHomeState extends State<caregiverHome> {
                   learnerInfoCard(),
                 ],
               )),
-              addNewLearnerComp()
+              addNewLearnerComp(context)
             ],
           )))
         ],
