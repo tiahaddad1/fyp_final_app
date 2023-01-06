@@ -20,14 +20,14 @@ class Learner extends User {
 
   static Learner fromJson(Map<String, dynamic> json) => Learner(
       user_id: json['learnerID'],
-      first_name: json['first_name'],
-      last_name: json['last_name'],
+      first_name: json['firstName'],
+      last_name: json['lastName'],
       email: json['email'],
       password: json['password'],
       about_description: json['about_description'],
       profile_pic: json['profile_pic'],
       birth_date: json['birth_date'],
-      caregiver_assigned: json['caregiver_assigned']);
+      caregiver_assigned: json['caregiverAssigned']);
 
   Map<String, dynamic> toJson() => {
         'learnerID': user_id,

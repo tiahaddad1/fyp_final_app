@@ -189,7 +189,10 @@ class logInDetails extends StatelessWidget {
                                 context: context,
                                 barrierDismissible: false,
                                 builder: (context) =>
-                                    Center(child: CircularProgressIndicator()));
+                                    Center(child: 
+                                    CircularProgressIndicator())
+                                    
+                                    );
                             try {
                               await AuthService.login(
                                   "C-" + emailController.text.trim(),

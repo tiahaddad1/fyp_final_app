@@ -11,6 +11,7 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:fyp_application/Model/Learner.dart';
 import 'package:fyp_application/View/caregiverHome.dart';
+import 'package:fyp_application/View/learnerLogin.dart';
 import 'package:fyp_application/View/signUpCaregiver.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -58,8 +59,8 @@ class _learnerSignupState extends State<learnerSignup> {
       return File(imagePath).copy(image.path);
     }
 
-    late String urlDownload;
-
+    late String urlDownload = "";
+    late String? ppUpload = "";
     capture() async {
       try {
         // ignore: deprecated_member_use
@@ -70,14 +71,21 @@ class _learnerSignupState extends State<learnerSignup> {
         final imageTemp = File(image!.path);
         final imagePermanent = await saveImagePermanently(image.path);
         setState(() => this.image = imagePermanent); //was imageTemp
-        if (emailController != null) {
-          final path = "profilephoto/${emailController.text}";
-          final ref = FirebaseStorage.instance.ref().child(path);
-          final uploadFile = await ref.putFile(File(image.path));
-          urlDownload = (await uploadFile.ref.getDownloadURL());
-          return urlDownload;
-        }
-        return "error";
+        // if (emailController != null) {
+        final path = "profilephoto/${emailController.text}";
+        final ref = FirebaseStorage.instance.ref().child(path);
+        ref
+            .delete()
+            .then((value) => print("deleted!"))
+            .catchError((error) => {print(error)});
+
+        final uploadFile = await ref.putFile(File(image.path));
+        urlDownload = (await uploadFile.ref.getDownloadURL());
+        // await FirebaseApi.updateImageLearner(urlDownload, emailController.text);
+        setState((() => ppUpload = urlDownload));
+        print("upload: " + ppUpload!);
+        return urlDownload;
+        // }
       } on PlatformException catch (e) {
         print("Failed to pick image: $e");
         return "error";
@@ -598,11 +606,11 @@ class _learnerSignupState extends State<learnerSignup> {
                                           InkWell(
                                               onTap: () {
                                                 capture();
-                                                tap = true;
+                                                setState((() => tap = true));
                                               },
                                               child:
                                                   // image != null
-                                                  //     ? Image.file(image!,
+                                                  //     ? Image.file(image,
                                                   //         width: 150, height: 120)
                                                   //     :
                                                   imagePath),
@@ -616,149 +624,66 @@ class _learnerSignupState extends State<learnerSignup> {
                             child: SizedBox(
                               child: new TextButton(
                                   onPressed: () async {
-                                      if (formKey.currentState!.validate()) {
-                                        print("Inputs are OK");
-                                      } else {
-                                        print("Inputs are incorrectly entered");
-                                        return;
-                                      }
+                                    if (formKey.currentState!.validate()) {
+                                      print("Inputs are OK");
+                                    } else {
+                                      print("Inputs are incorrectly entered");
+                                      return;
+                                    }
 
-                                      if (repasswordController.text !=
-                                          passwordController.text) {
-                                        showDialog(
-                                            context: context,
-                                            builder: (context) => AlertDialog(
-                                                  title: Text(
-                                                    "Incorrect Password!",
-                                                    style: TextStyle(
-                                                        color: Color.fromARGB(
-                                                          255,
-                                                          158,
-                                                          11,
-                                                          0,
-                                                        ),
-                                                        fontWeight:
-                                                            FontWeight.bold),
+                                    if (repasswordController.text !=
+                                        passwordController.text) {
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) => AlertDialog(
+                                                title: Text(
+                                                  "Incorrect Password!",
+                                                  style: TextStyle(
+                                                      color: Color.fromARGB(
+                                                        255,
+                                                        158,
+                                                        11,
+                                                        0,
+                                                      ),
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                content: Text(
+                                                    "Please re-enter your password correctly"),
+                                                actions: [
+                                                  TextButton(
+                                                    child: Text("Okay"),
+                                                    onPressed: () =>
+                                                        Navigator.pop(context),
                                                   ),
-                                                  content: Text(
-                                                      "Please re-enter your password correctly"),
-                                                  actions: [
-                                                    TextButton(
-                                                      child: Text("Okay"),
-                                                      onPressed: () =>
-                                                          Navigator.pop(context),
-                                                    ),
-                                                  ],
-                                                ));
-                                        return;
-                                      }
-                                      Learner newLearner = new Learner(
-                                          user_id: "123",
-                                          first_name: firstNameController.text,
-                                          last_name: lastNameController.text,
-                                          email: emailController.text,
-                                          password: Crypt.sha256(passwordController.text).toString(),
-                                          profile_pic: "",
-                                          about_description: "",
-                                          birth_date: DateFormat.yMd()
-                                              .format(dateNow!)
-                                              .toString(),
-                                          caregiver_assigned: userEmail);
-                                      try {
-                                        if (await FirebaseApi.compareLearnerEmail(
-                                                emailController.text) ==
-                                            true) {
-                                          final snackBarC = SnackBar(
-                                              content: Text(
-                                                  "This email already exists! Please try another email."));
-                                          action:
-                                          SnackBarAction(
-                                            label: 'Undo',
-                                            onPressed: () {},
-                                          );
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(snackBarC);
-                                        } else {
-                                          if (tap == true) {
-                                            LearnerProvider.addLearner(newLearner);
+                                                ],
+                                              ));
+                                      return;
+                                    }
 
-                                            if (true) {
-                                              showDialog(
-                                                  context: context,
-                                                  barrierDismissible: false,
-                                                  builder: (context) => Center(
-                                                      child:
-                                                          CircularProgressIndicator()));
-                                              try {
-                                                await FirebaseAuth.instance
-                                                    .createUserWithEmailAndPassword(
-                                                        email: "L-" +
-                                                            emailController.text
-                                                                .trim(),
-                                                        password: passwordController
-                                                            .text
-                                                            .trim());
-                                                print("Signed Up!");
-                                              } on FirebaseAuthException catch (e) {
-                                                print("Error with signing up!");
-                                              }
-                                              navigatorKey.currentState!.popUntil(
-                                                  (route) => route.isFirst);
-                                              FirebaseAuth.instance.signOut();
+                                    Learner newLearner = new Learner(
+                                        user_id: "",
+                                        first_name: firstNameController.text,
+                                        last_name: lastNameController.text,
+                                        email: emailController.text,
+                                        password: Crypt.sha256(
+                                                passwordController.text)
+                                            .toString(),
+                                        profile_pic: "",
+                                        about_description: "",
+                                        birth_date: DateFormat.yMd()
+                                            .format(dateNow!)
+                                            .toString(),
+                                        caregiver_assigned:
+                                            UserProvider.getUserEmail());
 
-                                              setState(() {
-                                                success = true;
-                                                emailCreated = emailController.text;
-                                                // urlImage =
-                                                //     LearnerProvider.loadProfilePic(
-                                                //         emailCreated);
-                                              });
-                                              print(urlImage);
-                                              showDialog(
-                                                  context: context,
-                                                  builder: (context) => AlertDialog(
-                                                        title: Text(
-                                                          "Account Successfully Created!",
-                                                          style: TextStyle(
-                                                              color: Color.fromARGB(
-                                                                  255, 4, 194, 26),
-                                                              fontWeight:
-                                                                  FontWeight.bold),
-                                                        ),
-                                                        content: Padding(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    top: 10),
-                                                            child: Image.asset(
-                                                              'lib/assets/success.png',
-                                                              alignment:
-                                                                  Alignment.center,
-                                                              height: 80,
-                                                            )),
-                                                        actions: [
-                                                          TextButton(
-                                                              child: Text("Okay!"),
-                                                              onPressed: () {
-                                                                Navigator.pop(
-                                                                    context);
-                                                                if (true) {
-                                                                  Navigator.push(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                          builder:
-                                                                              (context) =>
-                                                                                  caregiverHome()));
-                                                                }
-                                                              }),
-                                                        ],
-                                                      ));
-                                            }
-                                          }
-                                        }
-                                      } catch (Excpetion) {
+                                    try {
+                                      if (await FirebaseApi.compareLearnerEmail(
+                                              emailController.text) ==
+                                          true) {
                                         final snackBarC = SnackBar(
                                             content: Text(
-                                                "An internal issue has occured! Please try again later."));
+                                                "This email already exists! Please try another email."));
                                         action:
                                         SnackBarAction(
                                           label: 'Undo',
@@ -766,39 +691,141 @@ class _learnerSignupState extends State<learnerSignup> {
                                         );
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(snackBarC);
+                                      } else {
+                                        if (tap == true) {
+                                          LearnerProvider.addLearner(
+                                              newLearner);
+
+                                          if (true) {
+                                            showDialog(
+                                                context: context,
+                                                barrierDismissible: false,
+                                                builder: (context) => Center(
+                                                    child:
+                                                        CircularProgressIndicator()));
+                                            try {
+                                              await FirebaseAuth.instance
+                                                  .createUserWithEmailAndPassword(
+                                                      email: "L-" +
+                                                          emailController.text
+                                                              .trim(),
+                                                      password:
+                                                          passwordController
+                                                              .text
+                                                              .trim());
+                                              print("Signed Up!");
+                                            } on FirebaseAuthException catch (e) {
+                                              print("Error with signing up!");
+                                            }
+                                            navigatorKey.currentState!.popUntil(
+                                                (route) => route.isFirst);
+                                            FirebaseAuth.instance.signOut();
+
+                                            setState(() {
+                                              success = true;
+                                              emailCreated =
+                                                  emailController.text;
+                                              // urlImage =
+                                              //     LearnerProvider.loadProfilePic(
+                                              //         emailCreated);
+                                            });
+                                            // print("Oii: " + urlImage);
+                                            showDialog(
+                                                context: context,
+                                                builder: (context) =>
+                                                    AlertDialog(
+                                                      title: Text(
+                                                        "Account Successfully Created!",
+                                                        style: TextStyle(
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    4,
+                                                                    194,
+                                                                    26),
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                      content: Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  top: 10),
+                                                          child: Image.asset(
+                                                            'lib/assets/success.png',
+                                                            alignment: Alignment
+                                                                .center,
+                                                            height: 80,
+                                                          )),
+                                                      actions: [
+                                                        TextButton(
+                                                            child:
+                                                                Text("Okay!"),
+                                                            onPressed: () {
+                                                              Navigator.pop(
+                                                                  context);
+                                                              if (true) {
+                                                                FirebaseApi
+                                                                    .updateImageLearner(
+                                                                        ppUpload!,
+                                                                        emailController.text);
+                                                                Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder:
+                                                                            (context) =>
+                                                                                caregiverHome()));
+                                                              }
+                                                            }),
+                                                      ],
+                                                    ));
+                                          }
+                                        }
                                       }
-                                      if (tap == false) {
-                                        showDialog(
-                                            context: context,
-                                            builder: (context) => AlertDialog(
-                                                  title: Text(
-                                                    "Please upload an image of the child!",
-                                                    style: TextStyle(
-                                                        color: Color.fromARGB(
-                                                          255,
-                                                          158,
-                                                          11,
-                                                          0,
-                                                        ),
-                                                        fontWeight:
-                                                            FontWeight.bold),
+                                    } catch (Exception) {
+                                      final snackBarC = SnackBar(
+                                          content: Text(
+                                              "An internal issue has occured! Please try again later."));
+                                      action:
+                                      SnackBarAction(
+                                        label: 'Undo',
+                                        onPressed: () {},
+                                      );
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(snackBarC);
+                                    }
+                                    if (tap == false) {
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) => AlertDialog(
+                                                title: Text(
+                                                  "Please upload an image of the child!",
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      color: Color.fromARGB(
+                                                        255,
+                                                        158,
+                                                        11,
+                                                        0,
+                                                      ),
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                content: Image.asset(
+                                                    "lib/assets/profile.png",
+                                                    width: 100,
+                                                    height: 100),
+                                                actions: [
+                                                  TextButton(
+                                                    child: Text("Okay"),
+                                                    onPressed: () =>
+                                                        Navigator.pop(context),
                                                   ),
-                                                  content: Image.asset(
-                                                      "lib/assets/profile.png",
-                                                      width: 100,
-                                                      height: 100),
-                                                  actions: [
-                                                    TextButton(
-                                                      child: Text("Okay"),
-                                                      onPressed: () =>
-                                                          Navigator.pop(context),
-                                                    ),
-                                                  ],
-                                                ));
-                                        return;
-                                      }
-                                    },
-                                  
+                                                ],
+                                              ));
+                                      return;
+                                    }
+                                  },
                                   child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,

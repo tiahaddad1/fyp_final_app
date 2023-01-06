@@ -35,13 +35,14 @@ class FirebaseApi {
 
     // Get data from docs and convert map to List
     final allData = querySnapshot.docs.map((doc) => doc.data()).toList();
+    print(allData);
     List<String> emails = [];
     bool ans = false;
     allData.forEach((learner) {
       emails.add(learner
           .toString()
           .replaceAll(new RegExp(r'[{}]'), '')
-          .split(",")[0]
+          .split(",")[5]
           .split("email: ")[1]);
     });
 
@@ -276,6 +277,50 @@ class FirebaseApi {
     await docUser.update({'profile_pic': image});
   }
 
+  static updateImageLearner(String image, String email) async {
+    print(image);
+    final a = await FirebaseFirestore.instance
+        .collection('learner')
+        .where('email', isEqualTo: email)
+        .get();
+    Learner l = new Learner(
+        user_id: a.docs[0]['learnerID'],
+        first_name: a.docs[0]['firstName'],
+        last_name: a.docs[0]['lastName'],
+        email: a.docs[0]['email'],
+        password: a.docs[0]['password'],
+        about_description: a.docs[0]['about_description'],
+        profile_pic: a.docs[0]['profile_pic'],
+        caregiver_assigned: a.docs[0]['caregiverAssigned'],
+        birth_date: a.docs[0]['birth_date']);
+
+    print("1: " + l.toString());
+
+    final docUser =
+        FirebaseFirestore.instance.collection('learner').doc(l.user_id);
+    print("2: " + docUser.toString());
+    await docUser.update({'profile_pic': image});
+  }
+
+  static updateDescription(String desc) async {
+    final a = await FirebaseFirestore.instance
+        .collection('caregiver')
+        .where('email', isEqualTo: UserProvider.getUserEmail())
+        .get();
+    Caregiver c = new Caregiver(
+      user_id: a.docs[0]['caregiverID'],
+      first_name: a.docs[0]['first_name'],
+      last_name: a.docs[0]['last_name'],
+      email: a.docs[0]['email'],
+      password: a.docs[0]['password'],
+      about_description: a.docs[0]['about_description'],
+      profile_pic: a.docs[0]['profile_pic'],
+    );
+    final docUser =
+        FirebaseFirestore.instance.collection('caregiver').doc(c.user_id);
+    await docUser.update({'about_description': desc});
+  }
+
   static Future<String> getPPStatus(email) async {
     //work on retrieving image
     final a = await FirebaseFirestore.instance
@@ -331,7 +376,7 @@ class FirebaseApi {
       emails.add(learner
           .toString()
           .replaceAll(new RegExp(r'[{}]'), '')
-          .split(",")[0]
+          .split(",")[5]
           .split("email: ")[1]);
     });
     for (var email in emails) {
@@ -393,7 +438,7 @@ class FirebaseApi {
         pass.add(learner
             .toString()
             .replaceAll(new RegExp(r'[{}]'), '')
-            .split(",")[5]
+            .split(",")[4]
             .split("password:")[1]
             .trim());
       });
@@ -412,5 +457,31 @@ class FirebaseApi {
     } else {
       return correct;
     }
+  }
+
+  static getAllLearners() async {
+    QuerySnapshot query = await FirebaseFirestore.instance
+        .collection('learner')
+        .where('caregiverAssigned', isEqualTo: UserProvider.getUserEmail())
+        .get();
+    final allData = query.docs.map((doc) => doc.data()).toList();
+
+    print(allData);
+// final doc = await _fireStore.collection('learner').get();
+    // final allData = doc.docs.map((d) => d.data()).toList();
+    if (allData.length > 0) {
+      try {
+        final a = allData.map((document) {
+          // Learner learner = Learner.fromJson(document);
+          // return (learner);
+          return (document);
+        }).toList();
+        print("HERRR: " + a.toString());
+        return a;
+      } catch (Exception) {
+        print(Exception);
+      }
+    }
+    return [];
   }
 }

@@ -6,11 +6,13 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:fyp_application/View/Components/logOutButton.dart';
 import 'package:fyp_application/View/Components/scheduleTaskComp.dart';
+import 'package:fyp_application/View/editTaskScreen.dart';
 import 'package:fyp_application/api/firebase_api.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
 import '../Model/Caregiver.dart';
+import '../Model/Learner.dart';
 import '../Provider/User-provider.dart';
 import 'Components/learnerInfoCard.dart';
 import 'learnerSignup.dart';
@@ -32,6 +34,8 @@ class _caregiverHomeState extends State<caregiverHome> {
     return File(imagePath).copy(image.path);
   }
 
+  TextEditingController caregiverDescriptionController =
+      TextEditingController();
   late String urlDownload;
 
   capture() async {
@@ -148,6 +152,7 @@ class _caregiverHomeState extends State<caregiverHome> {
     );
   }
 
+  String desc = "";
   bool edit = false;
   @override
   Widget build(BuildContext context) {
@@ -238,32 +243,41 @@ class _caregiverHomeState extends State<caregiverHome> {
                             ),
                             Container(
                                 child: FutureBuilder<Caregiver>(
-                              future: FirebaseApi.getCurrentCaregiverName(
-                                  currentUser),
-                              builder: (context, snapshot) {
-                                if (snapshot.hasData) {
-                                  return Text(
-                                    snapshot.data!.first_name.substring(0,1).toUpperCase()+snapshot.data!.first_name.substring(1)+" "+snapshot.data!.last_name.substring(0,1).toUpperCase()+snapshot.data!.last_name.substring(1),
-                                    style: TextStyle(
-                                        fontFamily: "Cabin-Regular",
-                                        fontSize: 20,
-                                        color:
-                                            Color.fromARGB(255, 66, 135, 123),
-                                        fontWeight: FontWeight.w600),
-                                  );
-                                } else {
-                                  return Text(
-                                    "",
-                                    style: TextStyle(
-                                        fontFamily: "Cabin-Regular",
-                                        fontSize: 20,
-                                        color:
-                                            Color.fromARGB(255, 66, 135, 123),
-                                        fontWeight: FontWeight.w600),
-                                  );
-                                }
-                              }
-                            ))
+                                    future: FirebaseApi.getCurrentCaregiverName(
+                                        currentUser),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasData) {
+                                        return Text(
+                                          snapshot.data!.first_name
+                                                  .substring(0, 1)
+                                                  .toUpperCase() +
+                                              snapshot.data!.first_name
+                                                  .substring(1) +
+                                              " " +
+                                              snapshot.data!.last_name
+                                                  .substring(0, 1)
+                                                  .toUpperCase() +
+                                              snapshot.data!.last_name
+                                                  .substring(1),
+                                          style: TextStyle(
+                                              fontFamily: "Cabin-Regular",
+                                              fontSize: 20,
+                                              color: Color.fromARGB(
+                                                  255, 66, 135, 123),
+                                              fontWeight: FontWeight.w600),
+                                        );
+                                      } else {
+                                        return Text(
+                                          "",
+                                          style: TextStyle(
+                                              fontFamily: "Cabin-Regular",
+                                              fontSize: 20,
+                                              color: Color.fromARGB(
+                                                  255, 66, 135, 123),
+                                              fontWeight: FontWeight.w600),
+                                        );
+                                      }
+                                    }))
                           ],
                         ),
                         padding: EdgeInsets.only(right: 10),
@@ -326,40 +340,63 @@ class _caregiverHomeState extends State<caregiverHome> {
                     ])),
             Stack(alignment: Alignment.topRight, children: <Widget>[
               Container(
-                margin: EdgeInsets.only(bottom: 15, left: 15, right: 15),
-                padding:
-                    EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 15),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Color.fromARGB(255, 240, 240, 240),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color.fromARGB(255, 98, 98, 98).withOpacity(0.2),
-                      spreadRadius: 1,
-                      blurRadius: 3,
-                      offset: Offset(0, 1),
-                    ),
-                  ],
-                ),
-                width: double.infinity,
-                height: 65,
-                child: TextField(
-                    readOnly: edit == true ? false : true,
-                    onChanged: (value) {
-                      
-                      //save to DB
-                    },
-                    showCursor: true,
-                    cursorColor: Color.fromARGB(255, 66, 135, 123),
-                    maxLines: 5,
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText:
-                          "A  certified ABA therapist for children on spectrum.",
-                      hintStyle: TextStyle(
-                          color: Color.fromARGB(255, 0, 0, 0), fontSize: 13),
-                    )),
-              ),
+                  margin: EdgeInsets.only(bottom: 15, left: 15, right: 15),
+                  padding:
+                      EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 15),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Color.fromARGB(255, 240, 240, 240),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color.fromARGB(255, 98, 98, 98).withOpacity(0.2),
+                        spreadRadius: 1,
+                        blurRadius: 3,
+                        offset: Offset(0, 1),
+                      ),
+                    ],
+                  ),
+                  width: double.infinity,
+                  height: 65,
+                  child: FutureBuilder<Caregiver>(
+                      future: FirebaseApi.getCurrentCaregiverName(currentUser),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return TextField(
+                              readOnly: false,
+                              minLines: 3,
+                              style: TextStyle(fontSize: 13),
+                              controller: caregiverDescriptionController,
+                              showCursor: true,
+                              cursorColor: Color.fromARGB(255, 66, 135, 123),
+                              maxLines: 5,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: snapshot.data!.about_description == ""
+                                    ? "Please provide a description of yourself..."
+                                    : snapshot.data!.about_description,
+                                hintStyle: TextStyle(
+                                    color: Color.fromARGB(255, 0, 0, 0),
+                                    fontSize: 13),
+                              ));
+                        } else {
+                          return TextField(
+                              style: TextStyle(fontSize: 13),
+                              controller: caregiverDescriptionController,
+                              minLines: 3,
+                              readOnly: false,
+                              showCursor: true,
+                              cursorColor: Color.fromARGB(255, 66, 135, 123),
+                              maxLines: 5,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText:
+                                    "Please provide a description of yourself...",
+                                hintStyle: TextStyle(
+                                    color: Color.fromARGB(255, 0, 0, 0),
+                                    fontSize: 13),
+                              ));
+                        }
+                      })),
               Positioned(
                   bottom: 14,
                   right: 13,
@@ -377,6 +414,9 @@ class _caregiverHomeState extends State<caregiverHome> {
                         setState(() {
                           edit = true;
                         });
+                        print("Desc: " + caregiverDescriptionController.text);
+                        FirebaseApi.updateDescription(
+                            caregiverDescriptionController.text);
                         print("clicked!");
                       },
                       child: Align(
@@ -427,23 +467,62 @@ class _caregiverHomeState extends State<caregiverHome> {
             ),
           ),
           Expanded(
-              child: SafeArea(
-                  child: ListView(
-            padding: EdgeInsets.only(top: 20),
-            shrinkWrap: true,
-            scrollDirection: Axis.vertical,
-            children: [
-              Center(
-                  child: Wrap(
+              child: 
+          //     StreamBuilder(
+          //   stream: FirebaseApi.getAllLearners(),
+          //   builder: (context, snapshot) {
+          //     if (snapshot.hasData) {
+          //       final learners = snapshot.data;
+          //      return SafeArea(
+          //           child: ListView(
+          //         padding: EdgeInsets.only(top: 20),
+          //         shrinkWrap: true,
+          //         scrollDirection: Axis.vertical,
+          //         children: [
+          //           Center(
+          //               child: Wrap(
+                          
+          //                 children:learners.map(learnerInfoCard).toList()
+          //             // children: learners.map((e) {
+          //             //   return learnerInfoCard(data: e);
+          //             // })
+          //             // [
+          //             //   learnerInfoCard(snapshot.data),
+          //             //   learnerInfoCard(),
+          //             //   learnerInfoCard(),
+          //             // ],
+          //           )),
+          //           addNewLearnerComp(context)
+          //         ],
+          //       ));
+          //     }
+          //     else{
+          //       return Center(child: CircularProgressIndicator(),);
+          //     }
+          //   },
+          // )
+              //future builder here
+              //once learner account created, make sure to show all learners
+              //associated to a therapist
+
+                  SafeArea(
+                      child: ListView(
+                padding: EdgeInsets.only(top: 20),
+                shrinkWrap: true,
+                scrollDirection: Axis.vertical,
                 children: [
-                  learnerInfoCard(),
-                  learnerInfoCard(),
-                  learnerInfoCard(),
+                  Center(
+                      child: Wrap(
+                    children: [
+                      learnerInfoCard(),
+                      learnerInfoCard(),
+                      learnerInfoCard(),
+                    ],
+                  )),
+                  addNewLearnerComp(context)
                 ],
-              )),
-              addNewLearnerComp(context)
-            ],
-          )))
+              ))
+              )
         ],
       ),
     );
