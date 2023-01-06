@@ -153,6 +153,7 @@ class FirebaseApi {
     List<String> emails = [];
     Map<String, String> names = Map();
     allData.forEach((u) {
+      print(u);
       emails.add(u
           .toString()
           .replaceAll(new RegExp(r'[{}]'), '')
@@ -240,6 +241,7 @@ class FirebaseApi {
     final docUser = FirebaseFirestore.instance
         .collection('caregiver')
         .doc(UserProvider.getID().toString());
+    print(docUser);
     docUser.update({'profile_pic': image});
   }
 
@@ -282,7 +284,7 @@ class FirebaseApi {
       profile_pic: a.docs[0]['profile_pic'],
     );
     c.profile_pic = pp;
-    print(c.email);
+    // print("LOOK HERE: "+c.toString());
     return c;
   }
   /////////
