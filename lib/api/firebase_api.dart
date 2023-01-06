@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:fyp_application/Provider/User-provider.dart';
 import 'package:fyp_application/Utils.dart';
 import '../Model/Learner.dart';
+import '../Model/User.dart';
 import '/Model/Caregiver.dart';
 
 class FirebaseApi {
@@ -140,20 +141,20 @@ class FirebaseApi {
     return e;
   }
 
-  static Future<String> returnName(user) async {
+  static Future<String> returnName(String user) async {
     QuerySnapshot querySnapshot;
-    if (user.substring(0, 1) == "c") {
-      querySnapshot = await _fireStore.collection('caregiver').get();
-    } else {
-      querySnapshot = await _fireStore.collection('learner').get();
-    }
+    // if (user.substring(0, 1) == "c") {
+    querySnapshot = await _fireStore.collection('caregiver').get();
+    // } else {
+    //   querySnapshot = await _fireStore.collection('learner').get();
+    // }
     // Get data from docs and convert map to List
     final allData = querySnapshot.docs.map((doc) => doc.data()).toList();
     String? name = "";
     List<String> emails = [];
     Map<String, String> names = Map();
     allData.forEach((u) {
-      print(u);
+      // print(u);
       emails.add(u
           .toString()
           .replaceAll(new RegExp(r'[{}]'), '')
@@ -182,6 +183,7 @@ class FirebaseApi {
     //   }
     // }
     // await getCaregivers();
+    print(names[user.substring(2)]!);
     return names[user.substring(2)]!;
   }
 
@@ -237,12 +239,41 @@ class FirebaseApi {
     return pp;
   }
 
-  static updateImage(String image) {
-    final docUser = FirebaseFirestore.instance
+  static Future<Caregiver>? getCurrentCaregiverName(String email) async {
+    final a = await FirebaseFirestore.instance
         .collection('caregiver')
-        .doc(UserProvider.getID().toString());
-    print(docUser);
-    docUser.update({'profile_pic': image});
+        .where('email', isEqualTo: email)
+        .get();
+    Caregiver c = new Caregiver(
+      user_id: a.docs[0]['caregiverID'],
+      first_name: a.docs[0]['first_name'],
+      last_name: a.docs[0]['last_name'],
+      email: a.docs[0]['email'],
+      password: a.docs[0]['password'],
+      about_description: a.docs[0]['about_description'],
+      profile_pic: a.docs[0]['profile_pic'],
+    );
+    return c;
+  }
+
+  static updateImage(String image, String email) async {
+    final a = await FirebaseFirestore.instance
+        .collection('caregiver')
+        .where('email', isEqualTo: email)
+        .get();
+    Caregiver c = new Caregiver(
+      user_id: a.docs[0]['caregiverID'],
+      first_name: a.docs[0]['first_name'],
+      last_name: a.docs[0]['last_name'],
+      email: a.docs[0]['email'],
+      password: a.docs[0]['password'],
+      about_description: a.docs[0]['about_description'],
+      profile_pic: a.docs[0]['profile_pic'],
+    );
+    final docUser =
+        FirebaseFirestore.instance.collection('caregiver').doc(c.user_id);
+
+    await docUser.update({'profile_pic': image});
   }
 
   static Future<String> getPPStatus(email) async {
