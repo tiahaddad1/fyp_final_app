@@ -60,7 +60,7 @@ class _learnerInfoCardState extends State<learnerInfoCard> {
                 widget.first_name.substring(0,1).toUpperCase()+widget.first_name.substring(1)+" "+widget.last_name.substring(0,1).toUpperCase()+widget.last_name.substring(1),
                 style: TextStyle(
                     color: Colors.black,
-                    fontSize: 15,
+                    fontSize: 12,
                     fontWeight: FontWeight.w700,
                     fontFamily: "Cabin-Regular"),
               ),

@@ -211,13 +211,12 @@ class enterDetails extends StatelessWidget {
                                     ))),
                             SizedBox(
                                 width: MediaQuery.of(context).size.width - 30,
-                                child:buttonComponent(
-                                    colour: Color.fromARGB(255, 66, 135, 123),
-                                    text: "Sign Up",
-                                    function: () async {
-                                
-                                // new TextButton(
-                                //   onPressed: () async {
+                                child: buttonComponent(
+                                  colour: Color.fromARGB(255, 66, 135, 123),
+                                  text: "Sign Up",
+                                  function: () async {
+                                    // new TextButton(
+                                    //   onPressed: () async {
                                     if (formKey.currentState!.validate()) {
                                       print("Inputs are OK");
                                     } else {
@@ -254,115 +253,118 @@ class enterDetails extends StatelessWidget {
                                               ));
                                       return;
                                     }
-                                              Caregiver newCaregiver = new Caregiver(
-                                                  user_id: "",
-                                                  first_name: firstNameController.text,
-                                                  last_name: lastNameController.text,
-                                                  email: emailController.text,
-                                                  password: Crypt.sha256(passwordController.text).toString(),
-                                                  about_description: "",
-                                                  profile_pic: "");
-                                              try {
-                                                if (await FirebaseApi.compareEmail(
-                                                        emailController.text) ==
-                                                    true) {
-                                                  final snackBarC = SnackBar(
-                                                      content: Text(
-                                                          "This email already exists! Please try another email."));
-                                                  action:
-                                                  SnackBarAction(
-                                                    label: 'Undo',
-                                                    onPressed: () {},
-                                                  );
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(snackBarC);
-                                                } else {
-                                                  CaregiverProvider.addCaregiver(
-                                                      newCaregiver);
-                                      //saving to Firebase Authentication 272- 294:
-                                                  if (error == false) {
-                                                    showDialog(
-                                                        context: context,
-                                                        barrierDismissible: false,
-                                                        builder: (context) => Center(
+                                    Caregiver newCaregiver = new Caregiver(
+                                        user_id: "",
+                                        first_name: firstNameController.text,
+                                        last_name: lastNameController.text,
+                                        email: emailController.text,
+                                        password: Crypt.sha256(
+                                                passwordController.text)
+                                            .toString(),
+                                        about_description: "",
+                                        profile_pic: "");
+                                    try {
+                                      if (await FirebaseApi.compareEmail(
+                                              emailController.text) ==
+                                          true) {
+                                        final snackBarC = SnackBar(
+                                            content: Text(
+                                                "This email already exists! Please try another email."));
+                                        // action:
+                                        SnackBarAction(
+                                          label: 'Undo',
+                                          onPressed: () {},
+                                        );
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(snackBarC);
+                                      } else {
+                                        
+                                        CaregiverProvider.addCaregiver(
+                                            newCaregiver);
+                                             
+                                        //saving to Firebase Authentication 272- 294:
+                                        if (error == false) {
+                                         
+                                          showDialog(
+                                              context: context,
+                                              barrierDismissible: false,
+                                              builder: (context) => Center(
+                                                  child:
+                                                      CircularProgressIndicator()));
+                                          try {
+                                            await AuthService.signUp(
+                                                "C-" +
+                                                    emailController.text.trim(),
+                                                passwordController.text.trim(),
+                                                context);
+                                            print("Signed Up!");
+                                          } on FirebaseAuthException catch (e) {
+                                            print("Error with signing up!");
+                                          }
+                                          navigatorKey.currentState!.popUntil(
+                                              (route) => route.isFirst);
+                                          FirebaseAuth.instance.signOut();
+                                          if (true)
+                                            showDialog(
+                                                context: context,
+                                                builder: (context) =>
+                                                    AlertDialog(
+                                                      title: Text(
+                                                        "Account Created!",
+                                                        style: TextStyle(
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    4,
+                                                                    194,
+                                                                    26),
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                      content: Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  top: 10),
+                                                          child: Image.asset(
+                                                            'lib/assets/success.png',
+                                                            alignment: Alignment
+                                                                .center,
+                                                            height: 80,
+                                                          )),
+                                                      actions: [
+                                                        TextButton(
                                                             child:
-                                                                CircularProgressIndicator()));
-                                                    try {
-                                                      await AuthService.signUp(
-                                                             "C-"+emailController
-                                                                  .text
-                                                                  .trim(),
-                                                                  passwordController
-                                                                      .text
-                                                                      .trim(),context);
-                                                      print("Signed Up!");
-                                                    } on FirebaseAuthException catch (e) {
-                                                      print("Error with signing up!");
-                                                    }
-                                                    navigatorKey.currentState!.popUntil(
-                                                        (route) => route.isFirst);
-                                                      FirebaseAuth.instance.signOut();
-                                                    if (true)
-                                                      showDialog(
-                                                          context: context,
-                                                          builder: (context) =>
-                                                              AlertDialog(
-                                                                title: Text(
-                                                                  "Account Created!",
-                                                                  style: TextStyle(
-                                                                      color: Color
-                                                                          .fromARGB(
-                                                                              255,
-                                                                              4,
-                                                                              194,
-                                                                              26),
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold),
-                                                                ),
-                                                                content: Padding(
-                                                                    padding:
-                                                                        EdgeInsets.only(
-                                                                            top: 10),
-                                                                    child: Image.asset(
-                                                                      'lib/assets/success.png',
-                                                                      alignment:
-                                                                          Alignment
-                                                                              .center,
-                                                                      height: 80,
-                                                                    )),
-                                                                actions: [
-                                                                  TextButton(
-                                                                      child: Text(
-                                                                          "Log in!"),
-                                                                      onPressed: () {
-                                                                        Navigator.pop(
-                                                                            context);
-                                                                        if (true) {
-                                                                          Navigator.push(
-                                                                              context,
-                                                                              MaterialPageRoute(
-                                                                                  builder: (context) =>
-                                                                                      logInCaregiver()));
-                                                                        }
-                                                                      }),
-                                                                ],
-                                                              ));
-                                                  }
-                                                }
-                                              } catch (a) {
-                                                print(a);
-                                                final snackBarC = SnackBar(
-                                                    content: Text(
-                                                        "An internal issue has occured! Please try again later."));
-                                                action:
-                                                SnackBarAction(
-                                                  label: 'Undo',
-                                                  onPressed: () {},
-                                                );
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(snackBarC);
-                                              }
+                                                                Text("Log in!"),
+                                                            onPressed: () {
+                                                              Navigator.pop(
+                                                                  context);
+                                                              if (true) {
+                                                                Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder:
+                                                                            (context) =>
+                                                                                logInCaregiver()));
+                                                              }
+                                                            }),
+                                                      ],
+                                                    ));
+                                        }
+                                      }
+                                    } catch (a) {
+                                      print(a);
+                                      final snackBarC = SnackBar(
+                                          content: Text(
+                                              "An internal issue has occured! Please try again later."));
+                                      action:
+                                      SnackBarAction(
+                                        label: 'Undo',
+                                        onPressed: () {},
+                                      );
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(snackBarC);
+                                    }
                                   },
                                   // child: buttonComponent(
                                   //   colour: Color.fromARGB(255, 66, 135, 123),

@@ -98,7 +98,7 @@ class FirebaseApi {
       emails.add(caregiver
           .toString()
           .replaceAll(new RegExp(r'[{}]'), '')
-          .split(",")[0]
+          .split(",")[4]
           .split("email: ")[1]);
     });
 
@@ -472,29 +472,29 @@ class FirebaseApi {
     // final allData = doc.docs.map((d) => d.data()).toList();
     if (allData.length > 0) {
       try {
-      final a = allData.map((document) {
-        // print("docuemnt: " + document.toString());
+        final a = allData.map((document) {
+          // print("docuemnt: " + document.toString());
 
-        // Learner l = new Learner(
-        //     user_id: document[0]['learnerID'],
-        //     first_name: document[0]['firstName'],
-        //     last_name: document[0]['lastName'],
-        //     email: document[0]['email'],
-        //     password: document[0]['password'],
-        //     about_description: document[0]['about_description'],
-        //     profile_pic: document[0]['profile_pic'],
-        //     caregiver_assigned: document[0]['caregiverAssigned'],
-        //     birth_date: document[0]['birth_date']);
+          // Learner l = new Learner(
+          //     user_id: document[0]['learnerID'],
+          //     first_name: document[0]['firstName'],
+          //     last_name: document[0]['lastName'],
+          //     email: document[0]['email'],
+          //     password: document[0]['password'],
+          //     about_description: document[0]['about_description'],
+          //     profile_pic: document[0]['profile_pic'],
+          //     caregiver_assigned: document[0]['caregiverAssigned'],
+          //     birth_date: document[0]['birth_date']);
 
-        Learner learner = Learner.fromJson(document);
-        print(learner);
-              return (learner);
-              // return (document);
-      }).toList();
-      //     print("HERRR: " + a.toString());
-          return a;
-        } catch (Exception) {
-      //     print(Exception);
+          Learner learner = Learner.fromJson(document);
+          print(learner);
+          return (learner);
+          // return (document);
+        }).toList();
+        //     print("HERRR: " + a.toString());
+        return a;
+      } catch (Exception) {
+        //     print(Exception);
       }
     }
     return [];

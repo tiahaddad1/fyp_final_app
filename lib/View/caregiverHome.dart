@@ -480,18 +480,26 @@ class _caregiverHomeState extends State<caregiverHome> {
                   return Expanded(
                     //fix the design layout
                     child: SafeArea(
-                        child: ListView.builder(
+                        child: GridView.builder(
                       itemCount: snapshot.data!.length,
-
-                      itemBuilder: (context, index) {
-                        final doc = snapshot.data![index];
-                        return learnerInfoCard(
-                            first_name: doc.first_name,
-                            last_name: doc.last_name);
-                      },
                       padding: EdgeInsets.only(top: 20),
                       shrinkWrap: true,
                       scrollDirection: Axis.vertical,
+                      itemBuilder: (context, index) {
+                        final doc = snapshot.data![index];
+                        return Center(
+                            child: Wrap(children: [
+                          learnerInfoCard(
+                              first_name: doc.first_name,
+                              last_name: doc.last_name),
+                        ]));
+                      },
+                      gridDelegate:
+                          new SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio: 1,
+                              crossAxisSpacing: 0,
+                              mainAxisSpacing: 10),
                       // children: [
                       //   Center(
                       //       child: Wrap(
@@ -511,8 +519,12 @@ class _caregiverHomeState extends State<caregiverHome> {
                   );
                 } else {
                   return Center(
-                    child:
-                        CircularProgressIndicator(), //show a text in the middle
+                    child: Image.asset(
+                      "lib/assets/noData.png",
+                      width: 10,
+                      height: 15,
+                    ),
+                    // CircularProgressIndicator(), //show a text in the middle
                     //that there is no data
                   );
                 }
