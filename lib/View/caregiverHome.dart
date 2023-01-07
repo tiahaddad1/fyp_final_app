@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:fyp_application/View/Components/deleteButton.dart';
 import 'package:fyp_application/View/Components/logOutButton.dart';
 import 'package:fyp_application/View/Components/scheduleTaskComp.dart';
 import 'package:fyp_application/View/editTaskScreen.dart';
@@ -212,8 +213,14 @@ class _caregiverHomeState extends State<caregiverHome> {
               Padding(
                 child: Expanded(
                     child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+                      Container(
+                        padding: EdgeInsets.only(right: 10),
+                        // height: 50,
+                        // width: double.infinity,
+                        child: deleteButton(text: "Delete Account",user:currentUser,role:"c"),
+                      ),    
                       Container(
                         padding: EdgeInsets.only(right: 10),
                         height: 50,
@@ -477,6 +484,7 @@ class _caregiverHomeState extends State<caregiverHome> {
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   final learners = snapshot.data;
+                  print(learners);
                   return Expanded(
                     //fix the design layout
                     child: SafeArea(
@@ -491,7 +499,8 @@ class _caregiverHomeState extends State<caregiverHome> {
                             child: Wrap(children: [
                           learnerInfoCard(
                               first_name: doc.first_name,
-                              last_name: doc.last_name),
+                              last_name: doc.last_name,
+                              learner: doc),
                         ]));
                       },
                       gridDelegate:

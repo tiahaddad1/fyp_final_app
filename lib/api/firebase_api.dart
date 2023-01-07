@@ -5,6 +5,7 @@ import 'dart:ui';
 // import 'dart:html';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp_application/Provider/User-provider.dart';
@@ -321,6 +322,56 @@ class FirebaseApi {
     await docUser.update({'about_description': desc});
   }
 
+  static deleteLearner(Learner learner) async {
+//delete from db
+    final deleteLearner = await FirebaseFirestore.instance
+        .collection("learner")
+        .doc(learner.user_id)
+        .delete()
+        .then((value) => print("deleted!"));
+//delete from firestore
+    final path = "profilephoto/${learner.user_id}";
+    final ref = FirebaseStorage.instance.ref().child(path);
+    ref
+        .delete()
+        .then((value) => print("deleted image!"))
+        .catchError((error) => {print(error)});
+  }
+
+  static deleteCaregiver(Caregiver caregiver) async {
+    //get all users who have the caregiver assigned
+    final query = await FirebaseFirestore.instance
+        .collection('learner')
+        .where('caregiverAssigned', isEqualTo: UserProvider.getUserEmail())
+        .get();
+    final allData =
+        query.docs.map((doc) => doc.data()).toList(); //convert to list
+
+    allData.forEach((element) async {
+      //loop over and delete
+      Learner learner = Learner.fromJson(element);
+      await FirebaseFirestore.instance
+          .collection("learner")
+          .doc(learner.user_id)
+          .delete()
+          .then((value) => print("deleted!"));
+    });
+
+//delete from db
+    final deleteCaregiver = await FirebaseFirestore.instance
+        .collection("caregiver")
+        .doc(caregiver.user_id)
+        .delete()
+        .then((value) => print("deleted!"));
+//delete from storage
+    final path = "profilephoto/${caregiver.user_id}";
+    final ref = FirebaseStorage.instance.ref().child(path);
+    ref
+        .delete()
+        .then((value) => print("deleted image!"))
+        .catchError((error) => {print(error)});
+  }
+
   static Future<String> getPPStatus(email) async {
     //work on retrieving image
     final a = await FirebaseFirestore.instance
@@ -388,6 +439,15 @@ class FirebaseApi {
       }
     }
     return e;
+  }
+
+  static Future<String> returnImageLearner(email) async {
+    final pp = await FirebaseStorage.instance
+        .ref()
+        .child("profilephoto/${email}")
+        .getDownloadURL();
+    print("PROFILEEEE: " + pp);
+    return pp;
   }
 
   static Future<bool> checkPassword(emailCon, passCon) async {
@@ -473,25 +533,38 @@ class FirebaseApi {
     if (allData.length > 0) {
       try {
         final a = allData.map((document) {
-          // print("docuemnt: " + document.toString());
-
-          // Learner l = new Learner(
-          //     user_id: document[0]['learnerID'],
-          //     first_name: document[0]['firstName'],
-          //     last_name: document[0]['lastName'],
-          //     email: document[0]['email'],
-          //     password: document[0]['password'],
-          //     about_description: document[0]['about_description'],
-          //     profile_pic: document[0]['profile_pic'],
-          //     caregiver_assigned: document[0]['caregiverAssigned'],
-          //     birth_date: document[0]['birth_date']);
-
           Learner learner = Learner.fromJson(document);
-          print(learner);
+
+          // try {
+
+          //   Future<String> image = returnImageLearner(learner.email).then((value) => learner.profile_pic = value.toString());
+
+          //   //  learner.profile_pic = image.toString();
+          // } catch (Exception) {
+          //   print(Exception);
+          // }
+          // Future<String> image =  returnImageLearner(learner.email);
+
+          // Future<String> image = returnImageLearner(learner.email)
+          //     .then((value) => learner.profile_pic = value.toString());
+          // FutureBuilder(
+          //   future: returnImageLearner(learner.email),
+          //   builder: (context, snapshot)=>
+          //     learner.profile_pic = snapshot.data!;
+          //   ,
+          // // );
+          // a.future = image.whenComplete(
+          //   () {
+          //     print(image);
+          //   },
+          // );
+          // learner.profile_pic = image.toString();
+          // print("kkk: "+ learner.profile_pic.toString());
           return (learner);
           // return (document);
         }).toList();
-        //     print("HERRR: " + a.toString());
+        // await a.map((e) async => e.profile_pic= await returnImageLearner(e.email).whenComplete(() => print(e.profile_pic)));
+        print("HERRR: " + a.toString());
         return a;
       } catch (Exception) {
         //     print(Exception);

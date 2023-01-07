@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -12,25 +13,39 @@ import 'package:fyp_application/View/caregiverViewReminders.dart';
 import 'package:fyp_application/View/caregiverViewRewards.dart';
 import 'package:fyp_application/View/caregiverViewSchedule.dart';
 import 'package:fyp_application/View/caregiverViewSkills.dart';
+import 'package:fyp_application/api/firebase_api.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+
+import '../Model/Learner.dart';
+import 'caregiverHome.dart';
 
 class learnerInfoScreen extends StatefulWidget {
-  const learnerInfoScreen({super.key});
+  final Learner learner;
+  const learnerInfoScreen({super.key, required this.learner});
 
   @override
   State<learnerInfoScreen> createState() => _learnerInfoScreenState();
 }
 
 class _learnerInfoScreenState extends State<learnerInfoScreen> {
+  calculateAge() {
+    DateTime dob = DateFormat('MM/dd/yyyy').parse(widget.learner.birth_date);
+    DateTime now = new DateTime.now();
+    return ((now.difference(dob).inDays) / 365).floor();
+  }
+
   deleteLearnerFromDB() {
     //put in controller all CRUD operations
     //populate code with deleting user from db
   }
   File? image;
+  late String? ppUpload = "";
+  late String img;
   bool tapped = false;
-  Image imagePath =
-      Image(image: AssetImage("lib/assets/photo.png"), width: 70, height: 80);
-
+  late Image imagePath = Image(
+      image: NetworkImage(widget.learner.profile_pic), width: 70, height: 80);
+  late String urlDownload;
   Future capture() async {
     try {
       // ignore: deprecated_member_use
@@ -39,7 +54,18 @@ class _learnerInfoScreenState extends State<learnerInfoScreen> {
 
       final imageTemp = File(image.path);
       setState(() => this.image = imageTemp); //was imageTemp
-
+      final path = "profilephoto/${widget.learner.email}";
+      final ref = FirebaseStorage.instance.ref().child(path);
+      ref
+          .delete()
+          .then((value) => print("deleted!"))
+          .catchError((error) => {print(error)});
+      final uploadFile = await ref.putFile(File(image.path));
+      urlDownload = (await uploadFile.ref.getDownloadURL());
+      await FirebaseApi.updateImageLearner(urlDownload, widget.learner.email);
+      print("OKAYYYY: " + urlDownload);
+      setState((() => ppUpload = urlDownload));
+      return urlDownload;
       // final MediaSource s = ModalRoute.of(context).media;
       // if (media == null) {
       //   return;
@@ -96,7 +122,16 @@ class _learnerInfoScreenState extends State<learnerInfoScreen> {
                             ),
                             Container(
                               child: Text(
-                                "Liam Harrison",
+                                widget.learner.first_name
+                                        .substring(0, 1)
+                                        .toUpperCase() +
+                                    widget.learner.first_name.substring(1) +
+                                    " " +
+                                    widget.learner.last_name
+                                        .substring(0, 1)
+                                        .toUpperCase() +
+                                    widget.learner.last_name.substring(1),
+                                // "Liam Harrison",
                                 style: TextStyle(
                                     color: Color.fromARGB(255, 0, 0, 0),
                                     fontSize: 25,
@@ -114,7 +149,7 @@ class _learnerInfoScreenState extends State<learnerInfoScreen> {
                                   Padding(
                                     child: Text(
                                       "age: " +
-                                          "12" +
+                                          calculateAge().toString() +
                                           " years old", //subtract the year they were born with today's date
                                       style: TextStyle(
                                         fontFamily: "Cabin-Regular",
@@ -127,7 +162,8 @@ class _learnerInfoScreenState extends State<learnerInfoScreen> {
                                   Padding(
                                     child: Text(
                                       "date of birth: " +
-                                          "24/01/2010", //display their dob
+                                          widget.learner
+                                              .birth_date, //display their dob
                                       style: TextStyle(
                                         fontFamily: "Cabin-Regular",
                                         fontSize: 15,
@@ -157,14 +193,28 @@ class _learnerInfoScreenState extends State<learnerInfoScreen> {
                                             tapped = true;
                                           }
                                         },
-                                        child: image != null
-                                            ? Image.file(image!,
-                                                width: 280, height: 110)
-                                            : imagePath),
+                                        child: FutureBuilder(
+                                          future:
+                                              FirebaseApi.returnImageLearner(
+                                                  widget.learner.email),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.hasData) {
+                                              return Image(
+                                                  image: NetworkImage(
+                                                      snapshot.data!),
+                                                  width: 200,
+                                                  height: 90);
+                                            } else {
+                                              return Image.asset(
+                                                  "lib/assets/user1.png",
+                                                  fit: BoxFit.cover);
+                                            }
+                                          },
+                                        ))
                                   ]))),
                         ),
                         Positioned(
-                          bottom: 5,
+                          bottom: 12,
                           right: 7,
                           child: GestureDetector(
                               onTap: () {
@@ -212,7 +262,9 @@ class _learnerInfoScreenState extends State<learnerInfoScreen> {
                   margin: EdgeInsets.only(bottom: 10, top: 20),
                   padding: EdgeInsets.only(left: 13),
                   child: Text(
-                    "Liam's" + " information:",
+                    widget.learner.first_name.substring(0, 1).toUpperCase() +
+                        widget.learner.first_name.substring(1) +
+                        "'s information:",
                     style: TextStyle(
                         color: Color.fromARGB(255, 63, 62, 59),
                         decoration: TextDecoration.underline,
@@ -256,7 +308,8 @@ class _learnerInfoScreenState extends State<learnerInfoScreen> {
             alignment: Alignment.center,
             child: deleteButton(
               text: "Delete Learner",
-              function: deleteLearnerFromDB(),
+              user: widget.learner,
+              role: "l",
             ),
           )
         ],

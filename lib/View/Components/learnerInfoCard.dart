@@ -3,15 +3,16 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:fyp_application/View/learnerInformationScreen.dart';
 import 'package:fyp_application/View/learnerSignup.dart';
+import 'package:fyp_application/api/firebase_api.dart';
 
 import '../../Model/Learner.dart';
 
 class learnerInfoCard extends StatefulWidget {
-  // final Learner data;
+  final Learner learner;
   final String first_name;
   final String last_name;
   // const learnerInfoCard({super.key, required this.data});
-  const learnerInfoCard({super.key, required this.first_name,required this.last_name});
+  const learnerInfoCard({super.key, required this.first_name,required this.last_name, required this.learner});
   // const learnerInfoCard({super.key});
 
   @override
@@ -24,7 +25,7 @@ class _learnerInfoCardState extends State<learnerInfoCard> {
     return GestureDetector(
       onTap: () {
         Navigator.push(context,
-            MaterialPageRoute(builder: (context) => learnerInfoScreen()));
+            MaterialPageRoute(builder: (context) => learnerInfoScreen(learner:widget.learner)));
       },
       child: Container(
           margin: EdgeInsets.only(left: 20, right: 20, bottom: 20),
@@ -46,7 +47,16 @@ class _learnerInfoCardState extends State<learnerInfoCard> {
                 borderRadius: BorderRadius.circular(7), // Image border
                 child: SizedBox.fromSize(
                   size: Size.fromRadius(55), // Image radius
-                  child: Image.asset("lib/assets/user1.png", fit: BoxFit.cover),
+                  child: FutureBuilder(future:FirebaseApi.returnImageLearner(widget.learner.email),builder: (context, snapshot) {
+                    if(snapshot.hasData){
+                      return Image.network(snapshot.data!, fit: BoxFit.cover);
+                    }
+                    else{
+                      return Image.asset("lib/assets/user1.png", fit: BoxFit.cover);
+                    }
+                  },)
+                  
+                  // Image.network(widget.learner.profile_pic, fit: BoxFit.cover),
                 ),
               ),
               padding: EdgeInsets.only(top: 10, bottom: 10),
