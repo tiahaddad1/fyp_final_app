@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -124,7 +125,7 @@ class _caregiverHomeState extends State<caregiverHome> {
             ),
             color: Colors.white,
           ),
-          margin: EdgeInsets.all(20),
+          margin: EdgeInsets.only(bottom: 20, left: 20, right: 20),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -190,255 +191,260 @@ class _caregiverHomeState extends State<caregiverHome> {
 
   mainContent(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        bottomOpacity: 0.0,
-        elevation: 0.0,
-        automaticallyImplyLeading: false,
-        backgroundColor: Color.fromARGB(255, 251, 251, 251),
-        toolbarHeight: 300,
-        // shape: RoundedRectangleBorder(
-        //   borderRadius: BorderRadius.vertical(
-        //     bottom: Radius.circular(20),
+        appBar: AppBar(
+          bottomOpacity: 0.0,
+          elevation: 0.0,
+          automaticallyImplyLeading: false,
+          backgroundColor: Color.fromARGB(255, 251, 251, 251),
+          toolbarHeight: 300,
+          // shape: RoundedRectangleBorder(
+          //   borderRadius: BorderRadius.vertical(
+          //     bottom: Radius.circular(20),
 
-        //   ),
-        // ),
-        shape: Border(
-            bottom:
-                BorderSide(color: Color.fromARGB(255, 66, 135, 123), width: 2)),
-        title: Expanded(
-            child: Column(
-          children: [
-            Padding(
-              child: Expanded(
-                  child:
-                      Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                Container(
-                  padding: EdgeInsets.only(right: 10),
-                  height: 50,
-                  // width: double.infinity,
-                  child: logOutButton(),
-                )
-              ])),
-              padding: EdgeInsets.only(bottom: 15),
-            ),
-            Padding(
-                padding: EdgeInsets.only(bottom: 20),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
+          //   ),
+          // ),
+          shape: Border(
+              bottom: BorderSide(
+                  color: Color.fromARGB(255, 66, 135, 123), width: 2)),
+          title: Expanded(
+              child: Column(
+            children: [
+              Padding(
+                child: Expanded(
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
                       Container(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              child: Text(
-                                "Welcome back",
-                                style: TextStyle(
-                                    color: Color.fromARGB(255, 100, 100, 100),
-                                    fontSize: 15,
-                                    fontFamily: "Cabin-Regular"),
-                                textAlign: TextAlign.left,
-                              ),
-                              padding: EdgeInsets.only(bottom: 20),
-                            ),
-                            Container(
-                                child: FutureBuilder<Caregiver>(
-                                    future: FirebaseApi.getCurrentCaregiverName(
-                                        currentUser),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.hasData) {
-                                        return Text(
-                                          snapshot.data!.first_name
-                                                  .substring(0, 1)
-                                                  .toUpperCase() +
-                                              snapshot.data!.first_name
-                                                  .substring(1) +
-                                              " " +
-                                              snapshot.data!.last_name
-                                                  .substring(0, 1)
-                                                  .toUpperCase() +
-                                              snapshot.data!.last_name
-                                                  .substring(1),
-                                          style: TextStyle(
-                                              fontFamily: "Cabin-Regular",
-                                              fontSize: 20,
-                                              color: Color.fromARGB(
-                                                  255, 66, 135, 123),
-                                              fontWeight: FontWeight.w600),
-                                        );
-                                      } else {
-                                        return Text(
-                                          "",
-                                          style: TextStyle(
-                                              fontFamily: "Cabin-Regular",
-                                              fontSize: 20,
-                                              color: Color.fromARGB(
-                                                  255, 66, 135, 123),
-                                              fontWeight: FontWeight.w600),
-                                        );
-                                      }
-                                    }))
-                          ],
-                        ),
                         padding: EdgeInsets.only(right: 10),
-                      ),
-                      Stack(alignment: Alignment.topRight, children: <Widget>[
-                        ClipRRect(
-                          borderRadius:
-                              BorderRadius.circular(15), // Image border
-                          child: SizedBox.fromSize(
-                              size: Size.fromRadius(55), // Image radius
-                              child: Padding(
-                                  padding: EdgeInsets.only(top: 20),
-                                  child: Column(children: [
-                                    InkWell(
-                                        onTap: () {
-                                          // if (tapped == false) {
-                                          capture();
-                                          // tapped = true;
-                                          // }
-                                        },
-                                        child: pp != null
-                                            ? Image.network(pp!,
-                                                width: 300, height: 90)
-                                            : pp == "waiting..."
-                                                ? Image.network(ppUpload!,
-                                                    width: 300, height: 90)
-                                                : imagePath),
-                                  ]))),
-                        ),
-                        Positioned(
-                          bottom: 10,
-                          right: 7,
-                          child: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  edit = true;
-                                });
-                                if (edit == true) {
-                                  capture();
-                                  setState(() {
-                                    edit = false;
-                                  });
-                                  // upload image and save to DB!
-                                }
-                                print("clicked!");
-                              },
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: Padding(
-                                  child: Image.asset(
-                                    "lib/assets/pencil.png",
-                                    width: 18,
-                                    height: 18,
-                                  ),
-                                  padding: EdgeInsets.only(top: 5, left: 5),
-                                ),
-                              )),
-                        ),
-                      ])
+                        height: 50,
+                        // width: double.infinity,
+                        child: logOutButton(),
+                      )
                     ])),
-            Stack(alignment: Alignment.topRight, children: <Widget>[
-              Container(
-                  margin: EdgeInsets.only(bottom: 15, left: 15, right: 15),
-                  padding:
-                      EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 15),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Color.fromARGB(255, 240, 240, 240),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Color.fromARGB(255, 98, 98, 98).withOpacity(0.2),
-                        spreadRadius: 1,
-                        blurRadius: 3,
-                        offset: Offset(0, 1),
-                      ),
-                    ],
-                  ),
-                  width: double.infinity,
-                  height: 65,
-                  child: FutureBuilder<Caregiver>(
-                      future: FirebaseApi.getCurrentCaregiverName(currentUser),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return TextField(
-                              readOnly: false,
-                              minLines: 3,
-                              style: TextStyle(fontSize: 13),
-                              controller: caregiverDescriptionController,
-                              showCursor: true,
-                              cursorColor: Color.fromARGB(255, 66, 135, 123),
-                              maxLines: 5,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: snapshot.data!.about_description == ""
-                                    ? "Please provide a description of yourself..."
-                                    : snapshot.data!.about_description,
-                                hintStyle: TextStyle(
-                                    color: Color.fromARGB(255, 0, 0, 0),
-                                    fontSize: 13),
-                              ));
-                        } else {
-                          return TextField(
-                              style: TextStyle(fontSize: 13),
-                              controller: caregiverDescriptionController,
-                              minLines: 3,
-                              readOnly: false,
-                              showCursor: true,
-                              cursorColor: Color.fromARGB(255, 66, 135, 123),
-                              maxLines: 5,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText:
-                                    "Please provide a description of yourself...",
-                                hintStyle: TextStyle(
-                                    color: Color.fromARGB(255, 0, 0, 0),
-                                    fontSize: 13),
-                              ));
-                        }
-                      })),
-              Positioned(
-                  bottom: 14,
-                  right: 13,
-                  child: Container(
-                    width: 30,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                          bottomRight: Radius.circular(10),
-                          topLeft: Radius.circular(20)),
-                      color: Color.fromARGB(170, 217, 217, 217),
-                      shape: BoxShape.rectangle,
-                    ),
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          edit = true;
-                        });
-                        print("Desc: " + caregiverDescriptionController.text);
-                        FirebaseApi.updateDescription(
-                            caregiverDescriptionController.text);
-                        print("clicked!");
-                      },
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Padding(
-                          child: Image.asset(
-                            "lib/assets/pencil.png",
-                            width: 18,
-                            height: 18,
+                padding: EdgeInsets.only(bottom: 15),
+              ),
+              Padding(
+                  padding: EdgeInsets.only(bottom: 20),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                child: Text(
+                                  "Welcome back",
+                                  style: TextStyle(
+                                      color: Color.fromARGB(255, 100, 100, 100),
+                                      fontSize: 15,
+                                      fontFamily: "Cabin-Regular"),
+                                  textAlign: TextAlign.left,
+                                ),
+                                padding: EdgeInsets.only(bottom: 20),
+                              ),
+                              Container(
+                                  child: FutureBuilder<Caregiver>(
+                                      future:
+                                          FirebaseApi.getCurrentCaregiverName(
+                                              currentUser),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.hasData) {
+                                          return Text(
+                                            snapshot.data!.first_name
+                                                    .substring(0, 1)
+                                                    .toUpperCase() +
+                                                snapshot.data!.first_name
+                                                    .substring(1) +
+                                                " " +
+                                                snapshot.data!.last_name
+                                                    .substring(0, 1)
+                                                    .toUpperCase() +
+                                                snapshot.data!.last_name
+                                                    .substring(1),
+                                            style: TextStyle(
+                                                fontFamily: "Cabin-Regular",
+                                                fontSize: 20,
+                                                color: Color.fromARGB(
+                                                    255, 66, 135, 123),
+                                                fontWeight: FontWeight.w600),
+                                          );
+                                        } else {
+                                          return Text(
+                                            "",
+                                            style: TextStyle(
+                                                fontFamily: "Cabin-Regular",
+                                                fontSize: 20,
+                                                color: Color.fromARGB(
+                                                    255, 66, 135, 123),
+                                                fontWeight: FontWeight.w600),
+                                          );
+                                        }
+                                      }))
+                            ],
                           ),
-                          padding: EdgeInsets.only(top: 5, left: 5, bottom: 5),
+                          padding: EdgeInsets.only(right: 10),
+                        ),
+                        Stack(alignment: Alignment.topRight, children: <Widget>[
+                          ClipRRect(
+                            borderRadius:
+                                BorderRadius.circular(15), // Image border
+                            child: SizedBox.fromSize(
+                                size: Size.fromRadius(55), // Image radius
+                                child: Padding(
+                                    padding: EdgeInsets.only(top: 20),
+                                    child: Column(children: [
+                                      InkWell(
+                                          onTap: () {
+                                            // if (tapped == false) {
+                                            capture();
+                                            // tapped = true;
+                                            // }
+                                          },
+                                          child: pp != null
+                                              ? Image.network(pp!,
+                                                  width: 300, height: 90)
+                                              : pp == "waiting..."
+                                                  ? Image.network(ppUpload!,
+                                                      width: 300, height: 90)
+                                                  : imagePath),
+                                    ]))),
+                          ),
+                          Positioned(
+                            bottom: 10,
+                            right: 7,
+                            child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    edit = true;
+                                  });
+                                  if (edit == true) {
+                                    capture();
+                                    setState(() {
+                                      edit = false;
+                                    });
+                                    // upload image and save to DB!
+                                  }
+                                  print("clicked!");
+                                },
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  child: Padding(
+                                    child: Image.asset(
+                                      "lib/assets/pencil.png",
+                                      width: 18,
+                                      height: 18,
+                                    ),
+                                    padding: EdgeInsets.only(top: 5, left: 5),
+                                  ),
+                                )),
+                          ),
+                        ])
+                      ])),
+              Stack(alignment: Alignment.topRight, children: <Widget>[
+                Container(
+                    margin: EdgeInsets.only(bottom: 15, left: 15, right: 15),
+                    padding: EdgeInsets.only(
+                        top: 10, left: 10, right: 10, bottom: 15),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Color.fromARGB(255, 240, 240, 240),
+                      boxShadow: [
+                        BoxShadow(
+                          color:
+                              Color.fromARGB(255, 98, 98, 98).withOpacity(0.2),
+                          spreadRadius: 1,
+                          blurRadius: 3,
+                          offset: Offset(0, 1),
+                        ),
+                      ],
+                    ),
+                    width: double.infinity,
+                    height: 65,
+                    child: FutureBuilder<Caregiver>(
+                        future:
+                            FirebaseApi.getCurrentCaregiverName(currentUser),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return TextField(
+                                readOnly: false,
+                                minLines: 3,
+                                style: TextStyle(fontSize: 13),
+                                controller: caregiverDescriptionController,
+                                showCursor: true,
+                                cursorColor: Color.fromARGB(255, 66, 135, 123),
+                                maxLines: 5,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: snapshot.data!.about_description ==
+                                          ""
+                                      ? "Please provide a description of yourself..."
+                                      : snapshot.data!.about_description,
+                                  hintStyle: TextStyle(
+                                      color: Color.fromARGB(255, 0, 0, 0),
+                                      fontSize: 13),
+                                ));
+                          } else {
+                            return TextField(
+                                style: TextStyle(fontSize: 13),
+                                controller: caregiverDescriptionController,
+                                minLines: 3,
+                                readOnly: false,
+                                showCursor: true,
+                                cursorColor: Color.fromARGB(255, 66, 135, 123),
+                                maxLines: 5,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText:
+                                      "Please provide a description of yourself...",
+                                  hintStyle: TextStyle(
+                                      color: Color.fromARGB(255, 0, 0, 0),
+                                      fontSize: 13),
+                                ));
+                          }
+                        })),
+                Positioned(
+                    bottom: 14,
+                    right: 13,
+                    child: Container(
+                      width: 30,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                            bottomRight: Radius.circular(10),
+                            topLeft: Radius.circular(20)),
+                        color: Color.fromARGB(170, 217, 217, 217),
+                        shape: BoxShape.rectangle,
+                      ),
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            edit = true;
+                          });
+                          print("Desc: " + caregiverDescriptionController.text);
+                          FirebaseApi.updateDescription(
+                              caregiverDescriptionController.text);
+                          print("clicked!");
+                        },
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Padding(
+                            child: Image.asset(
+                              "lib/assets/pencil.png",
+                              width: 18,
+                              height: 18,
+                            ),
+                            padding:
+                                EdgeInsets.only(top: 5, left: 5, bottom: 5),
+                          ),
                         ),
                       ),
-                    ),
-                  )),
-            ]),
-          ],
-        )),
-      ),
-      backgroundColor: Color.fromARGB(255, 240, 240, 240),
-      body: Column(
-        children: [
+                    )),
+              ]),
+            ],
+          )),
+        ),
+        backgroundColor: Color.fromARGB(255, 240, 240, 240),
+        body: Column(children: [
           Container(
             padding: EdgeInsets.only(right: 20, bottom: 20, top: 20),
             height: 60,
@@ -466,65 +472,83 @@ class _caregiverHomeState extends State<caregiverHome> {
                   fontFamily: "Cabin-Regular"),
             ),
           ),
-          Expanded(
-              child: 
-          //     StreamBuilder(
-          //   stream: FirebaseApi.getAllLearners(),
-          //   builder: (context, snapshot) {
-          //     if (snapshot.hasData) {
-          //       final learners = snapshot.data;
-          //      return SafeArea(
-          //           child: ListView(
-          //         padding: EdgeInsets.only(top: 20),
-          //         shrinkWrap: true,
-          //         scrollDirection: Axis.vertical,
-          //         children: [
-          //           Center(
-          //               child: Wrap(
-                          
-          //                 children:learners.map(learnerInfoCard).toList()
-          //             // children: learners.map((e) {
-          //             //   return learnerInfoCard(data: e);
-          //             // })
-          //             // [
-          //             //   learnerInfoCard(snapshot.data),
-          //             //   learnerInfoCard(),
-          //             //   learnerInfoCard(),
-          //             // ],
-          //           )),
-          //           addNewLearnerComp(context)
-          //         ],
-          //       ));
-          //     }
-          //     else{
-          //       return Center(child: CircularProgressIndicator(),);
-          //     }
-          //   },
+          FutureBuilder<List<Learner>>(
+              future: FirebaseApi.getAllLearners(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  final learners = snapshot.data;
+                  return Expanded(
+                    //fix the design layout
+                    child: SafeArea(
+                        child: ListView.builder(
+                      itemCount: snapshot.data!.length,
+
+                      itemBuilder: (context, index) {
+                        final doc = snapshot.data![index];
+                        return learnerInfoCard(
+                            first_name: doc.first_name,
+                            last_name: doc.last_name);
+                      },
+                      padding: EdgeInsets.only(top: 20),
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      // children: [
+                      //   Center(
+                      //       child: Wrap(
+
+                      //         children:learners.map(learnerInfoCard).toList()
+                      // children: learners.map((e) {
+                      //   return learnerInfoCard(data: e);
+                      // })
+                      // [
+                      //   learnerInfoCard(snapshot.data),
+                      //   learnerInfoCard(),
+                      //   learnerInfoCard(),
+                      // ],
+                    )),
+                    // addNewLearnerComp(context)
+                    // ],
+                  );
+                } else {
+                  return Center(
+                    child:
+                        CircularProgressIndicator(), //show a text in the middle
+                    //that there is no data
+                  );
+                }
+              }),
+          addNewLearnerComp(context)
+        ]));
+  }
+  // else{
+  //   return Center(child: CircularProgressIndicator(),);
+  // }
+}
           // )
               //future builder here
               //once learner account created, make sure to show all learners
               //associated to a therapist
 
-                  SafeArea(
-                      child: ListView(
-                padding: EdgeInsets.only(top: 20),
-                shrinkWrap: true,
-                scrollDirection: Axis.vertical,
-                children: [
-                  Center(
-                      child: Wrap(
-                    children: [
-                      learnerInfoCard(),
-                      learnerInfoCard(),
-                      learnerInfoCard(),
-                    ],
-                  )),
-                  addNewLearnerComp(context)
-                ],
-              ))
-              )
-        ],
-      ),
-    );
-  }
-}
+              //     SafeArea(
+              //         child: ListView(
+              //   padding: EdgeInsets.only(top: 20),
+              //   shrinkWrap: true,
+              //   scrollDirection: Axis.vertical,
+              //   children: [
+              //     Center(
+              //         child: Wrap(
+              //       children: [
+              //         learnerInfoCard(),
+              //         learnerInfoCard(),
+              //         learnerInfoCard(),
+              //       ],
+              //     )),
+              //     addNewLearnerComp(context)
+              //   ],
+              // ))
+//               )
+//         ],
+//       ),
+//     );
+//   }
+// }

@@ -8,8 +8,11 @@ import '../../Model/Learner.dart';
 
 class learnerInfoCard extends StatefulWidget {
   // final Learner data;
+  final String first_name;
+  final String last_name;
   // const learnerInfoCard({super.key, required this.data});
-  const learnerInfoCard({super.key});
+  const learnerInfoCard({super.key, required this.first_name,required this.last_name});
+  // const learnerInfoCard({super.key});
 
   @override
   State<learnerInfoCard> createState() => _learnerInfoCardState();
@@ -52,8 +55,9 @@ class _learnerInfoCardState extends State<learnerInfoCard> {
               padding: EdgeInsets.only(left: 8),
               alignment: Alignment.topLeft,
               child: Text(
-                "Liam Harrison",
+                // "Liam Harrison",
                 // widget.data.first_name.substring(0,1).toUpperCase()+widget.data.first_name.substring(1)+" "+widget.data.last_name.substring(0,1).toUpperCase()+widget.data.last_name.substring(1),
+                widget.first_name.substring(0,1).toUpperCase()+widget.first_name.substring(1)+" "+widget.last_name.substring(0,1).toUpperCase()+widget.last_name.substring(1),
                 style: TextStyle(
                     color: Colors.black,
                     fontSize: 15,
