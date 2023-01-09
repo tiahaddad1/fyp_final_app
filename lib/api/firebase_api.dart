@@ -11,10 +11,14 @@ import 'package:flutter/material.dart';
 import 'package:fyp_application/Provider/User-provider.dart';
 import 'package:fyp_application/Utils.dart';
 import '../Model/Learner.dart';
+import '../Model/Task.dart';
 import '../Model/User.dart';
 import '/Model/Caregiver.dart';
+import '/Model/Task.dart' as t;
 
 class FirebaseApi {
+  //USER related methods//
+
   static Future<String> createCaregiver(Caregiver caregiver) async {
     final docOfCaregiver =
         FirebaseFirestore.instance.collection('caregiver').doc();
@@ -122,7 +126,7 @@ class FirebaseApi {
 
     // Get data from docs and convert map to List
     final allData = querySnapshot.docs.map((doc) => doc.data()).toList();
-    print(allData);
+    // print(allData);
     String e = "";
     List<String> emails = [];
     allData.forEach((caregiver) {
@@ -156,7 +160,6 @@ class FirebaseApi {
     List<String> emails = [];
     Map<String, String> names = Map();
     allData.forEach((u) {
-      // print(u);
       emails.add(u
           .toString()
           .replaceAll(new RegExp(r'[{}]'), '')
@@ -174,18 +177,7 @@ class FirebaseApi {
               .split(",")[0]
               .split("first_name: ")[1]);
     });
-    // print(names[user.substring(2)]);
-    // for (var email in emails) {
-    //   if (user.substring(2) == email) {
-    //     name = names["email"]!;
-    //     print("1  " + name);
-    //     break;
-    //   } else {
-    //     continue;
-    //   }
-    // }
-    // await getCaregivers();
-    print(names[user.substring(2)]!);
+
     return names[user.substring(2)]!;
   }
 
@@ -198,7 +190,7 @@ class FirebaseApi {
           Caregiver caregiver = Caregiver.fromJson(document);
           return (caregiver);
         }).toList();
-        print(a);
+        // print(a);
         return a;
       } catch (Exception) {
         print(Exception);
@@ -279,7 +271,7 @@ class FirebaseApi {
   }
 
   static updateImageLearner(String image, String email) async {
-    print(image);
+    // print(image);
     final a = await FirebaseFirestore.instance
         .collection('learner')
         .where('email', isEqualTo: email)
@@ -295,11 +287,11 @@ class FirebaseApi {
         caregiver_assigned: a.docs[0]['caregiverAssigned'],
         birth_date: a.docs[0]['birth_date']);
 
-    print("1: " + l.toString());
+    // print("1: " + l.toString());
 
     final docUser =
         FirebaseFirestore.instance.collection('learner').doc(l.user_id);
-    print("2: " + docUser.toString());
+    // print("2: " + docUser.toString());
     await docUser.update({'profile_pic': image});
   }
 
@@ -338,38 +330,51 @@ class FirebaseApi {
         .catchError((error) => {print(error)});
   }
 
-  static deleteCaregiver(Caregiver caregiver) async {
-    //get all users who have the caregiver assigned
-    final query = await FirebaseFirestore.instance
-        .collection('learner')
-        .where('caregiverAssigned', isEqualTo: UserProvider.getUserEmail())
+  static deleteCaregiver(String caregiverEmail) async {
+    //locating caregiver
+    final queryCar = await FirebaseFirestore.instance
+        .collection('caregiver')
+        .where('email', isEqualTo: caregiverEmail)
         .get();
-    final allData =
-        query.docs.map((doc) => doc.data()).toList(); //convert to list
+    final allDataCar = queryCar.docs.map((doc) => doc.data()).toList();
 
-    allData.forEach((element) async {
-      //loop over and delete
-      Learner learner = Learner.fromJson(element);
-      await FirebaseFirestore.instance
-          .collection("learner")
-          .doc(learner.user_id)
-          .delete()
-          .then((value) => print("deleted!"));
-    });
+    allDataCar.forEach((element) async {
+      Caregiver caregiver = Caregiver.fromJson(element);
+      try {
+        UserProvider.user!.delete();
+        FirebaseAuth.instance.signOut();
+      } catch (error) {
+        print("ERROR with deleting current user: " + error.toString());
+      }
+
+      //get all learners who have the caregiver assigned
+      final query = await FirebaseFirestore.instance
+          .collection('learner')
+          .where('caregiverAssigned', isEqualTo: caregiverEmail)
+          .get();
+      final allData =
+          query.docs.map((doc) => doc.data()).toList(); //convert to list
+
+      allData.forEach((element) async {
+        //loop over and delete learners
+        Learner learner = Learner.fromJson(element);
+        deleteLearner(learner);
+      });
 
 //delete from db
-    final deleteCaregiver = await FirebaseFirestore.instance
-        .collection("caregiver")
-        .doc(caregiver.user_id)
-        .delete()
-        .then((value) => print("deleted!"));
+      final deleteCaregiver = await FirebaseFirestore.instance
+          .collection("caregiver")
+          .doc(caregiver.user_id)
+          .delete()
+          .then((value) => print("deleted!"));
 //delete from storage
-    final path = "profilephoto/${caregiver.user_id}";
-    final ref = FirebaseStorage.instance.ref().child(path);
-    ref
-        .delete()
-        .then((value) => print("deleted image!"))
-        .catchError((error) => {print(error)});
+      final path = "profilephoto/${caregiver.user_id}";
+      final ref = FirebaseStorage.instance.ref().child(path);
+      ref
+          .delete()
+          .then((value) => print("deleted image!"))
+          .catchError((error) => {print(error)});
+    });
   }
 
   static Future<String> getPPStatus(email) async {
@@ -387,7 +392,7 @@ class FirebaseApi {
       about_description: a.docs[0]['about_description'],
       profile_pic: a.docs[0]['profile_pic'],
     );
-    print("PROFILE: " + c.profile_pic);
+    // print("PROFILE: " + c.profile_pic);
     return c.profile_pic;
   }
 
@@ -446,12 +451,12 @@ class FirebaseApi {
         .ref()
         .child("profilephoto/${email}")
         .getDownloadURL();
-    print("PROFILEEEE: " + pp);
+    // print("PROFILEEEE: " + pp);
     return pp;
   }
 
   static Future<bool> checkPassword(emailCon, passCon) async {
-    print("checkPassword is the prob");
+    // print("checkPassword is the prob");
     bool correct = false;
     if (await returnCredentials(emailCon) != "") {
       QuerySnapshot querySnapshot =
@@ -459,7 +464,7 @@ class FirebaseApi {
 
       // Get data from docs and convert map to List
       final allData = querySnapshot.docs.map((doc) => doc.data()).toList();
-      print(allData);
+      // print(allData);
       List<String> pass = [];
       allData.forEach((caregiver) {
         pass.add(caregiver
@@ -469,7 +474,7 @@ class FirebaseApi {
             .split("password:")[1]
             .trim());
       });
-      print(pass);
+      // print(pass);
       for (var p in pass) {
         bool passBool = Utils().isValid(p, passCon);
         if (passBool == true) {
@@ -527,44 +532,13 @@ class FirebaseApi {
 
     final allData = query.docs.map((doc) => doc.data()).toList();
 
-    // print("All data: " + allData.toString());
-// final doc = await _fireStore.collection('learner').get();
-    // final allData = doc.docs.map((d) => d.data()).toList();
     if (allData.length > 0) {
       try {
         final a = allData.map((document) {
           Learner learner = Learner.fromJson(document);
-
-          // try {
-
-          //   Future<String> image = returnImageLearner(learner.email).then((value) => learner.profile_pic = value.toString());
-
-          //   //  learner.profile_pic = image.toString();
-          // } catch (Exception) {
-          //   print(Exception);
-          // }
-          // Future<String> image =  returnImageLearner(learner.email);
-
-          // Future<String> image = returnImageLearner(learner.email)
-          //     .then((value) => learner.profile_pic = value.toString());
-          // FutureBuilder(
-          //   future: returnImageLearner(learner.email),
-          //   builder: (context, snapshot)=>
-          //     learner.profile_pic = snapshot.data!;
-          //   ,
-          // // );
-          // a.future = image.whenComplete(
-          //   () {
-          //     print(image);
-          //   },
-          // );
-          // learner.profile_pic = image.toString();
-          // print("kkk: "+ learner.profile_pic.toString());
           return (learner);
-          // return (document);
         }).toList();
-        // await a.map((e) async => e.profile_pic= await returnImageLearner(e.email).whenComplete(() => print(e.profile_pic)));
-        print("HERRR: " + a.toString());
+        // print("HERRR: " + a.toString());
         return a;
       } catch (Exception) {
         //     print(Exception);
@@ -572,4 +546,65 @@ class FirebaseApi {
     }
     return [];
   }
+
+  //TASK related methods//
+  addTask(t.Task task) async {
+    final docOfTask = FirebaseFirestore.instance.collection('task').doc();
+    task.task_id = docOfTask.id;
+    await docOfTask.set(task.toJson());
+    return task.task_id;
+  }
+
+  deleteTask(t.Task task) async {
+    final deleteTask = await FirebaseFirestore.instance
+        .collection("task")
+        .doc(task.task_id)
+        .delete()
+        .then((value) => print("task deleted!"));
+//delete from firestore
+    final path = "profilephoto/taskVideos/${"task-" + task.task_id}";
+    final ref = FirebaseStorage.instance.ref().child(path);
+    ref
+        .delete()
+        .then((value) => print("deleted task video!"))
+        .catchError((error) => {print(error)});
+    //put deleteSubtask() method here
+  }
+
+  updateTask(t.Task task) async {
+    // final updateT = await FirebaseFirestore.instance
+    //     .collection('task')
+    //     .where('task_id', isEqualTo: task.task_id)
+    //     .get();
+
+    // t.Task t = new Task(
+    //   task_id: updateT.docs[0]['task_id'],
+    //   name: updateT.docs[0]['name'],
+    //   description: updateT.docs[0]['description'],
+    //   date: updateT.docs[0]['date'],
+    //   start_time: updateT.docs[0]['start_time'],
+    //   end_time: updateT.docs[0]['end_time'],
+    //   rewards: updateT.docs[0]['rewards'],
+    //   reminder: updateT.docs[0]['reminder'],
+    //   video: updateT.docs[0]['video'],
+    //   subtasks: updateT.docs[0]['subtasks'],
+    // );
+    // final docTask =
+    //     FirebaseFirestore.instance.collection('task').doc(t.task_id);
+    // await docTask.update({
+    //   'name': name,
+    //   'description': description,
+    //   'name': name,
+    //   'date': date,
+    //   'start_time': start_time,
+    //   'end_time': end_time,
+    //   'rewards': rewards,
+    //   'reminder': reminder,
+    //   'video': video,
+    //   'subtasks': subtasks
+    // });
+  }
+  getAllTasks() {}
+
+  //do for all of subtasks as well, and put a check for subtasks included or not with length retrieved from db
 }

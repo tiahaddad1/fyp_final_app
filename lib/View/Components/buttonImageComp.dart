@@ -29,16 +29,19 @@ class _buttonImageState extends State<buttonImage> {
           height: 50,
           child: new TextButton(
               onPressed: () {
+                print("something something");
                 widget.function();
               },
               child:
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Padding(
-                    child: widget.image!=null?Image.asset(
-                      widget.image!,
-                      width: 30,
-                      height: 30,
-                    ):null,
+                    child: widget.image != null
+                        ? Image.asset(
+                            widget.image!,
+                            width: 30,
+                            height: 30,
+                          )
+                        : null,
                     padding: EdgeInsets.only(right: 15)),
                 Text(
                   widget.text,
@@ -51,7 +54,7 @@ class _buttonImageState extends State<buttonImage> {
                 ),
               ]),
               style: ButtonStyle(
-                elevation: MaterialStatePropertyAll<double>(3),
+                  elevation: MaterialStatePropertyAll<double>(3),
                   padding: MaterialStatePropertyAll<EdgeInsetsGeometry>(
                       EdgeInsets.all(10)),
                   backgroundColor:

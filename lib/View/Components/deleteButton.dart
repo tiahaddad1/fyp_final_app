@@ -3,6 +3,7 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:fyp_application/Provider/User-provider.dart';
 import 'package:fyp_application/View/caregiverHome.dart';
+import 'package:fyp_application/View/userRole.dart';
 
 import '../../Model/User.dart';
 import '../../api/firebase_api.dart';
@@ -37,14 +38,62 @@ class _deleteButtonState extends State<deleteButton> {
           ),
           onPressed: () {
             if (widget.role == "c") {
-              FirebaseApi.deleteCaregiver(widget.user);
-              UserProvider.userLogOut();
+              showDialog(  
+              context: context,  
+              builder: (BuildContext context) {  
+              return  
+              AlertDialog(
+                title: Text("Delete your account?"),
+                content: Text(
+                    "Are you sure you want to permanently delete your account?"),
+                actions: [
+                  TextButton(
+                    child: Text("Yes, I am sure"),
+                    onPressed: () {
+                      FirebaseApi.deleteCaregiver(widget.user);
+                      Navigator.push(context,
+                MaterialPageRoute(builder: (context) => userRoleScreen()));
+                    },
+                  ),
+                  TextButton(
+                    child: Text("Cancel"),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  )
+                ],
+              );    },  
+  );
+              // UserProvider.userLogOut();
               print("deleting caregiver...");
             } else if (widget.role == "l") {
-              FirebaseApi.deleteLearner(widget.user);
-            }
-            Navigator.push(context,
+              showDialog(  
+              context: context,  
+              builder: (BuildContext context) {  
+              return  
+               AlertDialog(
+                title: Text("Delete selected learner?"),
+                content: Text(
+                    "Are you sure you want to permanently delete the learner?"),
+                actions: [
+                  TextButton(
+                    child: Text("Yes, I am sure"),
+                    onPressed: () {
+                      FirebaseApi.deleteLearner(widget.user);
+                      Navigator.push(context,
                 MaterialPageRoute(builder: (context) => caregiverHome()));
+                    },
+                  ),
+                  TextButton(
+                    child: Text("Cancel"),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  )
+                ],
+              );},  
+  );
+            }
           },
           child: Container(
             child: Text(widget.text,

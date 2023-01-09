@@ -161,13 +161,10 @@ class _addTaskScreenState extends State<addTaskScreen> {
                           fontSize: 15,
                           fontFamily: "Cabin-Regular"),
                       recognizer: TapGestureRecognizer()
-                        ..onTap = () => 
-                        Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            addSubtask()))
-                        ),
+                        ..onTap = () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => addSubtask()))),
                 ),
               ]),
               Padding(
@@ -541,154 +538,274 @@ class _addTaskScreenState extends State<addTaskScreen> {
                                           width: 200,
                                           height: 100,
                                           child: Image.asset(
-                                            "lib/assets/uploadVid.webp",width: 75,height: 75,
+                                            "lib/assets/uploadVid.webp",
+                                            width: 75,
+                                            height: 75,
                                           ),
                                         ))),
                         ],
                       ),
                     ],
                   )),
-              GestureDetector(
-                  onTap: () {
-                    if (taskTitleController.text.isEmpty ||
-                        taskDescriptionController.text.isEmpty ||
-                        dateController.text.isEmpty ||
-                        startTimeController.text.isEmpty  ||
-                        endTimeController.text.isEmpty ||
-                        _video == null) {
-                      showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                                title: Text(
-                                  "Please ensure all fields are inserted!",
-                                  style: TextStyle(
-                                      color: Color.fromARGB(255, 0, 0, 0),
-                                      fontWeight: FontWeight.w600,fontSize: 20),
-                                ),
-                                content: Image.asset(
-                                  'lib/assets/issue.png',
-                                  alignment: Alignment.center,
-                                  height: 60,
-                                  width: 60,
-                                ),
-                                actions: [
-                                  TextButton(
-                                      child: Text("Okay"),
-                                      onPressed: () => Navigator.pop(context)),
-                                ],
-                              ));
-                    } else {
-                      if (true) {
-                        if (newSubTask == false) {
-                          showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                    title: Text(
-                                      "No Subtask?",
-                                      style: TextStyle(
-                                          color: Color.fromARGB(255, 0, 0, 0),
-                                          fontWeight: FontWeight.w600,fontSize: 20),
-                                    ),
-                                    content: Image.asset(
-                                      'lib/assets/check-list.png',
-                                      alignment: Alignment.center,
-                                      height: 60,
-                                      width: 60,
-                                    ),
-                                    actions: [
-                                      Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            TextButton(
-                                              child: Text("Nope!"),
-                                              onPressed: () => showDialog(
-                                                  context: context,
-                                                  builder: (context) =>
-                                                      AlertDialog(
-                                                        title: Text(
-                                                          "Task Created!",
-                                                          style: TextStyle(
-                                                              color: Color
-                                                                  .fromARGB(255,
-                                                                      0, 0, 0),
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,fontSize: 20),
-                                                        ),
-                                                        content: Image.asset(
-                                                          'lib/assets/check.png',
-                                                          alignment:
-                                                              Alignment.center,
-                                                          height: 60,
-                                                          width: 60,
-                                                        ),
-                                                        actions: [
-                                                          TextButton(
-                                                              child:
-                                                                  Text("Okay"),
-                                                              onPressed: () =>
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .pop()),
-                                                        ],
-                                                      )),
-                                            ),
-                                            TextButton(
-                                                child: Text("Oops, I forgot!"),
-                                                onPressed: () => Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            addSubtask())))
-                                          ])
-                                    ],
-                                  ));
-                        } else {
-                          showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                    title: Text(
-                                      "Task Created!",
-                                      style: TextStyle(
-                                          color: Color.fromARGB(255, 0, 0, 0),
-                                          fontWeight: FontWeight.w600,fontSize: 20),
-                                    ),
-                                    content: Image.asset(
-                                      'lib/assets/check.png',
-                                      alignment: Alignment.center,
-                                      height: 60,
-                                      width: 60,
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                          child: Text("Okay"),
-                                          onPressed: () =>
-                                              Navigator.pop(context))
-                                      // Navigator.pop(context)),
-                                    ],
-                                  ));
-                        }
-                      }
-                    }
-                  },
-                  child: Container(
-                    child: buttonImage(
-                        text: "Add Task",
-                        function: addTaskToDB(),
-                        color: Color.fromARGB(255, 66, 135, 123)),
-                    alignment: Alignment.topCenter,
-                  )
-                  // buttonImage(text: "Add Task", function: addTaskToDB(), color: Color.fromARGB(255, 66, 135, 123)),
-                  ),
-            ],
-          ),
-        ),
-      ),
-    );
+              // GestureDetector(onTap: () {
+                // if (taskTitleController.text.isEmpty ||
+                //     taskDescriptionController.text.isEmpty ||
+                //     dateController.text.isEmpty ||
+                //     startTimeController.text.isEmpty  ||
+                //     endTimeController.text.isEmpty ||
+                //     _video == null) {
+                //   showDialog(
+                //       context: context,
+                //       builder: (context) => AlertDialog(
+                //             title: Text(
+                //               "Please ensure all fields are inserted!",
+                //               style: TextStyle(
+                //                   color: Color.fromARGB(255, 0, 0, 0),
+                //                   fontWeight: FontWeight.w600,fontSize: 20),
+                //             ),
+                //             content: Image.asset(
+                //               'lib/assets/issue.png',
+                //               alignment: Alignment.center,
+                //               height: 60,
+                //               width: 60,
+                //             ),
+                //             actions: [
+                //               TextButton(
+                //                   child: Text("Okay"),
+                //                   onPressed: () => Navigator.pop(context)),
+                //             ],
+                //           ));
+                // } else {
+                //   if (true) {
+                //     if (newSubTask == false) {
+                //       showDialog(
+                //           context: context,
+                //           builder: (context) => AlertDialog(
+                //                 title: Text(
+                //                   "No Subtask?",
+                //                   style: TextStyle(
+                //                       color: Color.fromARGB(255, 0, 0, 0),
+                //                       fontWeight: FontWeight.w600,fontSize: 20),
+                //                 ),
+                //                 content: Image.asset(
+                //                   'lib/assets/check-list.png',
+                //                   alignment: Alignment.center,
+                //                   height: 60,
+                //                   width: 60,
+                //                 ),
+                //                 actions: [
+                //                   Row(
+                //                       mainAxisAlignment:
+                //                           MainAxisAlignment.spaceBetween,
+                //                       children: [
+                //                         TextButton(
+                //                           child: Text("Nope!"),
+                //                           onPressed: () => showDialog(
+                //                               context: context,
+                //                               builder: (context) =>
+                //                                   AlertDialog(
+                //                                     title: Text(
+                //                                       "Task Created!",
+                //                                       style: TextStyle(
+                //                                           color: Color
+                //                                               .fromARGB(255,
+                //                                                   0, 0, 0),
+                //                                           fontWeight:
+                //                                               FontWeight
+                //                                                   .w600,fontSize: 20),
+                //                                     ),
+                //                                     content: Image.asset(
+                //                                       'lib/assets/check.png',
+                //                                       alignment:
+                //                                           Alignment.center,
+                //                                       height: 60,
+                //                                       width: 60,
+                //                                     ),
+                //                                     actions: [
+                //                                       TextButton(
+                //                                           child:
+                //                                               Text("Okay"),
+                //                                           onPressed: () =>
+                //                                               Navigator.of(
+                //                                                       context)
+                //                                                   .pop()),
+                //                                     ],
+                //                                   )),
+                //                         ),
+                //                         TextButton(
+                //                             child: Text("Oops, I forgot!"),
+                //                             onPressed: () => Navigator.push(
+                //                                 context,
+                //                                 MaterialPageRoute(
+                //                                     builder: (context) =>
+                //                                         addSubtask())))
+                //                       ])
+                //                 ],
+                //               ));
+                //     } else {
+                //       showDialog(
+                //           context: context,
+                //           builder: (context) => AlertDialog(
+                //                 title: Text(
+                //                   "Task Created!",
+                //                   style: TextStyle(
+                //                       color: Color.fromARGB(255, 0, 0, 0),
+                //                       fontWeight: FontWeight.w600,fontSize: 20),
+                //                 ),
+                //                 content: Image.asset(
+                //                   'lib/assets/check.png',
+                //                   alignment: Alignment.center,
+                //                   height: 60,
+                //                   width: 60,
+                //                 ),
+                //                 actions: [
+                //                   TextButton(
+                //                       child: Text("Okay"),
+                //                       onPressed: () =>
+                //                           Navigator.pop(context))
+                //                   // Navigator.pop(context)),
+                //                 ],
+                //               ));
+                //     }
+                // }
+                // }
+                // },
+                // child:
+                Container(
+                  child: buttonImage(
+                      text: "Add Task",
+                      // function: ()=>GestureDetector(onTap:() { addTaskDetails(taskTitleController,taskDescriptionController,dateController,startTimeController,endTimeController,taskReminderController,context,_video);}),
+                      function: ()=>addTaskDetails(taskTitleController,taskDescriptionController,dateController,startTimeController,endTimeController,taskReminderController,context,_video),
+                      color: Color.fromARGB(255, 66, 135, 123)),
+                  alignment: Alignment.topCenter
+                )]))));
+                // buttonImage(text: "Add Task", function: addTaskToDB(), color: Color.fromARGB(255, 66, 135, 123)),
+                // ),
+              }
   }
 
-  addTaskToDB() {
+  addTaskDetails(
+      TextEditingController taskTitleController,
+      TextEditingController taskDescriptionController,
+      TextEditingController dateController,
+      TextEditingController startTimeController,
+      TextEditingController endTimeController,
+      TextEditingController taskReminderController, BuildContext context, File? _video) {
     //add task details to database and create new task
+    if (taskTitleController.text.isEmpty ||
+        taskDescriptionController.text.isEmpty ||
+        dateController.text.isEmpty ||
+        startTimeController.text.isEmpty ||
+        endTimeController.text.isEmpty ||
+        _video == null) {
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+                title: Text(
+                  "Please ensure that all fields are inserted!",
+                  style: TextStyle(
+                      color: Color.fromARGB(255, 0, 0, 0),
+                      fontWeight: FontWeight.w500,
+                      fontSize: 17),
+                ),
+                content: Image.asset(
+                  'lib/assets/issue.png',
+                  alignment: Alignment.center,
+                  height: 60,
+                  width: 60,
+                ),
+                actions: [
+                  TextButton(
+                      child: Text("Okay"),
+                      onPressed: () => Navigator.pop(context)),
+                ],
+              ));
+    } else {
+      if (true) {
+        if (newSubTask == false) {
+          showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                    title: Text(
+                      "No Subtask?",
+                      style: TextStyle(
+                          color: Color.fromARGB(255, 0, 0, 0),
+                          fontWeight: FontWeight.w600,
+                          fontSize: 20),
+                    ),
+                    content: Image.asset(
+                      'lib/assets/check-list.png',
+                      alignment: Alignment.center,
+                      height: 60,
+                      width: 60,
+                    ),
+                    actions: [
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            TextButton(
+                              child: Text("No"),
+                              onPressed: () => showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                        title: Text(
+                                          "Task Created!",
+                                          style: TextStyle(
+                                              color:
+                                                  Color.fromARGB(255, 0, 0, 0),
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 20),
+                                        ),
+                                        content: Image.asset(
+                                          'lib/assets/check.png',
+                                          alignment: Alignment.center,
+                                          height: 60,
+                                          width: 60,
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                              child: Text("Okay"),
+                                              onPressed: () =>
+                                                  Navigator.of(context).pop()),
+                                        ],
+                                      )),
+                            ),
+                            TextButton(
+                                child: Text("Add subtasks"),
+                                onPressed: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => addSubtask())))
+                          ])
+                    ],
+                  ));
+        } else {
+          //db stuff here call method
+          showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                    title: Text(
+                      "Task Created!",
+                      style: TextStyle(
+                          color: Color.fromARGB(255, 0, 0, 0),
+                          fontWeight: FontWeight.w600,
+                          fontSize: 20),
+                    ),
+                    content: Image.asset(
+                      'lib/assets/check.png',
+                      alignment: Alignment.center,
+                      height: 60,
+                      width: 60,
+                    ),
+                    actions: [
+                      TextButton(
+                          child: Text("Okay"),
+                          onPressed: () => Navigator.pop(context))
+                      // Navigator.pop(context)),
+                    ],
+                  ));
+        }
+      }
+    }
   }
-}
+
