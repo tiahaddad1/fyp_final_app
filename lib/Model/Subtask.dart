@@ -1,8 +1,7 @@
-
 class Subtask {
   String subtask_id;
   String name;
-  DateTime time;
+  String time;
   int duration;
   String image;
   int rewards;
@@ -27,13 +26,13 @@ class Subtask {
     );
   }
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         'subtask_id': subtask_id,
         'name': name,
         'time': time,
         'duration': duration,
-        'image':image,
-        'rewards':rewards,
+        'image': image,
+        'rewards': rewards,
       };
   String getSubTaskID() {
     return this.subtask_id;
@@ -43,7 +42,7 @@ class Subtask {
     return this.name;
   }
 
-  DateTime getTime() {
+  String getTime() {
     return this.time;
   }
 
@@ -57,29 +56,29 @@ class Subtask {
 
   int getRewards() {
     return this.rewards;
-  }  
-
-   setSubTaskID(String subTaskID) {
-     this.subtask_id=subTaskID;
   }
 
-   setName(String name) {
-     this.name=name;
+  setSubTaskID(String subTaskID) {
+    this.subtask_id = subTaskID;
   }
 
-   setTime(DateTime time) {
-     this.time=time;
+  setName(String name) {
+    this.name = name;
   }
 
-   setDuration(int duration) {
-    this.duration=duration;
+  setTime(String time) {
+    this.time = time;
+  }
+
+  setDuration(int duration) {
+    this.duration = duration;
   }
 
   setImage(String image) {
-     this.image=image;
+    this.image = image;
   }
 
-   setRewards(int rewards) {
-     this.rewards=rewards;
-  }    
+  setRewards(int rewards) {
+    this.rewards = rewards;
+  }
 }

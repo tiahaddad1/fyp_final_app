@@ -282,7 +282,7 @@ class _learnerInfoScreenState extends State<learnerInfoScreen> {
                     learnerDetailComp(
                         image: "lib/assets/scheduleDetailIcon.png",
                         name: "Schedule",
-                        page: caregiverSchedule()),
+                        page: caregiverSchedule(learner_id:widget.learner.user_id)),
                     learnerDetailComp(
                         image: "lib/assets/feelingsDetailIcon.png",
                         name: "Feelings",

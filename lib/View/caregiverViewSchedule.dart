@@ -8,7 +8,8 @@ import 'package:intl/intl.dart';
 import 'Components/scheduleTaskComp.dart';
 
 class caregiverSchedule extends StatefulWidget {
-  const caregiverSchedule({super.key});
+  final learner_id;
+  const caregiverSchedule({super.key, this.learner_id});
 
   @override
   State<caregiverSchedule> createState() => _caregiverScheduleState();
@@ -69,7 +70,7 @@ class _caregiverScheduleState extends State<caregiverSchedule> {
               GestureDetector(
                 onTap: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => addTaskScreen()));
+                      MaterialPageRoute(builder: (context) => addTaskScreen(learner_id:widget.learner_id)));
                 },
                 child: Container(
                   margin:
@@ -78,8 +79,9 @@ class _caregiverScheduleState extends State<caregiverSchedule> {
                   height: 30,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Color.fromARGB(255, 66, 135, 123),),
+                    borderRadius: BorderRadius.circular(20),
+                    color: Color.fromARGB(255, 66, 135, 123),
+                  ),
                   child: Text(
                     "+ Add Task",
                     style: TextStyle(
@@ -111,22 +113,19 @@ class _caregiverScheduleState extends State<caregiverSchedule> {
             height: 40,
           ),
           SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              scheduleTaskComp(),
-              scheduleTaskComp(),
-              scheduleTaskComp(),
-              scheduleTaskComp()
-
-            ]))
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                scheduleTaskComp(),
+                scheduleTaskComp(),
+                scheduleTaskComp(),
+                scheduleTaskComp()
+              ]))
         ]));
   }
 
-  viewAllTasks(){
-   //look into video: https://www.youtube.com/watch?v=pQSTgf-6hDk&t=0s&ab_channel=dbestech
-   //for all details of viewing tasks
+  viewAllTasks() {
+    //look into video: https://www.youtube.com/watch?v=pQSTgf-6hDk&t=0s&ab_channel=dbestech
+    //for all details of viewing tasks
   }
-
-
 }

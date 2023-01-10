@@ -1,14 +1,19 @@
 import 'dart:io';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:fyp_application/Model/SubtaskOne.dart';
+import 'package:fyp_application/Model/SubtaskTwo.dart';
 import 'package:fyp_application/View/addTaskScreen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-
+import 'package:fyp_application/Model/Subtask.dart';
+import 'package:path_provider/path_provider.dart';
 import 'buttonImageComp.dart';
+import 'package:path/path.dart';
 
 class addSubtask extends StatefulWidget {
   const addSubtask({super.key});
@@ -41,6 +46,14 @@ class _addSubtaskState extends State<addSubtask> {
   Image imagePath2 =
       Image(image: AssetImage("lib/assets/photo.png"), width: 70, height: 80);
 
+  Future<File> saveImagePermanently(String imagePath) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final name = basename(imagePath);
+    final image = File('${directory.path}/$name');
+    return File(imagePath).copy(image.path);
+  }
+
+  late String urlDownload = "";
   Future capture() async {
     try {
       // ignore: deprecated_member_use
@@ -49,6 +62,10 @@ class _addSubtaskState extends State<addSubtask> {
 
       final imageTemp = File(image.path);
       setState(() => this.image = imageTemp); //was imageTemp
+      final path = "subtaskImages/${subtask1TitleController.text}";
+      final ref = FirebaseStorage.instance.ref().child(path);
+      final uploadFile = await ref.putFile(File(image.path));
+      urlDownload = (await uploadFile.ref.getDownloadURL());
 
       // final MediaSource s = ModalRoute.of(context).media;
       // if (media == null) {
@@ -69,6 +86,10 @@ class _addSubtaskState extends State<addSubtask> {
 
       final imageTemp2 = File(image2.path);
       setState(() => this.image2 = imageTemp2); //was imageTemp
+      final path = "subtaskImages/${subtask2TitleController.text}";
+      final ref = FirebaseStorage.instance.ref().child(path);
+      final uploadFile = await ref.putFile(File(image2.path));
+      urlDownload = (await uploadFile.ref.getDownloadURL());
 
       // final MediaSource s = ModalRoute.of(context).media;
       // if (media == null) {
@@ -86,7 +107,7 @@ class _addSubtaskState extends State<addSubtask> {
 
   showCalendar() async {
     DateTime? pickDate = await showDatePicker(
-        context: context,
+        context: this.context,
         initialDate: DateTime.now(),
         firstDate: DateTime(2022),
         lastDate: DateTime(2200));
@@ -108,7 +129,7 @@ class _addSubtaskState extends State<addSubtask> {
   showTime() {
     return showTimePicker(
         initialEntryMode: TimePickerEntryMode.input,
-        context: context,
+        context: this.context,
         initialTime: TimeOfDay(
             hour: int.parse(startTime.split(":")[0]),
             minute: int.parse(startTime.split(":")[1].split(" ")[0])));
@@ -257,38 +278,28 @@ class _addSubtaskState extends State<addSubtask> {
                             ],
                           ));
                 } else {
+                  Subtask_Two newSubtaskTwo = Subtask_Two(
+                      subtask_id: "",
+                      name: subtask2TitleController.text,
+                      time: subtaskStartTimeController.text,
+                      duration: int.parse(subtaskDurationController.text),
+                      image: image2!.path,
+                      rewards: int.parse(subtask2RewardController.text));
+                  Subtask_One newSubtaskOne = Subtask_One(
+                      subtask_id: "",
+                      name: subtask1TitleController.text,
+                      time: subtaskStartTimeController.text,
+                      duration: int.parse(subtaskDurationController.text),
+                      image: image!.path,
+                      rewards: int.parse(subtask1RewardController.text));
                   newSubTask = true;
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      addSubtasksToDB();
-                      return AlertDialog(
-                        title: Text(
-                          "Subtask Added!",
-                          style: TextStyle(
-                              color: Color.fromARGB(255, 0, 0, 0),
-                              fontWeight: FontWeight.w600,
-                              fontSize: 20),
-                        ),
-                        content: Image.asset(
-                          'lib/assets/check.png',
-                          alignment: Alignment.center,
-                          height: 60,
-                          width: 60,
-                        ),
-                        actions: [
-                          TextButton(
-                              child: Text("Okay"),
-                              onPressed: () => Navigator.pop(context)),
-                        ],
-                      );
-                    },
-                  );
-                  if (true) {
+                  if (newSubTask == true) {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => addTaskScreen()));
+                            builder: (context) => addTaskScreen(
+                                  subtasks: [newSubtaskOne, newSubtaskTwo],
+                                )));
                   }
                 }
               },
@@ -549,8 +560,7 @@ class _addSubtaskState extends State<addSubtask> {
                                   }
                                 },
                                 child: image != null
-                                    ? Image.file(image,
-                                        width: 280, height: 110)
+                                    ? Image.file(image, width: 280, height: 110)
                                     : imagePath),
                           ]))
                     ],

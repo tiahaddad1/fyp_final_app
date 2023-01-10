@@ -8,6 +8,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:fyp_application/Model/Learner_Tasks.dart';
+import 'package:fyp_application/Model/Subtask.dart';
 import 'package:fyp_application/Provider/User-provider.dart';
 import 'package:fyp_application/Utils.dart';
 import '../Model/Learner.dart';
@@ -548,10 +550,38 @@ class FirebaseApi {
   }
 
   //TASK related methods//
-  addTask(t.Task task) async {
-    final docOfTask = FirebaseFirestore.instance.collection('task').doc();
-    task.task_id = docOfTask.id;
-    await docOfTask.set(task.toJson());
+  static addTaskAndSubtasks(
+      t.Task task, List<Subtask> subtasks, String learner_id) async {
+    try {
+      final docOfTask = FirebaseFirestore.instance.collection('task').doc();
+      task.task_id = docOfTask.id;
+      task.subtasks = [
+        subtasks[0].subtask_id = task.task_id + "-subtaskone",
+        subtasks[1].subtask_id = task.task_id + "-subtasktwo"
+      ];
+
+      await docOfTask.set(task.toJson());
+
+      if (true) {
+        final docOfSubtask1 =
+            FirebaseFirestore.instance.collection('subtask').doc();
+        subtasks[0].subtask_id = task.task_id + "-subtaskone";
+        await docOfSubtask1.set(subtasks[0].toJson());
+
+        final docOfSubtask2 =
+            FirebaseFirestore.instance.collection('subtask').doc();
+        subtasks[1].subtask_id = task.task_id + "-subtasktwo";
+        await docOfSubtask2.set(subtasks[1].toJson());
+
+        final docOfTask_Learner =
+        FirebaseFirestore.instance.collection('learner_tasks').doc();
+        Learner_Tasks newLearnerTasks =
+            new Learner_Tasks(task_id: task.task_id, user_id: learner_id);
+        await docOfTask_Learner.set(newLearnerTasks.toJson());
+      }
+    } catch (error) {
+      print("error with creating new task or subtask");
+    }
     return task.task_id;
   }
 
@@ -562,7 +592,7 @@ class FirebaseApi {
         .delete()
         .then((value) => print("task deleted!"));
 //delete from firestore
-    final path = "profilephoto/taskVideos/${"task-" + task.task_id}";
+    final path = "taskVideos/${"task-" + task.task_id}";
     final ref = FirebaseStorage.instance.ref().child(path);
     ref
         .delete()

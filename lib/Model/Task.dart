@@ -8,13 +8,13 @@ class Task {
   String task_id;
   String name;
   String description;
-  DateTime date;
-  DateTime start_time;
-  DateTime end_time;
+  String date;
+  String start_time;
+  String end_time;
   int rewards;
   int reminder;
   String video;
-  List<Subtask> subtasks;
+  List<String> subtasks;
 
   Task({
     required this.task_id,
@@ -68,11 +68,11 @@ class Task {
     return this.description;
   }
 
-  DateTime getStartTime() {
+  String getStartTime() {
     return this.start_time;
   }
 
-  DateTime getEndTime() {
+  String getEndTime() {
     return this.end_time;
   }
 
@@ -88,11 +88,11 @@ class Task {
     return this.video;
   }
 
-  DateTime getDate() {
+  String getDate() {
     return this.date;
   }
 
-  List<Subtask> getSubTasks() {
+  List<String> getSubTasks() {
     return this.subtasks;
   }
 
@@ -108,11 +108,11 @@ class Task {
      this.description=description;
   }
 
-   setStartTime(DateTime start_time) {
+   setStartTime(String start_time) {
      this.start_time=start_time;
   }
 
-   setEndTime(DateTime end_time) {
+   setEndTime(String end_time) {
      this.end_time=end_time;
   }
 
@@ -128,11 +128,11 @@ class Task {
      this.video=video;
   }
 
-   setDate(DateTime date) {
+   setDate(String date) {
      this.date=date;
   }
 
-   setSubTasks(List<Subtask> subtasks) {
+   setSubTasks(List<String> subtasks) {
      this.subtasks=subtasks;
   }
 
