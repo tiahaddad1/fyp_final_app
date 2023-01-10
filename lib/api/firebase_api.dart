@@ -552,32 +552,36 @@ class FirebaseApi {
   //TASK related methods//
   static addTaskAndSubtasks(
       t.Task task, List<Subtask> subtasks, String learner_id) async {
+    print("here??");
     try {
       final docOfTask = FirebaseFirestore.instance.collection('task').doc();
       task.task_id = docOfTask.id;
       task.subtasks = [
-        subtasks[0].subtask_id = task.task_id + "-subtaskone",
-        subtasks[1].subtask_id = task.task_id + "-subtasktwo"
+        subtasks.isEmpty ? "" : task.task_id + "-subtaskone",
+        subtasks.isEmpty ? "" : task.task_id + "-subtasktwo"
       ];
 
       await docOfTask.set(task.toJson());
 
       if (true) {
-        final docOfSubtask1 =
-            FirebaseFirestore.instance.collection('subtask').doc();
-        subtasks[0].subtask_id = task.task_id + "-subtaskone";
-        await docOfSubtask1.set(subtasks[0].toJson());
+        print("tat hete??");
+        if (subtasks.isNotEmpty) {
+          final docOfSubtask1 =
+              FirebaseFirestore.instance.collection('subtask').doc();
+          subtasks[0].subtask_id = task.task_id + "-subtaskone";
+          await docOfSubtask1.set(subtasks[0].toJson());
 
-        final docOfSubtask2 =
-            FirebaseFirestore.instance.collection('subtask').doc();
-        subtasks[1].subtask_id = task.task_id + "-subtasktwo";
-        await docOfSubtask2.set(subtasks[1].toJson());
+          final docOfSubtask2 =
+              FirebaseFirestore.instance.collection('subtask').doc();
+          subtasks[1].subtask_id = task.task_id + "-subtasktwo";
+          await docOfSubtask2.set(subtasks[1].toJson());
 
-        final docOfTask_Learner =
-        FirebaseFirestore.instance.collection('learner_tasks').doc();
-        Learner_Tasks newLearnerTasks =
-            new Learner_Tasks(task_id: task.task_id, user_id: learner_id);
-        await docOfTask_Learner.set(newLearnerTasks.toJson());
+          final docOfTask_Learner =
+              FirebaseFirestore.instance.collection('learner_tasks').doc();
+          Learner_Tasks newLearnerTasks =
+              new Learner_Tasks(task_id: task.task_id, user_id: learner_id);
+          await docOfTask_Learner.set(newLearnerTasks.toJson());
+        } else {}
       }
     } catch (error) {
       print("error with creating new task or subtask");

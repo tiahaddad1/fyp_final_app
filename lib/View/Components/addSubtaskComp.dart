@@ -139,7 +139,7 @@ class _addSubtaskState extends State<addSubtask> {
     //WORK ON THIS
 
     var pickedTime = await showTime();
-    String formattedTime = pickedTime!.format(context);
+    String formattedTime = pickedTime!.format(this.context);
     if (pickedTime == null) {
       print("Time not selected");
     } else if (isStartTime == true) {
@@ -228,7 +228,7 @@ class _addSubtaskState extends State<addSubtask> {
             subtaskCont(
                 "One",
                 subtask1TitleController,
-                subtaskStartTimeController,
+                startTime,
                 subtaskDurationController,
                 subtask1RewardController,
                 tapped,
@@ -238,7 +238,7 @@ class _addSubtaskState extends State<addSubtask> {
             subtaskCont(
                 "Two",
                 subtask2TitleController,
-                subtaskStartTimeController,
+                startTime,
                 subtaskDurationController,
                 subtask2RewardController,
                 tapped2,
@@ -248,8 +248,8 @@ class _addSubtaskState extends State<addSubtask> {
             GestureDetector(
               onTap: () {
                 if (subtask1TitleController.text.isEmpty ||
-                    subtaskStartTimeController.text.isEmpty ||
-                    subtaskDurationController.text.isEmpty ||
+                    startTime=="" ||
+                    subtaskDurationController.text.isEmpty||
                     subtask1RewardController.text.isEmpty ||
                     image == null ||
                     subtask2TitleController.text.isEmpty ||
@@ -281,26 +281,25 @@ class _addSubtaskState extends State<addSubtask> {
                   Subtask_Two newSubtaskTwo = Subtask_Two(
                       subtask_id: "",
                       name: subtask2TitleController.text,
-                      time: subtaskStartTimeController.text,
+                      time: startTime,
                       duration: int.parse(subtaskDurationController.text),
                       image: image2!.path,
                       rewards: int.parse(subtask2RewardController.text));
                   Subtask_One newSubtaskOne = Subtask_One(
                       subtask_id: "",
                       name: subtask1TitleController.text,
-                      time: subtaskStartTimeController.text,
+                      time: startTime,
                       duration: int.parse(subtaskDurationController.text),
                       image: image!.path,
                       rewards: int.parse(subtask1RewardController.text));
                   newSubTask = true;
-                  if (newSubTask == true) {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => addTaskScreen(
                                   subtasks: [newSubtaskOne, newSubtaskTwo],
                                 )));
-                  }
+                  
                 }
               },
               child: Container(
@@ -329,7 +328,7 @@ class _addSubtaskState extends State<addSubtask> {
   Widget subtaskCont(
       String subtaskNo,
       TextEditingController subtaskTitleController,
-      TextEditingController subtaskStartTimeController,
+      String subtaskStartTimeController,
       TextEditingController subtaskDurationController,
       TextEditingController subtaskRewardController,
       bool tapped,
@@ -428,7 +427,7 @@ class _addSubtaskState extends State<addSubtask> {
                             readOnly: true,
                             autofocus: false,
                             cursorColor: Color.fromARGB(255, 45, 119, 223),
-                            controller: subtaskStartTimeController,
+                            // controller: subtaskStartTimeController,
                             style: TextStyle(
                                 color: Colors.black,
                                 fontFamily: "Cabin-Regular",
@@ -481,6 +480,7 @@ class _addSubtaskState extends State<addSubtask> {
                       child: Row(children: [
                         Expanded(
                           child: TextFormField(
+                            keyboardType: TextInputType.number,
                             autofocus: false,
                             cursorColor: Color.fromARGB(255, 45, 119, 223),
                             controller: subtaskRewardController,

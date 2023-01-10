@@ -766,12 +766,12 @@ class _addTaskScreenState extends State<addTaskScreen> {
                           function: () => addTaskDetails(
                               taskTitleController,
                               taskDescriptionController,
-                              dateController,
-                              startTimeController,
-                              endTimeController,
-                              taskReminderController,
-                              taskRewardsController,
-                              widget.subtasks,
+                              DateFormat.yMd().format(dateNow!),
+                              startTime,
+                              endTime,
+                              selectReminder.toString(),
+                              selectRewards.toString(),
+                              newSubTask == true ? widget.subtasks : [],
                               context,
                               widget.learner_id,
                               _video),
@@ -786,11 +786,11 @@ class _addTaskScreenState extends State<addTaskScreen> {
 addTaskDetails(
   TextEditingController taskTitleController,
   TextEditingController taskDescriptionController,
-  TextEditingController dateController,
-  TextEditingController startTimeController,
-  TextEditingController endTimeController,
-  TextEditingController taskReminderController,
-  TextEditingController taskRewardsController,
+  String dateController,
+  String startTimeController,
+  String endTimeController,
+  String taskReminderController,
+  String taskRewardsController,
   List<Subtask> subtaskss,
   BuildContext context,
   String learner_id,
@@ -799,10 +799,21 @@ addTaskDetails(
   //add task details to database and create new task
   if (taskTitleController.text.isEmpty ||
       taskDescriptionController.text.isEmpty ||
-      dateController.text.isEmpty ||
-      startTimeController.text.isEmpty ||
-      endTimeController.text.isEmpty ||
+      dateController == "" ||
+      startTimeController == "" ||
+      endTimeController == "" ||
+      taskReminderController == "" ||
+      taskRewardsController == "" ||
       _video == null) {
+    print(taskTitleController.text);
+    print(taskDescriptionController.text);
+    print(dateController);
+    print(startTimeController);
+    print(endTimeController);
+    print(taskReminderController);
+    print(taskRewardsController);
+    print(_video);
+
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -832,17 +843,17 @@ addTaskDetails(
             context: context,
             builder: (context) => AlertDialog(
                   title: Text(
-                    "No Subtask?",
+                    "No Subtasks?",
                     style: TextStyle(
                         color: Color.fromARGB(255, 0, 0, 0),
                         fontWeight: FontWeight.w600,
                         fontSize: 20),
                   ),
                   content: Image.asset(
-                    'lib/assets/check-list.png',
+                    'lib/assets/noSubtasks.png',
                     alignment: Alignment.center,
-                    height: 60,
-                    width: 60,
+                    height: 55,
+                    width: 55,
                   ),
                   actions: [
                     Row(
@@ -855,13 +866,11 @@ addTaskDetails(
                                     task_id: "",
                                     name: taskTitleController.text,
                                     description: taskDescriptionController.text,
-                                    date: dateController.text,
-                                    start_time: startTimeController.text,
-                                    rewards:
-                                        int.parse(taskRewardsController.text),
-                                    end_time: endTimeController.text,
-                                    reminder:
-                                        int.parse(taskReminderController.text),
+                                    date: dateController,
+                                    start_time: startTimeController,
+                                    rewards: int.parse(taskRewardsController),
+                                    end_time: endTimeController,
+                                    reminder: int.parse(taskReminderController),
                                     video: _video.toString(),
                                     subtasks: [
                                       "",
@@ -869,7 +878,7 @@ addTaskDetails(
                                     ]); //creates the subtask object as well
                                 try {
                                   FirebaseApi.addTaskAndSubtasks(
-                                      newTask, subtaskss,learner_id);
+                                      newTask, subtaskss, learner_id);
                                   if (true) {
                                     showDialog(
                                         context: context,
@@ -922,19 +931,20 @@ addTaskDetails(
                   ],
                 ));
       } else {
+        print("im hereeeee");
         t.Task newTask = t.Task(
             task_id: "",
             name: taskTitleController.text,
             description: taskDescriptionController.text,
-            date: dateController.text,
-            start_time: startTimeController.text,
-            rewards: int.parse(taskRewardsController.text),
-            end_time: endTimeController.text,
-            reminder: int.parse(taskReminderController.text),
+            date: dateController,
+            start_time: startTimeController,
+            rewards: int.parse(taskRewardsController),
+            end_time: endTimeController,
+            reminder: int.parse(taskReminderController),
             video: _video.toString(),
             subtasks: ["", ""]); //creates the subtask object as well
         try {
-          FirebaseApi.addTaskAndSubtasks(newTask, subtaskss,learner_id);
+          FirebaseApi.addTaskAndSubtasks(newTask, subtaskss, learner_id);
           if (true) {
             showDialog(
                 context: context,
