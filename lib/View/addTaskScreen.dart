@@ -8,14 +8,17 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:fyp_application/Model/SubtaskOne.dart';
 import 'package:fyp_application/Model/SubtaskTwo.dart';
+import 'package:fyp_application/Provider/learner.dart';
 import 'package:fyp_application/View/Components/addSubtaskComp.dart';
 import 'package:fyp_application/View/Components/buttonImageComp.dart';
 import 'package:fyp_application/View/caregiverViewSchedule.dart';
 import 'package:fyp_application/api/firebase_api.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 
+import '../Model/Learner.dart';
 import '../Model/Subtask.dart';
 import '../Model/Task.dart' as t;
 
@@ -37,20 +40,48 @@ final taskReminderController = TextEditingController();
 final taskRewardsController = TextEditingController();
 
 class _addTaskScreenState extends State<addTaskScreen> {
-  @override
+  // @override
+  // void initstate() {
+  //   taskTitleController.clear();
+  //   taskDescriptionController.clear();
+  //   dateController.clear();
+  //   startTimeController.clear();
+  //   endTimeController.clear();
+  //   taskReminderController.clear();
+  //   taskRewardsController.clear();
+  //   // ignore: avoid_print
+  //   print('clear used');
+  // }
+
+  // @override
+  // saveToLocalStorage() async {
+  //   final prefs = await SharedPreferences.getInstance();
+
+  //   await prefs.setString('current_learner', widget.learner_id);
+  // }
+
+  // Future<String?> readFromLocalStorage() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final learner = prefs.getString('current_learner');
+  //   return learner;
+  // }
+
   final picker = ImagePicker();
-  File? _video;
   bool vid = false;
   late VideoPlayerController _controller;
   String? urlDownload;
+  File? _video;
+  // late File _video = File("");
   videoChooser() async {
     // ignore: deprecated_member_use
     final video = await picker.getVideo(source: ImageSource.gallery);
     _video = File(video!.path);
     _controller = VideoPlayerController.file(_video!)
       ..initialize().then((_) async {
-        setState(() {});
-        final path = "taskVideos/${subtask1TitleController.text}";
+        setState(() {
+          _video = File(video.path);
+        });
+        final path = "taskVideos/${taskTitleController.text}";
         final ref = FirebaseStorage.instance.ref().child(path);
         final uploadFile = await ref.putFile(_video!);
         urlDownload = (await uploadFile.ref.getDownloadURL());
@@ -73,6 +104,9 @@ class _addTaskScreenState extends State<addTaskScreen> {
   ];
   @override
   Widget build(BuildContext context) {
+    setState(() {
+      _video;
+    });
     showCalendar() async {
       DateTime? pickDate = await showDatePicker(
           context: context,
@@ -169,19 +203,20 @@ class _addTaskScreenState extends State<addTaskScreen> {
                           size: 17,
                         )),
                     RichText(
-                      text: TextSpan(
-                          text: "Add subtasks",
-                          style: TextStyle(
-                              color: Color.fromARGB(255, 62, 81, 140),
-                              decoration: TextDecoration.underline,
-                              fontSize: 15,
-                              fontFamily: "Cabin-Regular"),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => addSubtask()))),
-                    ),
+                        text: TextSpan(
+                            text: "Add subtasks",
+                            style: TextStyle(
+                                color: Color.fromARGB(255, 62, 81, 140),
+                                decoration: TextDecoration.underline,
+                                fontSize: 15,
+                                fontFamily: "Cabin-Regular"),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () => {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => addSubtask()))
+                                  })),
                   ]),
                   Padding(
                     padding: EdgeInsets.only(top: 15),
@@ -607,9 +642,15 @@ class _addTaskScreenState extends State<addTaskScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               InkWell(
-                                  onTap: () {
-                                    videoChooser();
+                                  onTap: () async {
+                                    await videoChooser();
+                                    print("pleaseeeeee");
                                     print(_video);
+                                    // setState(
+                                    //   () {
+                                    //     _video = _video;
+                                    //   },
+                                    // );
                                   },
                                   child: Container(
                                       width: 200,
@@ -760,22 +801,75 @@ class _addTaskScreenState extends State<addTaskScreen> {
                   // },
                   // child:
                   Container(
-                      child: buttonImage(
-                          text: "Add Task",
-                          // function: ()=>GestureDetector(onTap:() { addTaskDetails(taskTitleController,taskDescriptionController,dateController,startTimeController,endTimeController,taskReminderController,context,_video);}),
-                          function: () => addTaskDetails(
-                              taskTitleController,
-                              taskDescriptionController,
-                              DateFormat.yMd().format(dateNow!),
-                              startTime,
-                              endTime,
-                              selectReminder.toString(),
-                              selectRewards.toString(),
-                              newSubTask == true ? widget.subtasks : [],
-                              context,
-                              widget.learner_id,
-                              _video),
-                          color: Color.fromARGB(255, 66, 135, 123)),
+                      child: FutureBuilder(
+                          future: LearnerProvider.readFromLocalStorage(),
+                          builder: (context, snapshot) {
+                            return buttonImage(
+                                text: "Add Task",
+                                // function: ()=>GestureDetector(onTap:() { addTaskDetails(taskTitleController,taskDescriptionController,dateController,startTimeController,endTimeController,taskReminderController,context,_video);}),
+                                function: () {
+                                  print("LOOK HERE: " + _video!.toString());
+                                  print(taskTitleController.text);
+                                  print(taskDescriptionController.text);
+                                  print(DateFormat.yMd().format(dateNow!));
+                                  print(startTime);
+                                  print(endTime);
+                                  print(selectReminder.toString());
+                                  print(selectRewards.toString());
+                                  print(newSubTask == true
+                                      ? widget.subtasks
+                                      : []);
+                                  print(_video);
+                                  print(snapshot.data);
+
+                                  addTaskDetails(
+                                      taskTitleController,
+                                      taskDescriptionController,
+                                      DateFormat.yMd().format(dateNow!),
+                                      startTime,
+                                      endTime,
+                                      selectReminder.toString(),
+                                      selectRewards.toString(),
+                                      newSubTask == true ? widget.subtasks : [],
+                                      context,
+                                      snapshot.data==null?"no learner":snapshot.data!,
+                                      _video!);
+                                  print("problem1");
+                                },
+                                color: Color.fromARGB(255, 66, 135, 123));
+
+                            // buttonImage(
+                            //     text: "Add Task",
+                            //     // function: ()=>GestureDetector(onTap:() { addTaskDetails(taskTitleController,taskDescriptionController,dateController,startTimeController,endTimeController,taskReminderController,context,_video);}),
+                            //     function: () {
+                            //       print("LOOK HERE: " + _video!.toString());
+                            //       print(taskTitleController.text);
+                            //       print(taskDescriptionController.text);
+                            //       print(DateFormat.yMd().format(dateNow!));
+                            //       print(startTime);
+                            //       print(endTime);
+                            //       print(selectReminder.toString());
+                            //       print(selectRewards.toString());
+                            //       print(newSubTask == true ? widget.subtasks : []);
+                            //       print(_video);
+                            //       print(widget.learner_id);
+
+                            //       addTaskDetails(
+                            //           taskTitleController,
+                            //           taskDescriptionController,
+                            //           DateFormat.yMd().format(dateNow!),
+                            //           startTime,
+                            //           endTime,
+                            //           selectReminder.toString(),
+                            //           selectRewards.toString(),
+                            //           newSubTask == true ? widget.subtasks : [],
+                            //           context,
+                            //           widget.learner_id==null?readFromLocalStorage():widget.learner_id,
+                            //           _video!);
+                            //       print("problem1");
+                            //     },
+                            //     color: Color.fromARGB(255, 66, 135, 123)),
+                          }),
                       alignment: Alignment.topCenter)
                 ]))));
     // buttonImage(text: "Add Task", function: addTaskToDB(), color: Color.fromARGB(255, 66, 135, 123)),
@@ -791,11 +885,13 @@ addTaskDetails(
   String endTimeController,
   String taskReminderController,
   String taskRewardsController,
-  List<Subtask> subtaskss,
+  List<Subtask>? subtaskss,
   BuildContext context,
   String learner_id,
   File? _video,
 ) {
+  print("problem2");
+  // print("Video: " + _video!.path);
   //add task details to database and create new task
   if (taskTitleController.text.isEmpty ||
       taskDescriptionController.text.isEmpty ||
@@ -804,7 +900,7 @@ addTaskDetails(
       endTimeController == "" ||
       taskReminderController == "" ||
       taskRewardsController == "" ||
-      _video == null) {
+      _video.toString() == "") {
     print(taskTitleController.text);
     print(taskDescriptionController.text);
     print(dateController);
@@ -838,7 +934,7 @@ addTaskDetails(
             ));
   } else {
     if (true) {
-      if (subtaskss.length == 0) {
+      if (subtaskss!.length == 0) {
         showDialog(
             context: context,
             builder: (context) => AlertDialog(
@@ -852,8 +948,8 @@ addTaskDetails(
                   content: Image.asset(
                     'lib/assets/noSubtasks.png',
                     alignment: Alignment.center,
-                    height: 55,
-                    width: 55,
+                    height: 60,
+                    width: 60,
                   ),
                   actions: [
                     Row(
@@ -862,6 +958,7 @@ addTaskDetails(
                           TextButton(
                               child: Text("No"),
                               onPressed: () {
+                                Navigator.pop(context);
                                 t.Task newTask = t.Task(
                                     task_id: "",
                                     name: taskTitleController.text,
@@ -877,9 +974,13 @@ addTaskDetails(
                                       ""
                                     ]); //creates the subtask object as well
                                 try {
+                                  // Navigator.pop(context);
+                                  print("here-1");
                                   FirebaseApi.addTaskAndSubtasks(
                                       newTask, subtaskss, learner_id);
                                   if (true) {
+                                    taskTitleController.clear();
+                                    taskDescriptionController.clear();
                                     showDialog(
                                         context: context,
                                         builder: (context) => AlertDialog(
@@ -907,6 +1008,8 @@ addTaskDetails(
                                             ));
                                   }
                                 } catch (Exception) {
+                                  Navigator.pop(context);
+                                  print("here-2");
                                   final snackBarC = SnackBar(
                                       content: Text(
                                           "An internal issue has occured! Please try again later."));
@@ -923,14 +1026,19 @@ addTaskDetails(
                               }),
                           TextButton(
                               child: Text("Add subtasks"),
-                              onPressed: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => addSubtask())))
+                              onPressed: () => {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                addSubtask())),
+                                    // Navigator.pop(context)
+                                  })
                         ])
                   ],
                 ));
       } else {
+        Navigator.pop(context);
         print("im hereeeee");
         t.Task newTask = t.Task(
             task_id: "",
@@ -944,8 +1052,19 @@ addTaskDetails(
             video: _video.toString(),
             subtasks: ["", ""]); //creates the subtask object as well
         try {
+          print(subtaskss.isEmpty);
           FirebaseApi.addTaskAndSubtasks(newTask, subtaskss, learner_id);
           if (true) {
+            taskTitleController.clear();
+            taskDescriptionController.clear();
+            // if (true) {
+            subtask1TitleController.clear();
+            subtask2TitleController.clear();
+            subtaskStartTimeController.clear();
+            subtask1RewardController.clear();
+            subtask2RewardController.clear();
+            subtaskDurationController.clear();
+            // }
             showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
@@ -975,14 +1094,14 @@ addTaskDetails(
                     ));
           }
         } catch (Exception) {
+          print("mayveeeee");
           final snackBarC = SnackBar(
               content: Text(
-                  "An internal issue has occured! Please try again later."));
-          action:
-          SnackBarAction(
-            label: 'Undo',
-            onPressed: () {},
-          );
+                  "An internal issue has occured! Please try again later."),
+              action: SnackBarAction(
+                label: 'Undo',
+                onPressed: () {},
+              ));
           ScaffoldMessenger.of(context).showSnackBar(snackBarC);
         }
 

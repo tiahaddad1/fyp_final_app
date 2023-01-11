@@ -589,55 +589,125 @@ class FirebaseApi {
     return task.task_id;
   }
 
-  deleteTask(t.Task task) async {
+  deleteTask(t.Task task, List<String> subtasks) async {
     final deleteTask = await FirebaseFirestore.instance
         .collection("task")
         .doc(task.task_id)
         .delete()
         .then((value) => print("task deleted!"));
 //delete from firestore
-    final path = "taskVideos/${"task-" + task.task_id}";
+    final path = "taskVideos/${task.name}";
     final ref = FirebaseStorage.instance.ref().child(path);
     ref
         .delete()
         .then((value) => print("deleted task video!"))
         .catchError((error) => {print(error)});
     //put deleteSubtask() method here
+    final sub1 = await FirebaseFirestore.instance
+        .collection("subtask")
+        .where('subtask_id', isEqualTo: task.task_id + "subtask" + "one")
+        .get();
+
+    final sub2 = await FirebaseFirestore.instance
+        .collection("subtask")
+        .where('subtask_id', isEqualTo: task.task_id + "subtask" + "two")
+        .get();
+
+    final deletesub1 = await FirebaseFirestore.instance
+        .collection("subtask")
+        .doc(sub1.docs[0].id)
+        .delete()
+        .then((value) => print("subtask1 deleted!"));
+
+    final deletesub2 = await FirebaseFirestore.instance
+        .collection("subtask")
+        .doc(sub2.docs[0].id)
+        .delete()
+        .then((value) => print("subtask2 deleted!"));
+
+    final learnertask = await FirebaseFirestore.instance
+        .collection("learner_tasks")
+        .where('task_id', isEqualTo: task.task_id)
+        .get();
+
+    final deletelearnertask = await FirebaseFirestore.instance
+        .collection("learner_tasks")
+        .doc(learnertask.docs[0].id)
+        .delete()
+        .then((value) => print("learner_tasks deleted!"));
+
+    subtasks.forEach((String title) {
+      final path = "subtaskImages/${title}";
+      final ref = FirebaseStorage.instance.ref().child(path);
+      ref
+          .delete()
+          .then((value) => print("deleted!"))
+          .catchError((error) => {print(error)});
+    });
   }
 
-  updateTask(t.Task task) async {
-    // final updateT = await FirebaseFirestore.instance
-    //     .collection('task')
-    //     .where('task_id', isEqualTo: task.task_id)
-    //     .get();
+  updateTask(
+      String id,
+      String title,
+      String description,
+      String date,
+      String startTime,
+      String endTime,
+      String remindTask,
+      int rewardPoints,
+      String vid) async {
+    //getting the collection itself
+    final updateT = await FirebaseFirestore.instance
+        .collection('task')
+        .where('task_id', isEqualTo: id)
+        .get();
 
-    // t.Task t = new Task(
-    //   task_id: updateT.docs[0]['task_id'],
-    //   name: updateT.docs[0]['name'],
-    //   description: updateT.docs[0]['description'],
-    //   date: updateT.docs[0]['date'],
-    //   start_time: updateT.docs[0]['start_time'],
-    //   end_time: updateT.docs[0]['end_time'],
-    //   rewards: updateT.docs[0]['rewards'],
-    //   reminder: updateT.docs[0]['reminder'],
-    //   video: updateT.docs[0]['video'],
-    //   subtasks: updateT.docs[0]['subtasks'],
-    // );
-    // final docTask =
-    //     FirebaseFirestore.instance.collection('task').doc(t.task_id);
-    // await docTask.update({
-    //   'name': name,
-    //   'description': description,
-    //   'name': name,
-    //   'date': date,
-    //   'start_time': start_time,
-    //   'end_time': end_time,
-    //   'rewards': rewards,
-    //   'reminder': reminder,
-    //   'video': video,
-    //   'subtasks': subtasks
-    // });
+    t.Task ta = new t.Task(
+      task_id: updateT.docs[0]['task_id'],
+      name: title == null ? updateT.docs[0]['name'] : title,
+      description:
+          description == null ? updateT.docs[0]['description'] : description,
+      date: date == null ? updateT.docs[0]['date'] : date,
+      start_time: startTime == null ? updateT.docs[0]['start_time'] : startTime,
+      end_time: endTime == null ? updateT.docs[0]['end_time'] : endTime,
+      rewards: rewardPoints == null ? updateT.docs[0]['rewards'] : rewardPoints,
+      reminder: remindTask == null ? updateT.docs[0]['reminder'] : remindTask,
+      video: vid == null ? updateT.docs[0]['video'] : vid,
+      subtasks: updateT.docs[0]['subtasks'],
+    );
+    //getting the doc
+    final docTask = FirebaseFirestore.instance.collection('task').doc(id);
+    await docTask.update({
+      'task_id': ta.task_id,
+      'description': ta.description,
+      'name': ta.name,
+      'date': ta.date,
+      'start_time': ta.start_time,
+      'end_time': ta.end_time,
+      'rewards': ta.rewards,
+      'reminder': ta.reminder,
+      'video': ta.video,
+      'subtasks': ta.subtasks
+    });
+
+    final path = "taskVideos/${updateT.docs[0]['name']}";
+    final ref = FirebaseStorage.instance.ref().child(path);
+    ref
+        .delete()
+        .then((value) => print("deleted!"))
+        .catchError((error) => {print(error)});
+    final pathNEW = "taskVideos/${ta.name}";
+    final refNEW = FirebaseStorage.instance.ref().child(pathNEW);
+    await refNEW.putFile(File(vid));
   }
+
+  updateSubtasks() {
+    //put code for updating subtask details and info
+  }
+  deleteSubtasks() {
+    //put code for deleting subtask(s)
+  }
+
   getAllTasks() {}
 
   //do for all of subtasks as well, and put a check for subtasks included or not with length retrieved from db

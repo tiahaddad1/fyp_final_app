@@ -248,8 +248,8 @@ class _addSubtaskState extends State<addSubtask> {
             GestureDetector(
               onTap: () {
                 if (subtask1TitleController.text.isEmpty ||
-                    startTime=="" ||
-                    subtaskDurationController.text.isEmpty||
+                    startTime == "" ||
+                    subtaskDurationController.text.isEmpty ||
                     subtask1RewardController.text.isEmpty ||
                     image == null ||
                     subtask2TitleController.text.isEmpty ||
@@ -293,13 +293,22 @@ class _addSubtaskState extends State<addSubtask> {
                       image: image!.path,
                       rewards: int.parse(subtask1RewardController.text));
                   newSubTask = true;
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => addTaskScreen(
-                                  subtasks: [newSubtaskOne, newSubtaskTwo],
-                                )));
-                  
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => addTaskScreen(
+                                subtasks: [newSubtaskOne, newSubtaskTwo],
+                              )));
+                  //  if (true) {
+                  //   subtask1TitleController.clear();
+                  //   subtask2TitleController.clear();
+                  //   subtaskStartTimeController.clear();
+                  //   subtask1RewardController.clear();
+                  //   subtask2RewardController.clear();
+                  //   subtaskDurationController.clear();
+
+                  //   Navigator.pop(context);
+                  // }
                 }
               },
               child: Container(

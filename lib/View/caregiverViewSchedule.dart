@@ -2,6 +2,8 @@ import 'package:date_picker_timeline/date_picker_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:fyp_application/Provider/User-provider.dart';
+import 'package:fyp_application/Provider/learner.dart';
 import 'package:fyp_application/View/addTaskScreen.dart';
 import 'package:intl/intl.dart';
 
@@ -69,8 +71,13 @@ class _caregiverScheduleState extends State<caregiverSchedule> {
               ),
               GestureDetector(
                 onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => addTaskScreen(learner_id:widget.learner_id)));
+                  print("NAT: "+widget.learner_id);
+                   LearnerProvider.saveToLocalStorage(widget.learner_id);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              addTaskScreen(learner_id: widget.learner_id)));
                 },
                 child: Container(
                   margin:
