@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 class Skill {
-   String skill_id;
-   String name;
-   bool is_completed;
-   DateTime date_completed;
-   String image;
+  String skill_id;
+  String name;
+  bool is_completed;
+  DateTime date_completed;
+  String image;
 
   Skill({
     required this.skill_id,
@@ -25,12 +25,12 @@ class Skill {
     );
   }
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         'skill_id': skill_id,
         'name': name,
         'is_completed': is_completed,
         'date_completed': date_completed,
-        'image':image,
+        'image': image,
       };
 
   String getSkillID() {
@@ -53,23 +53,23 @@ class Skill {
     return this.date_completed;
   }
 
-   setSkillID(String skill_id) {
-     this.skill_id=skill_id;
+  setSkillID(String skill_id) {
+    this.skill_id = skill_id;
   }
 
-   setName(String name) {
-     this.name=name;
+  setName(String name) {
+    this.name = name;
   }
 
-   setIsCompleted(bool is_completed) {
-     this.is_completed=is_completed;
+  setIsCompleted(bool is_completed) {
+    this.is_completed = is_completed;
   }
 
-   setImage(String image) {
-     this.image=image;
+  setImage(String image) {
+    this.image = image;
   }
 
-   setDateCompleted(DateTime dateCompleted) {
-     this.date_completed=dateCompleted;
+  setDateCompleted(DateTime dateCompleted) {
+    this.date_completed = dateCompleted;
   }
 }

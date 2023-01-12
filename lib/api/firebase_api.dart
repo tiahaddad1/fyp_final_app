@@ -10,6 +10,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp_application/Model/Learner_Tasks.dart';
 import 'package:fyp_application/Model/Subtask.dart';
+import 'package:fyp_application/Model/SubtaskOne.dart';
+import 'package:fyp_application/Model/SubtaskTwo.dart';
 import 'package:fyp_application/Provider/User-provider.dart';
 import 'package:fyp_application/Utils.dart';
 import '../Model/Learner.dart';
@@ -590,7 +592,22 @@ class FirebaseApi {
   }
 
   deleteTask(t.Task task, List<String> subtasks) async {
-    final deleteTask = await FirebaseFirestore.instance
+    List<String> subtask_no = ['one', 'two'];
+
+    subtask_no.forEach((no) async {
+      final updateSubtask = await FirebaseFirestore.instance
+          .collection('subtask')
+          .where('subtask_id', isEqualTo: task.task_id + "-subtask" + no)
+          .get();
+
+      await FirebaseFirestore.instance
+          .collection("subtask")
+          .doc(updateSubtask.docs[0].id)
+          .delete()
+          .then((value) => print("subtask ${no} deleted!"));
+    });
+
+    await FirebaseFirestore.instance
         .collection("task")
         .doc(task.task_id)
         .delete()
@@ -603,34 +620,35 @@ class FirebaseApi {
         .then((value) => print("deleted task video!"))
         .catchError((error) => {print(error)});
     //put deleteSubtask() method here
-    final sub1 = await FirebaseFirestore.instance
-        .collection("subtask")
-        .where('subtask_id', isEqualTo: task.task_id + "subtask" + "one")
-        .get();
 
-    final sub2 = await FirebaseFirestore.instance
-        .collection("subtask")
-        .where('subtask_id', isEqualTo: task.task_id + "subtask" + "two")
-        .get();
+    // final sub1 = await FirebaseFirestore.instance
+    //     .collection("subtask")
+    //     .where('subtask_id', isEqualTo: task.task_id + "-subtask" + "one")
+    //     .get();
 
-    final deletesub1 = await FirebaseFirestore.instance
-        .collection("subtask")
-        .doc(sub1.docs[0].id)
-        .delete()
-        .then((value) => print("subtask1 deleted!"));
+    // final sub2 = await FirebaseFirestore.instance
+    //     .collection("subtask")
+    //     .where('subtask_id', isEqualTo: task.task_id + "-subtask" + "two")
+    //     .get();
 
-    final deletesub2 = await FirebaseFirestore.instance
-        .collection("subtask")
-        .doc(sub2.docs[0].id)
-        .delete()
-        .then((value) => print("subtask2 deleted!"));
+    // await FirebaseFirestore.instance
+    //     .collection("subtask")
+    //     .doc(sub1.docs[0].id)
+    //     .delete()
+    //     .then((value) => print("subtask1 deleted!"));
+
+    // await FirebaseFirestore.instance
+    //     .collection("subtask")
+    //     .doc(sub2.docs[0].id)
+    //     .delete()
+    //     .then((value) => print("subtask2 deleted!"));
 
     final learnertask = await FirebaseFirestore.instance
         .collection("learner_tasks")
         .where('task_id', isEqualTo: task.task_id)
         .get();
 
-    final deletelearnertask = await FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection("learner_tasks")
         .doc(learnertask.docs[0].id)
         .delete()
@@ -702,23 +720,96 @@ class FirebaseApi {
   }
 
   updateSubtasks(
-      String subtask1_id,
-      String subtask2_id,
-      String title1,
-      String title2,
-      String image1,
-      String image2,
-      String startTime,
-      int duration,
-      int rewardPoints1,
-      int rewardPoints2,) {
-    //put code for updating subtask details and info
-  }
-  deleteSubtasks() {
-    //put code for deleting subtask(s)
+    String subtask1_id,
+    String subtask2_id,
+    String title1,
+    String title2,
+    String image1,
+    String image2,
+    String startTime,
+    int duration,
+    int rewardPoints1,
+    int rewardPoints2,
+  ) async {
+    List<String> subtask_no = ['one', 'two'];
+
+    subtask_no.forEach((no) async {
+      final updateSubtask = await FirebaseFirestore.instance
+          .collection('subtask')
+          .where('subtask_id',
+              isEqualTo:
+                  no == 'one' ? subtask1_id : subtask2_id + "-subtask" + no)
+          .get();
+
+      Subtask subtask = new Subtask(
+          subtask_id: no == 'one' ? subtask1_id : subtask2_id,
+          name: no == 'one' ? title1 : title2,
+          time: startTime,
+          duration: duration,
+          image: no == 'one' ? image1 : image2,
+          rewards: no == 'one' ? rewardPoints1 : rewardPoints2);
+
+      await FirebaseFirestore.instance
+          .collection("subtask")
+          .doc(updateSubtask.docs[0].id)
+          .update({
+        'subtask_id': subtask.subtask_id,
+        'name': subtask.name,
+        'time': subtask.time,
+        'duration': duration,
+        'image': subtask.image,
+        'rewards': subtask.rewards,
+      });
+
+      final path = "subtaskImages/${updateSubtask.docs[0]['name']}";
+      final ref = FirebaseStorage.instance.ref().child(path);
+      ref
+          .delete()
+          .then((value) => print("deleted!"))
+          .catchError((error) => {print(error)});
+
+      final pathNEW = "subtaskImages/${subtask.name}";
+      final refNEW = FirebaseStorage.instance.ref().child(pathNEW);
+      await refNEW.putFile(File(no == 'one' ? image1 : image2));
+    });
   }
 
-  getAllTasks() {}
+  deleteSubtasks(t.Task task, List<String> subtasks) async {
+    List<String> subtask_no = ['one', 'two'];
 
+    subtask_no.forEach((no) async {
+      final updateSubtask = await FirebaseFirestore.instance
+          .collection('subtask')
+          .where('subtask_id', isEqualTo: task.task_id + "-subtask" + no)
+          .get();
+
+      await FirebaseFirestore.instance
+          .collection("subtask")
+          .doc(updateSubtask.docs[0].id)
+          .delete()
+          .then((value) => print("subtask ${no} deleted!"));
+    });
+
+    subtasks.forEach((String title) {
+      final path = "subtaskImages/${title}";
+      final ref = FirebaseStorage.instance.ref().child(path);
+      ref
+          .delete()
+          .then((value) => print("deleted!"))
+          .catchError((error) => {print(error)});
+    });
+
+  }
+
+  // Future<List<t.Task>> getAllTasks() async {
+  //   return;
+  // }
+  //implement when the calendar thing is working and pass the date as parameter
+
+  // Future<List<Subtask>> getAllSubtasks(String task_id) async{
+
+    // 1- get subtasks from db with "task_id +-subtask-${no}"
+    // 2- fill in the view components from created subtasks list
+  // }
   //do for all of subtasks as well, and put a check for subtasks included or not with length retrieved from db
 }
