@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp_application/api/firebase_api.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
+// import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hive/hive.dart';
 import '/Model/Learner.dart';
 
 class LearnerProvider extends ChangeNotifier {
@@ -41,16 +41,28 @@ class LearnerProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  static saveToLocalStorage(String learner_id) async {
-    print("nat is here");
-    final prefs = await SharedPreferences.getInstance();
-    print(prefs);
-    await prefs.setString('current_learner', learner_id);
+  // static saveToLocalStorage(String learner_id) async {
+  //   print("nat is here");
+  //   final prefs = await SharedPreferences.getInstance();
+  //   print(prefs);
+  //   await prefs.setString('current_learner', learner_id);
+  // }
+
+  // static Future<String?> readFromLocalStorage() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final learner = prefs.getString('current_learner');
+  //   return learner;
+  // }
+
+  static saveToLocalStorage(String learnedID) async {
+    final box = await Hive.openBox('current_learner');
+    await box.put('current_learner', learnedID);
   }
 
   static Future<String?> readFromLocalStorage() async {
-    final prefs = await SharedPreferences.getInstance();
-    final learner = prefs.getString('current_learner');
-    return learner;
+    Hive.init('path/to/directory');
+    final box = await Hive.openBox('current_learner');
+    print("Box: " + box.values.toString());
+    return box.values.first;
   }
 }

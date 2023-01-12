@@ -701,7 +701,17 @@ class FirebaseApi {
     await refNEW.putFile(File(vid));
   }
 
-  updateSubtasks() {
+  updateSubtasks(
+      String subtask1_id,
+      String subtask2_id,
+      String title1,
+      String title2,
+      String image1,
+      String image2,
+      String startTime,
+      int duration,
+      int rewardPoints1,
+      int rewardPoints2,) {
     //put code for updating subtask details and info
   }
   deleteSubtasks() {

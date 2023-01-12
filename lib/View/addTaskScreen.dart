@@ -15,7 +15,7 @@ import 'package:fyp_application/View/caregiverViewSchedule.dart';
 import 'package:fyp_application/api/firebase_api.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 
 import '../Model/Learner.dart';
@@ -832,7 +832,9 @@ class _addTaskScreenState extends State<addTaskScreen> {
                                       selectRewards.toString(),
                                       newSubTask == true ? widget.subtasks : [],
                                       context,
-                                      snapshot.data==null?"no learner":snapshot.data!,
+                                      snapshot.data == null
+                                          ? "no learner"
+                                          : snapshot.data!,
                                       _video!);
                                   print("problem1");
                                 },
@@ -895,12 +897,13 @@ addTaskDetails(
   //add task details to database and create new task
   if (taskTitleController.text.isEmpty ||
       taskDescriptionController.text.isEmpty ||
-      dateController == "" ||
-      startTimeController == "" ||
-      endTimeController == "" ||
-      taskReminderController == "" ||
-      taskRewardsController == "" ||
-      _video.toString() == "") {
+      dateController.isEmpty ||
+      startTimeController.isEmpty ||
+      endTimeController.isEmpty ||
+      taskReminderController.isEmpty ||
+      taskRewardsController.isEmpty ||
+      // _video.toString() == ""||
+      _video == null) {
     print(taskTitleController.text);
     print(taskDescriptionController.text);
     print(dateController);
@@ -1086,10 +1089,12 @@ addTaskDetails(
                             child: Text("Okay"),
                             onPressed: () {
                               Navigator.pop(context);
+                              Navigator.pop(context);
+                              Navigator.pop(context);
+                              Navigator.pop(context);
                               MaterialPageRoute(
                                   builder: (context) => caregiverSchedule());
                             })
-                        // Navigator.pop(context)),
                       ],
                     ));
           }

@@ -5,6 +5,8 @@ import 'package:fyp_application/View/caregiverHome.dart';
 import 'package:fyp_application/View/caregiverLogin.dart';
 import 'package:fyp_application/View/learnerAllScreens.dart';
 import 'package:fyp_application/View/learnerHome.dart';
+import 'package:hive/hive.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'Provider/User-provider.dart';
 import 'View/userRole.dart';
@@ -13,6 +15,8 @@ import 'package:firebase_core/firebase_core.dart';
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  final appDocumentDirectory = await getApplicationDocumentsDirectory();
+  Hive.init(appDocumentDirectory.path);
 
   runApp(const MyApp());
 }
