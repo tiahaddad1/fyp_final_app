@@ -5,18 +5,30 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:fyp_application/View/editSubtasksScreen.dart';
 import 'package:fyp_application/View/editTaskScreen.dart';
+import 'package:fyp_application/api/firebase_api.dart';
 import 'package:video_player/video_player.dart';
 
-class scheduleTaskComp extends StatefulWidget {
-  // final String taskTitle;
-  // final String timeFrom;
-  // final String timeTo;
-  // final int duration;
-  // final String description;
-  // final videoContent;
-  const scheduleTaskComp({super.key});
+import '../../Model/Task.dart';
 
-// const scheduleTaskComp({super.key,required this.taskTitle,required this.timeFrom,required this.timeTo,required this.duration,required this.description,required this.videoContent,});
+class scheduleTaskComp extends StatefulWidget {
+  final Task task;
+  final String taskTitle;
+  final String timeFrom;
+  final String timeTo;
+  final int reminder;
+  final String description;
+  final videoContent;
+  // const scheduleTaskComp({super.key});
+
+  const scheduleTaskComp(
+      {super.key,
+      required this.task,
+      required this.taskTitle,
+      required this.timeFrom,
+      required this.timeTo,
+      required this.reminder,
+      required this.description,
+      required this.videoContent});
 
   @override
   State<scheduleTaskComp> createState() => _scheduleTaskCompState();
@@ -62,7 +74,7 @@ class _scheduleTaskCompState extends State<scheduleTaskComp> {
                 Padding(
                   padding: EdgeInsets.all(10),
                   child: Text(
-                    "INSERT TASK TITLE",
+                    widget.taskTitle,
                     style: TextStyle(
                         color: Colors.black,
                         fontFamily: "Cabin-Regular",
@@ -85,7 +97,7 @@ class _scheduleTaskCompState extends State<scheduleTaskComp> {
                                 size: 12,
                               )),
                           Text(
-                            "10:00" + "-" + "10:20",
+                            widget.timeFrom + "-" + widget.timeTo,
                             style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 10,
@@ -103,7 +115,7 @@ class _scheduleTaskCompState extends State<scheduleTaskComp> {
                                 size: 12,
                               )),
                           Text(
-                            "5",
+                            widget.reminder.toString(),
                             style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 10,
@@ -117,13 +129,14 @@ class _scheduleTaskCompState extends State<scheduleTaskComp> {
                 Padding(
                   padding: EdgeInsets.all(10),
                   child: Text(
-                    "blah blah blah",
+                    widget.description,
                     style: TextStyle(
                         color: Colors.black,
                         fontFamily: "Cabin-Regular",
                         fontSize: 10),
                   ),
                 ),
+                FirebaseApi.hasSubtasks(widget.task)==true?
                 Padding(
                     padding: EdgeInsets.all(10),
                     child:
@@ -145,14 +158,14 @@ class _scheduleTaskCompState extends State<scheduleTaskComp> {
                       ),
                       onTap: () {
                         Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => editSubtaskScreen()));
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => editSubtaskScreen(task: widget.task)));
                       },
                     )
                     //:Text("No subtasks",),
 
-                    ),
+                    ):SizedBox(),
               ],
             ),
           ),
@@ -195,7 +208,7 @@ class _scheduleTaskCompState extends State<scheduleTaskComp> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => editTaskScreen()));
+                                    builder: (context) => editTaskScreen(task: widget.task)));
                             //save to DB
                           },
                         ),

@@ -9,10 +9,13 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:video_player/video_player.dart';
 
+import '../Model/Task.dart';
+import '../api/firebase_api.dart';
 import 'Components/buttonImageComp.dart';
 
 class editTaskScreen extends StatefulWidget {
-  const editTaskScreen({super.key});
+  final Task task;
+  const editTaskScreen({super.key, required this.task});
 
   @override
   State<editTaskScreen> createState() => _editTaskScreenState();
@@ -24,16 +27,18 @@ final dateController = TextEditingController();
 final startTimeController = TextEditingController();
 final endTimeController = TextEditingController();
 final taskReminderController = TextEditingController();
+final taskRewardsController = TextEditingController();
 
 class _editTaskScreenState extends State<editTaskScreen> {
   final picker = ImagePicker();
   File? _video;
   bool vid = false;
   late VideoPlayerController _controller;
-
+  int selectRewards = 5;
   videoChooser() async {
     // ignore: deprecated_member_use
     final video = await picker.getVideo(source: ImageSource.gallery);
+    // _video = File(widget.task.video);
     _video = File(video!.path);
     _controller = VideoPlayerController.file(_video!)
       ..initialize().then((_) {
@@ -45,7 +50,7 @@ class _editTaskScreenState extends State<editTaskScreen> {
   DateTime? dateNow = DateTime.now();
   String startTime = DateFormat("hh:mm a").format(DateTime.now()).toString();
   String endTime = "09:30 PM";
-  int selectReminder = 5;
+  int selectReminder = 0;
   List<int> reminderList = [
     5,
     10,
@@ -177,7 +182,7 @@ class _editTaskScreenState extends State<editTaskScreen> {
                           fontFamily: "Cabin-Regular",
                           fontSize: 16),
                       decoration: InputDecoration(
-                          hintText: "task.title",
+                          hintText: widget.task.name,
                           contentPadding: EdgeInsets.only(left: 10),
                           focusedBorder: InputBorder.none,
                           border: InputBorder.none,
@@ -219,7 +224,7 @@ class _editTaskScreenState extends State<editTaskScreen> {
                           fontFamily: "Cabin-Regular",
                           fontSize: 16),
                       decoration: InputDecoration(
-                          hintText: "task.description",
+                          hintText: widget.task.description,
                           contentPadding: EdgeInsets.only(left: 10),
                           focusedBorder: InputBorder.none,
                           border: InputBorder.none,
@@ -479,6 +484,71 @@ class _editTaskScreenState extends State<editTaskScreen> {
                   ],
                 ),
               ),
+
+             Padding(
+                    padding: EdgeInsets.only(top: 15),
+                    child: Text(
+                      "Reward points",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontFamily: "Cabin-Regular",
+                          fontSize: 17,
+                          color: Colors.black),
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top: 8),
+                    height: 52,
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey, width: 1),
+                        borderRadius: BorderRadius.circular(12)),
+                    child: Row(
+                      children: [
+                        Expanded(
+                            child: TextFormField(
+                          readOnly: true,
+                          autofocus: false,
+                          cursorColor: Color.fromARGB(255, 66, 135, 123),
+                          controller: taskRewardsController,
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontFamily: "Cabin-Regular",
+                              fontSize: 16),
+                          decoration: InputDecoration(
+                              hintText: selectRewards.toString(),
+                              contentPadding: EdgeInsets.only(left: 10),
+                              focusedBorder: InputBorder.none,
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none),
+                        )),
+                        DropdownButton(
+                          icon: Icon(Icons.keyboard_arrow_down,
+                              color: Color.fromARGB(255, 66, 135, 123)),
+                          iconSize: 32,
+                          elevation: 4,
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              selectRewards = int.parse(newValue!);
+                            });
+                          },
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 15,
+                              fontFamily: "Cabin-Regular"),
+                          underline: Container(
+                            height: 0,
+                          ),
+                          items: reminderList
+                              .map<DropdownMenuItem<String>>((int value) {
+                            return DropdownMenuItem<String>(
+                                value: value.toString(),
+                                child: Text(value.toString()));
+                          }).toList(),
+                        ),
+                      ],
+                    ),
+                  ),
+
               Container(
                   margin:
                       EdgeInsets.only(left: 10, right: 10, bottom: 20, top: 20),
@@ -578,10 +648,38 @@ class _editTaskScreenState extends State<editTaskScreen> {
                               ));
                     }
                   },
+
                   child: Container(
                     child: buttonImage(
                         text: "Update Task",
-                        function: {}, //update task to db
+                        function: () {
+                          try {
+                            FirebaseApi.updateTask(
+                                widget.task.task_id,
+                                taskTitleController.text,
+                                taskDescriptionController.text,
+                                DateFormat.yMd().format(dateNow!),
+                                startTime,
+                                endTime,
+                                selectReminder,
+                                selectRewards,
+                                _video.toString());
+                            if (true) {
+                              taskTitleController.clear();
+                              taskDescriptionController.clear();
+                              dateController.clear();
+                              startTimeController.clear();
+                              endTimeController.clear();
+                              taskReminderController.clear();
+
+                              Navigator.of(context).pop();
+                            }
+                          } catch (error) {
+                            final snackBarC = SnackBar(
+                                content: Text(
+                                    "An internal issue has occured! Please try again later."));
+                          }
+                        }, //update task to db
                         color: Color.fromARGB(255, 66, 135, 123)),
                     alignment: Alignment.topCenter,
                   )

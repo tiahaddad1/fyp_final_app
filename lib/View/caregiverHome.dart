@@ -527,15 +527,16 @@ class _caregiverHomeState extends State<caregiverHome> {
                     // ],
                   );
                 } else {
-                  return Center(
+                  return 
+                  Container(child: Center(
                     child: Image.asset(
                       "lib/assets/noData.png",
-                      width: 10,
-                      height: 15,
+                      width: 50,
+                      height: 55,
                     ),
                     // CircularProgressIndicator(), //show a text in the middle
                     //that there is no data
-                  );
+                  ),margin: EdgeInsets.all(30));
                 }
               }),
           addNewLearnerComp(context)

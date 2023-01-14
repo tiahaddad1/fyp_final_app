@@ -5,13 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:fyp_application/api/firebase_api.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
+import '../Model/Subtask.dart';
+import '../Model/Task.dart';
 import 'caregiverViewSchedule.dart';
 
 class editSubtaskScreen extends StatefulWidget {
-  const editSubtaskScreen({super.key});
+  final Task task;
+  const editSubtaskScreen({super.key, required this.task});
 
   @override
   State<editSubtaskScreen> createState() => _editSubtaskScreenState();
@@ -145,7 +149,7 @@ class _editSubtaskScreenState extends State<editSubtaskScreen> {
             leadingWidth: 100,
             title: Align(
               child: Text(
-                "Update subtasks' details",
+                "Subtasks' details",
                 style: TextStyle(
                   fontSize: 23,
                   fontWeight: FontWeight.bold,
@@ -190,10 +194,24 @@ class _editSubtaskScreenState extends State<editSubtaskScreen> {
                 imagePath2),
             GestureDetector(
               onTap: () {
+                // List<Subtask> allSub=FirebaseApi.getSubtasks(widget.task.task_id); dont need this?
+                //continue this AND FIX:
+                  // FirebaseApi.updateSubtasks(widget.task.task_id+"-subtaskone",widget.task.task_id+"-subtasktwo",)
+
+//params for method:
+    // String subtask1_id,
+    // String subtask2_id,
+    // String title1,
+    // String title2,
+    // String image1,
+    // String image2,
+    // String startTime,
+    // int duration,
+    // int rewardPoints1,
+    // int rewardPoints2,
                 showDialog(
                   context: context,
                   builder: (context) {
-                    addSubtasksToDB();
                     return AlertDialog(
                       title: Text(
                         "Subtask Updated!",
@@ -217,6 +235,7 @@ class _editSubtaskScreenState extends State<editSubtaskScreen> {
                   },
                 );
                 if (true) {
+
                   Navigator.push(
                       context,
                       MaterialPageRoute(

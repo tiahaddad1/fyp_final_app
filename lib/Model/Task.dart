@@ -14,7 +14,7 @@ class Task {
   int rewards;
   int reminder;
   String video;
-  List<String> subtasks;
+  List<dynamic> subtasks;
 
   Task({
     required this.task_id,
@@ -92,7 +92,7 @@ class Task {
     return this.date;
   }
 
-  List<String> getSubTasks() {
+  List<dynamic> getSubTasks() {
     return this.subtasks;
   }
 

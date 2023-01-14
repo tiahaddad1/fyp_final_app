@@ -60,9 +60,13 @@ class LearnerProvider extends ChangeNotifier {
   }
 
   static Future<String?> readFromLocalStorage() async {
-    Hive.init('path/to/directory');
+    try {
+      Hive.init('path/to/directory');
     final box = await Hive.openBox('current_learner');
     print("Box: " + box.values.toString());
     return box.values.first;
+    } catch (error) {
+      print("error in getting learner name");
+    }
   }
 }

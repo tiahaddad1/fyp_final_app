@@ -5,8 +5,10 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:fyp_application/Provider/User-provider.dart';
 import 'package:fyp_application/Provider/learner.dart';
 import 'package:fyp_application/View/addTaskScreen.dart';
+import 'package:fyp_application/api/firebase_api.dart';
 import 'package:intl/intl.dart';
 
+import '../Model/Task.dart';
 import 'Components/scheduleTaskComp.dart';
 
 class caregiverSchedule extends StatefulWidget {
@@ -20,7 +22,9 @@ class caregiverSchedule extends StatefulWidget {
 class _caregiverScheduleState extends State<caregiverSchedule> {
   DatePickerController dp = DatePickerController();
   final String date = DateFormat.yMMMMd().format(DateTime.now());
-  DateTime _selectedDate = DateTime.now();
+  DateTime _selectedDate =
+      DateTime.parse(DateTime.now().toString().substring(0, 10));
+  //  late Future<List<Task>> taskaaa;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,8 +75,8 @@ class _caregiverScheduleState extends State<caregiverSchedule> {
               ),
               GestureDetector(
                 onTap: () {
-                  print("NAT: "+widget.learner_id);
-                   LearnerProvider.saveToLocalStorage(widget.learner_id);
+                  print("NAT: " + widget.learner_id);
+                  LearnerProvider.saveToLocalStorage(widget.learner_id);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -103,8 +107,15 @@ class _caregiverScheduleState extends State<caregiverSchedule> {
           ),
           Container(
             margin: EdgeInsets.only(left: 20),
-            child: DatePicker(DateTime.now(),
-                onDateChange: (selectedDate) => _selectedDate = selectedDate,
+            child: DatePicker(DateTime.now(), onDateChange: (selectedDate) {
+              setState(() {
+                // print(_selectedDate);
+                _selectedDate = selectedDate;
+
+                // taskaaa = FirebaseApi.getAllTasks(_selectedDate);
+              });
+              // _selectedDate = selectedDate;
+            },
                 height: 100,
                 width: 80,
                 initialSelectedDate: DateTime.now(),
@@ -120,14 +131,75 @@ class _caregiverScheduleState extends State<caregiverSchedule> {
             height: 40,
           ),
           SingleChildScrollView(
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                scheduleTaskComp(),
-                scheduleTaskComp(),
-                scheduleTaskComp(),
-                scheduleTaskComp()
-              ]))
+              child:
+                  // Column(
+                  //     crossAxisAlignment: CrossAxisAlignment.start,
+                  //     children: [
+                  FutureBuilder<List<Task>>(
+                      future: FirebaseApi.getAllTasks(_selectedDate),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          List<Task> taskss = snapshot.data!;
+                          if (taskss.isNotEmpty) {
+                            print("taskss.isNotEmpty: " + taskss.isNotEmpty.toString());
+                            // if (snapshot.hasData) {
+                            // if (taskss.isNotEmpty) {
+                            // taskss = snapshot.data;
+                            // print(_selectedDate);
+                            return SafeArea(
+                                child: ListView.builder(
+                                    itemCount: taskss.length,
+                                    shrinkWrap: true,
+                                    scrollDirection: Axis.vertical,
+                                    itemBuilder: ((context, index) {
+                                      final doc = taskss[index];
+                                      print(doc.name);
+                                      return scheduleTaskComp(
+                                          task:doc ,
+                                          description: doc.description,
+                                          taskTitle: doc.name,
+                                          timeFrom: doc.start_time,
+                                          timeTo: doc.end_time,
+                                          reminder: doc.reminder,
+                                          videoContent: doc.video);
+                                    })));
+                            // } else {
+                            //   return Center(
+                            //     child: Text(
+                            //       "No tasks assigned...",
+                            //       style:
+                            //           TextStyle(color: Colors.grey, fontSize: 15),
+                            //     ),
+                            //   );
+                            // }
+                            // );
+                          } else {
+                            print("taskss.isEmpty: " + taskss.isEmpty.toString());
+                            return Center(
+                              child: Text(
+                                "No tasks assigned...",
+                                style:
+                                    TextStyle(color: Colors.grey, fontSize: 15),
+                              ),
+                            );
+                          }
+                        } else {
+                          return Center(
+                            child: Text(
+                              "No tasks assigned...",
+                              style:
+                                  TextStyle(color: Colors.grey, fontSize: 15),
+                            ),
+                          );
+                        }
+                        // },
+                      })
+              // scheduleTaskComp(),
+              // scheduleTaskComp(),
+              // scheduleTaskComp(),
+              // scheduleTaskComp()
+              // ])
+              )
         ]));
   }
 
