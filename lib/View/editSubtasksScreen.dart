@@ -34,6 +34,7 @@ String endTime = "09:30 PM";
 DateTime? dateNow = DateTime.now();
 
 class _editSubtaskScreenState extends State<editSubtaskScreen> {
+  List<Subtask> subtasksData = [];
   File? image;
   File? image2;
   bool tapped = false;
@@ -172,75 +173,203 @@ class _editSubtaskScreenState extends State<editSubtaskScreen> {
             )),
         body: SingleChildScrollView(
           child: Column(children: [
-            subtaskCont(
-                "One",
-                subtask1TitleController,
-                subtaskStartTimeController,
-                subtaskDurationController,
-                subtask1RewardController,
-                tapped,
-                capture,
-                image,
-                imagePath),
-            subtaskCont(
-                "Two",
-                subtask2TitleController,
-                subtaskStartTimeController,
-                subtaskDurationController,
-                subtask2RewardController,
-                tapped2,
-                capture2,
-                image2,
-                imagePath2),
+            FutureBuilder<List<Subtask>?>(
+              future: FirebaseApi.getSubtasks(widget.task.task_id),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  // setState(() {
+                  subtasksData = snapshot.data!;
+                  // });
+                  if (snapshot.data != null) {
+                    print(snapshot.data);
+                    print("dora: ");
+                    return Column(children: [
+                      subtaskCont(
+                          "One",
+                          subtask1TitleController,
+                          subtaskStartTimeController,
+                          subtaskDurationController,
+                          subtask1RewardController,
+                          tapped,
+                          capture,
+                          image,
+                          imagePath,
+                          snapshot.data![0]),
+                      subtaskCont(
+                          "Two",
+                          subtask2TitleController,
+                          subtaskStartTimeController,
+                          subtaskDurationController,
+                          subtask2RewardController,
+                          tapped2,
+                          capture2,
+                          image2,
+                          imagePath2,
+                          snapshot.data![1]),
+                    ]);
+                  } else {
+                    return Column(children: [
+                      subtaskCont(
+                          "One",
+                          subtask1TitleController,
+                          subtaskStartTimeController,
+                          subtaskDurationController,
+                          subtask1RewardController,
+                          tapped,
+                          capture,
+                          image,
+                          imagePath,
+                          null),
+                      subtaskCont(
+                          "Two",
+                          subtask2TitleController,
+                          subtaskStartTimeController,
+                          subtaskDurationController,
+                          subtask2RewardController,
+                          tapped2,
+                          capture2,
+                          image2,
+                          imagePath2,
+                          null),
+                    ]);
+                  }
+                } else {
+                  return Column(children: [
+                    subtaskCont(
+                        "One",
+                        subtask1TitleController,
+                        subtaskStartTimeController,
+                        subtaskDurationController,
+                        subtask1RewardController,
+                        tapped,
+                        capture,
+                        image,
+                        imagePath,
+                        null),
+                    subtaskCont(
+                        "Two",
+                        subtask2TitleController,
+                        subtaskStartTimeController,
+                        subtaskDurationController,
+                        subtask2RewardController,
+                        tapped2,
+                        capture2,
+                        image2,
+                        imagePath2,
+                        null),
+                  ]);
+                }
+              },
+            ),
+            // subtaskCont(
+            //     "One",
+            //     subtask1TitleController,
+            //     subtaskStartTimeController,
+            //     subtaskDurationController,
+            //     subtask1RewardController,
+            //     tapped,
+            //     capture,
+            //     image,
+            //     imagePath),
+            // subtaskCont(
+            //     "Two",
+            //     subtask2TitleController,
+            //     subtaskStartTimeController,
+            //     subtaskDurationController,
+            //     subtask2RewardController,
+            //     tapped2,
+            //     capture2,
+            //     image2,
+            //     imagePath2),
             GestureDetector(
               onTap: () {
-                // List<Subtask> allSub=FirebaseApi.getSubtasks(widget.task.task_id); dont need this?
-                //continue this AND FIX:
-                  // FirebaseApi.updateSubtasks(widget.task.task_id+"-subtaskone",widget.task.task_id+"-subtasktwo",)
-
-//params for method:
-    // String subtask1_id,
-    // String subtask2_id,
-    // String title1,
-    // String title2,
-    // String image1,
-    // String image2,
-    // String startTime,
-    // int duration,
-    // int rewardPoints1,
-    // int rewardPoints2,
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: Text(
-                        "Subtask Updated!",
-                        style: TextStyle(
-                            color: Color.fromARGB(255, 0, 0, 0),
-                            fontWeight: FontWeight.w600,
-                            fontSize: 20),
-                      ),
-                      content: Image.asset(
-                        'lib/assets/check.png',
-                        alignment: Alignment.center,
-                        height: 60,
-                        width: 60,
-                      ),
-                      actions: [
-                        TextButton(
-                            child: Text("Okay"),
-                            onPressed: () => Navigator.pop(context)),
-                      ],
+                try {
+                  FirebaseApi.updateSubtasks(
+                      widget.task.task_id + "-subtaskone",
+                      widget.task.task_id + "-subtasktwo",
+                      subtask1TitleController.text,
+                      subtask2TitleController.text,
+                      image.toString(),
+                      image2.toString(),
+                      subtaskStartTimeController.text,
+                      int.parse(subtaskDurationController.text),
+                      int.parse(subtask1RewardController.text),
+                      int.parse(subtask2RewardController.text));
+                  if (true) {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text(
+                            "Subtask Updated!",
+                            style: TextStyle(
+                                color: Color.fromARGB(255, 0, 0, 0),
+                                fontWeight: FontWeight.w600,
+                                fontSize: 20),
+                          ),
+                          content: Image.asset(
+                            'lib/assets/check.png',
+                            alignment: Alignment.center,
+                            height: 60,
+                            width: 60,
+                          ),
+                          actions: [
+                            TextButton(
+                                child: Text("Okay"),
+                                onPressed: () => Navigator.pop(context)),
+                          ],
+                        );
+                      },
                     );
-                  },
-                );
-                if (true) {
-
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => caregiverSchedule()));
+                    if (true) {
+                      Navigator.pop(context);
+                      // Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //         builder: (context) => caregiverSchedule()));
+                    }
+                  }
+                } catch (error) {
+                  final snackBarC = SnackBar(
+                      content: Text(
+                          "An internal issue has occured! Please try again later."),
+                      action: SnackBarAction(
+                        label: 'Undo',
+                        onPressed: () {},
+                      ));
+                  ScaffoldMessenger.of(context).showSnackBar(snackBarC);
                 }
+                // showDialog(
+                //   context: context,
+                //   builder: (context) {
+                //     return AlertDialog(
+                //       title: Text(
+                //         "Subtask Updated!",
+                //         style: TextStyle(
+                //             color: Color.fromARGB(255, 0, 0, 0),
+                //             fontWeight: FontWeight.w600,
+                //             fontSize: 20),
+                //       ),
+                //       content: Image.asset(
+                //         'lib/assets/check.png',
+                //         alignment: Alignment.center,
+                //         height: 60,
+                //         width: 60,
+                //       ),
+                //       actions: [
+                //         TextButton(
+                //             child: Text("Okay"),
+                //             onPressed: () => Navigator.pop(context)),
+                //       ],
+                //     );
+                //   },
+                // );
+                // if (true) {
+                //   Navigator.push(
+                //       context,
+                //       MaterialPageRoute(
+                //           builder: (context) => caregiverSchedule()));
+                // }
               },
               child: Container(
                 margin:
@@ -274,7 +403,8 @@ class _editSubtaskScreenState extends State<editSubtaskScreen> {
       bool tapped,
       Future capture(),
       File? image,
-      Image imagePath) {
+      Image imagePath,
+      Subtask? subtask) {
     return Container(
         margin: EdgeInsets.only(left: 10, right: 10, bottom: 20, top: 20),
         padding: EdgeInsets.all(10),
@@ -357,7 +487,9 @@ class _editSubtaskScreenState extends State<editSubtaskScreen> {
                           fontFamily: "Cabin-Regular",
                           fontSize: 16),
                       decoration: InputDecoration(
-                        hintText: "title here", ////shows argumet's title
+                        hintText: subtask != null
+                            ? subtask.name
+                            : "", ////shows argumet's title
                         contentPadding: EdgeInsets.only(left: 20),
                       )),
                   SizedBox(
@@ -413,7 +545,7 @@ class _editSubtaskScreenState extends State<editSubtaskScreen> {
                         decoration: InputDecoration(
                           contentPadding: EdgeInsets.only(left: 10),
                           hintText:
-                              "10 minutes", //shows argumet's duration time
+                              "${subtask != null ? subtask.duration : ""} minutes", //shows argumet's duration time
                         ),
                       ),
                     ),
@@ -433,7 +565,7 @@ class _editSubtaskScreenState extends State<editSubtaskScreen> {
                             decoration: InputDecoration(
                               contentPadding: EdgeInsets.only(left: 10),
                               hintText:
-                                  "5 stars!", //shows argumet's stars rewards
+                                  "${subtask != null ? subtask.rewards : ""} stars!", //shows argumet's stars rewards
                             ),
                           ),
                         ),
@@ -504,7 +636,10 @@ class _editSubtaskScreenState extends State<editSubtaskScreen> {
                                 },
                                 child: image != null
                                     ? Image.file(image, width: 280, height: 110)
-                                    : imagePath),
+                                    : subtask != null
+                                        ? Image.network(subtask.image,
+                                            width: 70, height: 80)
+                                        : imagePath),
                           ]))
                     ],
                   ),

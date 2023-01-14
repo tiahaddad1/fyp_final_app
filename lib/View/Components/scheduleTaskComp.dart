@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -49,6 +50,14 @@ class _scheduleTaskCompState extends State<scheduleTaskComp> {
 //   List<Subtask> subtasks = [];
 // }
   late VideoPlayerController _controller;
+  // @override
+  // void initState() async{
+  //   super.initState();
+  //   print(await FirebaseApi.getTaskVideo(widget.taskTitle));
+  //   _controller = VideoPlayerController.network(widget.videoContent.toString().substring(5))
+  //     ..initialize().then((_) => {});
+  // }
+
   @override
   Widget build(BuildContext context) {
     int randomNumber = random.nextInt(3);
@@ -136,36 +145,38 @@ class _scheduleTaskCompState extends State<scheduleTaskComp> {
                         fontSize: 10),
                   ),
                 ),
-                FirebaseApi.hasSubtasks(widget.task)==true?
-                Padding(
-                    padding: EdgeInsets.all(10),
-                    child:
-                        // Text("View subtasks",
-                        //     style: TextStyle(
-                        //         color: Color.fromARGB(255, 62, 81, 140),
-                        //         fontFamily: "Cabin-Regular",
-                        //         decoration: TextDecoration.underline,
-                        //         fontSize: 12)),
-                        // subtasks().length>0?
-                        GestureDetector(
-                      child: Text(
-                        "View subtasks",
-                        style: TextStyle(
-                            color: Color.fromARGB(255, 62, 81, 140),
-                            fontFamily: "Cabin-Regular",
-                            decoration: TextDecoration.underline,
-                            fontSize: 12),
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => editSubtaskScreen(task: widget.task)));
-                      },
-                    )
-                    //:Text("No subtasks",),
+                FirebaseApi.hasSubtasks(widget.task) == true
+                    ? Padding(
+                        padding: EdgeInsets.all(10),
+                        child:
+                            // Text("View subtasks",
+                            //     style: TextStyle(
+                            //         color: Color.fromARGB(255, 62, 81, 140),
+                            //         fontFamily: "Cabin-Regular",
+                            //         decoration: TextDecoration.underline,
+                            //         fontSize: 12)),
+                            // subtasks().length>0?
+                            GestureDetector(
+                          child: Text(
+                            "View subtasks",
+                            style: TextStyle(
+                                color: Color.fromARGB(255, 62, 81, 140),
+                                fontFamily: "Cabin-Regular",
+                                decoration: TextDecoration.underline,
+                                fontSize: 12),
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        editSubtaskScreen(task: widget.task)));
+                          },
+                        )
+                        //:Text("No subtasks",),
 
-                    ):SizedBox(),
+                        )
+                    : SizedBox(),
               ],
             ),
           ),
@@ -176,20 +187,49 @@ class _scheduleTaskCompState extends State<scheduleTaskComp> {
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Container(
-                  width: 150,
-                  height: 80,
-                  child:
-
-                      // AspectRatio(
-                      // aspectRatio: 3 / 2,
-                      // child: VideoPlayer(_controller),
-                      // ),
-                      Image.asset(
-                    "lib/assets/footballTaskImage.jpeg",
-                    fit: BoxFit.cover,
-                  ),
+                FutureBuilder<String>(
+                  future: FirebaseApi.getTaskVideo(widget.taskTitle),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      setState(() {
+                        _controller =
+                            VideoPlayerController.network(snapshot.data!);
+                      });
+                      print(_controller);
+                      return Container(
+                        width: 150,
+                        height: 80,
+                        child: _controller.value.isInitialized
+                            ? AspectRatio(
+                                aspectRatio: _controller.value.aspectRatio,
+                                child: VideoPlayer(_controller),
+                              )
+                            : Container(),
+                      );
+                    }
+                    return Container();
+                  },
                 ),
+                // Container(
+                //   width: 150,
+                //   height: 80,
+                //   child: _controller.value.isInitialized
+                //       ? AspectRatio(
+                //           aspectRatio: _controller.value.aspectRatio,
+                //           child: VideoPlayer(_controller),
+                //         )
+                //       : Container(),
+                // ),
+
+                // AspectRatio(
+                // aspectRatio: 3 / 2,
+                // child: VideoPlayer(_controller),
+                // ),
+                //       Image.asset(
+                //     "lib/assets/footballTaskImage.jpeg",
+                //     fit: BoxFit.cover,
+                //   ),
+                // ),
                 Container(
                     margin: EdgeInsets.only(top: 5),
                     child: Row(
@@ -208,7 +248,8 @@ class _scheduleTaskCompState extends State<scheduleTaskComp> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => editTaskScreen(task: widget.task)));
+                                    builder: (context) =>
+                                        editTaskScreen(task: widget.task)));
                             //save to DB
                           },
                         ),
@@ -222,7 +263,7 @@ class _scheduleTaskCompState extends State<scheduleTaskComp> {
                             ),
                           ),
                           onTap: () {
-                            //delete from DB
+                            FirebaseApi.deleteTask(widget.task);
                           },
                         )
                       ],

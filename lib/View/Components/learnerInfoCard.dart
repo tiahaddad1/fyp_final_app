@@ -6,6 +6,7 @@ import 'package:fyp_application/View/learnerSignup.dart';
 import 'package:fyp_application/api/firebase_api.dart';
 
 import '../../Model/Learner.dart';
+import '../../Provider/learner.dart';
 
 class learnerInfoCard extends StatefulWidget {
   final Learner learner;
@@ -23,7 +24,8 @@ class _learnerInfoCardState extends State<learnerInfoCard> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
+      onTap: () async{
+        await LearnerProvider.saveToLocalStorage(widget.learner.user_id);
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => learnerInfoScreen(learner:widget.learner)));
       },

@@ -4,7 +4,7 @@ class Skill {
   String skill_id;
   String name;
   bool is_completed;
-  DateTime date_completed;
+  String? date_completed;
   String image;
 
   Skill({
@@ -49,8 +49,8 @@ class Skill {
     return this.image;
   }
 
-  DateTime getDateCompleted() {
-    return this.date_completed;
+  String getDateCompleted() {
+    return this.date_completed!;
   }
 
   setSkillID(String skill_id) {
@@ -69,7 +69,7 @@ class Skill {
     this.image = image;
   }
 
-  setDateCompleted(DateTime dateCompleted) {
+  setDateCompleted(String dateCompleted) {
     this.date_completed = dateCompleted;
   }
 }

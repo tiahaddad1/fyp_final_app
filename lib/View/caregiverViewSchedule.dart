@@ -20,6 +20,7 @@ class caregiverSchedule extends StatefulWidget {
 }
 
 class _caregiverScheduleState extends State<caregiverSchedule> {
+  // String? learner_id="";
   DatePickerController dp = DatePickerController();
   final String date = DateFormat.yMMMMd().format(DateTime.now());
   DateTime _selectedDate =
@@ -76,7 +77,7 @@ class _caregiverScheduleState extends State<caregiverSchedule> {
               GestureDetector(
                 onTap: () {
                   print("NAT: " + widget.learner_id);
-                  LearnerProvider.saveToLocalStorage(widget.learner_id);
+                  // LearnerProvider.saveToLocalStorage(widget.learner_id);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -136,12 +137,13 @@ class _caregiverScheduleState extends State<caregiverSchedule> {
                   //     crossAxisAlignment: CrossAxisAlignment.start,
                   //     children: [
                   FutureBuilder<List<Task>>(
-                      future: FirebaseApi.getAllTasks(_selectedDate),
+                      future: FirebaseApi.getAllTasks(_selectedDate,widget.learner_id),
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           List<Task> taskss = snapshot.data!;
                           if (taskss.isNotEmpty) {
-                            print("taskss.isNotEmpty: " + taskss.isNotEmpty.toString());
+                            print("taskss.isNotEmpty: " +
+                                taskss.isNotEmpty.toString());
                             // if (snapshot.hasData) {
                             // if (taskss.isNotEmpty) {
                             // taskss = snapshot.data;
@@ -155,7 +157,7 @@ class _caregiverScheduleState extends State<caregiverSchedule> {
                                       final doc = taskss[index];
                                       print(doc.name);
                                       return scheduleTaskComp(
-                                          task:doc ,
+                                          task: doc,
                                           description: doc.description,
                                           taskTitle: doc.name,
                                           timeFrom: doc.start_time,
@@ -174,7 +176,8 @@ class _caregiverScheduleState extends State<caregiverSchedule> {
                             // }
                             // );
                           } else {
-                            print("taskss.isEmpty: " + taskss.isEmpty.toString());
+                            print(
+                                "taskss.isEmpty: " + taskss.isEmpty.toString());
                             return Center(
                               child: Text(
                                 "No tasks assigned...",

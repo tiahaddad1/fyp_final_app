@@ -19,7 +19,7 @@ class _doneButtonCaregiverState extends State<doneButtonCaregiver> {
         child: ElevatedButton(
           onPressed: () {
             //add details to db
-            // widget.function();
+            widget.function();
             Navigator.of(context).pop;
           },
           child: Padding(

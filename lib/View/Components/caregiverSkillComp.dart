@@ -33,7 +33,7 @@ class _caregiverSkillCompState extends State<caregiverSkillComp> {
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Padding(
                 padding: EdgeInsets.only(left: 5, right: 2, top: 3, bottom: 7),
-                child: Image.asset(
+                child: Image.network(
                   widget.image,
                   width: 35,
                   height: 35,

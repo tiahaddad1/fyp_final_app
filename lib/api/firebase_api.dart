@@ -17,6 +17,8 @@ import 'package:fyp_application/Provider/learner.dart';
 import 'package:fyp_application/Utils.dart';
 import 'package:intl/intl.dart';
 import '../Model/Learner.dart';
+import '../Model/Learner_Skills.dart';
+import '../Model/Skill.dart';
 import '../Model/Task.dart';
 import '../Model/User.dart';
 import '/Model/Caregiver.dart';
@@ -553,6 +555,13 @@ class FirebaseApi {
     return [];
   }
 
+  static Future<String> getTaskVideo(String taskName) async {
+    final storageRef = FirebaseStorage.instance.ref().child(taskName);
+    final String url = await storageRef.getDownloadURL();
+    print(url);
+    return url;
+  }
+
   //TASK related methods//
   static addTaskAndSubtasks(
       t.Task task, List<Subtask> subtasks, String learner_id) async {
@@ -599,7 +608,7 @@ class FirebaseApi {
     return task.task_id;
   }
 
-  deleteTask(t.Task task, List<String> subtasks) async {
+  static deleteTask(t.Task task) async {
     List<String> subtask_no = ['one', 'two'];
 
     subtask_no.forEach((no) async {
@@ -613,6 +622,15 @@ class FirebaseApi {
           .doc(updateSubtask.docs[0].id)
           .delete()
           .then((value) => print("subtask ${no} deleted!"));
+
+      //  subtasks.forEach((String title) {
+      final path = "subtaskImages/${updateSubtask.docs[0]['name']}";
+      final ref = FirebaseStorage.instance.ref().child(path);
+      ref
+          .delete()
+          .then((value) => print("deleted!"))
+          .catchError((error) => {print(error)});
+      // });
     });
 
     await FirebaseFirestore.instance
@@ -662,14 +680,14 @@ class FirebaseApi {
         .delete()
         .then((value) => print("learner_tasks deleted!"));
 
-    subtasks.forEach((String title) {
-      final path = "subtaskImages/${title}";
-      final ref = FirebaseStorage.instance.ref().child(path);
-      ref
-          .delete()
-          .then((value) => print("deleted!"))
-          .catchError((error) => {print(error)});
-    });
+    // subtasks.forEach((String title) {
+    //   final path = "subtaskImages/${title}";
+    //   final ref = FirebaseStorage.instance.ref().child(path);
+    //   ref
+    //       .delete()
+    //       .then((value) => print("deleted!"))
+    //       .catchError((error) => {print(error)});
+    // });
   }
 
   static updateTask(
@@ -746,7 +764,7 @@ class FirebaseApi {
   }
 
   //create a method that gives the subtask object as array
-  static List<Subtask> getSubtasks(String task_id) {
+  static Future<List<Subtask>?> getSubtasks(String task_id) async {
     List<String> subtask_no = ['one', 'two'];
     List<Subtask> subtaskss = [];
 
@@ -757,16 +775,21 @@ class FirebaseApi {
           .get();
 
       Subtask subtask = new Subtask(
-          subtask_id: task_id + "-subtask" + no,
+          subtask_id: updateSubtask.docs[0]['subtask_id'],
           name: updateSubtask.docs[0]['name'],
           time: updateSubtask.docs[0]['time'],
           duration: updateSubtask.docs[0]['duration'],
           image: updateSubtask.docs[0]['image'],
           rewards: updateSubtask.docs[0]['rewards']);
-
+      print("im inside the loop: " + updateSubtask.docs[0]['subtask_id']);
       subtaskss.add(subtask);
     });
-    return subtaskss;
+    if (subtaskss.length == 0) {
+      return null;
+    } else {
+      print(subtaskss[0].name);
+      return subtaskss;
+    }
   }
 
   static updateSubtasks(
@@ -786,12 +809,11 @@ class FirebaseApi {
       final updateSubtask = await FirebaseFirestore.instance
           .collection('subtask')
           .where('subtask_id',
-              isEqualTo:
-                  no == 'one' ? subtask1_id : subtask2_id + "-subtask" + no)
+              isEqualTo: no == 'one' ? subtask1_id : subtask2_id)
           .get();
 
       Subtask subtask = new Subtask(
-          subtask_id: no == 'one' ? subtask1_id : subtask2_id,
+          subtask_id: updateSubtask.docs[0]['subtask_id'],
           name: no == 'one'
               ? title1 == null
                   ? updateSubtask.docs[0]['name']
@@ -829,12 +851,13 @@ class FirebaseApi {
       final ref = FirebaseStorage.instance.ref().child(path);
       ref
           .delete()
-          .then((value) => print("deleted!"))
+          .then((value) => print(ref.delete() == null))
           .catchError((error) => {print(error)});
 
       final pathNEW = "subtaskImages/${subtask.name}";
       final refNEW = FirebaseStorage.instance.ref().child(pathNEW);
-      await refNEW.putFile(File(no == 'one' ? image1 : image2));
+      final put = refNEW.putFile(File(no == 'one' ? image1 : image2));
+      await put.whenComplete(() => print("doneee subtask"));
     });
   }
 
@@ -864,7 +887,8 @@ class FirebaseApi {
     });
   }
 
-  static Future<List<t.Task>> getAllTasks(DateTime selectedDate) async {
+  static Future<List<t.Task>> getAllTasks(
+      DateTime selectedDate, String learner_id) async {
     //pass the selected date
     //select the task table and take the tasks from the selecte ddate
     //return that list
@@ -872,7 +896,8 @@ class FirebaseApi {
 //should be this:
     // String? currentL = await LearnerProvider.readFromLocalStorage();
 //what works:
-    String currentL = "JzEyiITsGIuF4YM46TTx";
+    // String currentL = "JzEyiITsGIuF4YM46TTx";
+    // print("TIAAAA: "+learner_id);
     // print("current learner is: " + currentL);
     String d = selectedDate.toString().substring(0, 10);
     DateTime selectedDateString = DateFormat("yyyy-MM-dd").parse(d);
@@ -881,7 +906,7 @@ class FirebaseApi {
 
     final learnertasks = await FirebaseFirestore.instance
         .collection('learner_tasks')
-        .where('user_id', isEqualTo: currentL)
+        .where('user_id', isEqualTo: learner_id)
         .get();
 
     final allData =
@@ -933,22 +958,139 @@ class FirebaseApi {
     } else {
       print("the list is empty");
     }
-    // print("UMMM: "+taskss.toString());
     return taskss;
   }
-  //implement when the calendar thing is working and pass the date as parameter
 
-  // Future<List<Subtask>> getAllSubtasks(String task_id) async{
+  //SKILLS related methods//
 
-  // 1- get subtasks from db with "task_id +-subtask-${no}"
-  // 2- fill in the view components from created subtasks list
-  // }
-  //do for all of subtasks as well, and put a check for subtasks included or not with length retrieved from db
+  static addSkill(Skill skill, String learner_id) async {
+    try {
+      final docOfSkill = FirebaseFirestore.instance.collection('skill').doc();
+      skill.skill_id = docOfSkill.id;
+
+      await docOfSkill.set(skill.toJson());
+      final docOfSkill_Learner =
+          FirebaseFirestore.instance.collection('learner_skills').doc();
+      Learner_Skills newLearnerSkills =
+          new Learner_Skills(skill_id: skill.skill_id, user_id: learner_id);
+      await docOfSkill_Learner.set(newLearnerSkills.toJson());
+    } catch (error) {
+      print("unable to create new skill");
+    }
+  }
+
+  static deleteSkill(Skill skill) async {
+    await FirebaseFirestore.instance
+        .collection("skill")
+        .doc(skill.skill_id)
+        .delete()
+        .then((value) => print("skill deleted!"));
+
+//delete from firestore
+    final path = "skillImages/${skill.name}";
+    final ref = FirebaseStorage.instance.ref().child(path);
+    ref
+        .delete()
+        .then((value) => print("deleted skill image!"))
+        .catchError((error) => {print(error)});
+
+//delete learnerskill from db
+    final learnerskill = await FirebaseFirestore.instance
+        .collection("learner_skills")
+        .where('skill_id', isEqualTo: skill.skill_id)
+        .get();
+
+    await FirebaseFirestore.instance
+        .collection("learner_skills")
+        .doc(learnerskill.docs[0].id)
+        .delete()
+        .then((value) => print("learner_skills deleted!"));
+  }
+
+  static updateSkill(String skill_id, String name, bool checked) async {
+    final updateSkill = await FirebaseFirestore.instance
+        .collection('skill')
+        .where('skill_id', isEqualTo: skill_id)
+        .get();
+
+    Skill s = new Skill(
+        skill_id: updateSkill.docs[0]['skill_id'],
+        name: name == null ? updateSkill.docs[0]['name'] : name,
+        image: updateSkill.docs[0]['image'],
+        date_completed: checked == true
+            ? DateTime.now().toString().substring(0, 10)
+            : updateSkill.docs[0]['date_completed'],
+        is_completed: checked == true ? true : false);
+
+    //getting the doc
+    final docSkill =
+        FirebaseFirestore.instance.collection('skill').doc(skill_id);
+
+    await docSkill.update({
+      'skill_id': s.skill_id,
+      'name': s.name,
+      'image': s.image,
+      'date_completed': s.date_completed,
+      'is_completed': s.is_completed,
+    });
+  }
+
+  static Future<List<Skill>> getAllSkills(String learner_id) async {
+    print(learner_id);
+    final learnerSkills = await FirebaseFirestore.instance
+        .collection('learner_skills')
+        .where('user_id', isEqualTo: learner_id)
+        .get();
+
+    final allData =
+        learnerSkills.docs.map((learnerskill) => learnerskill.data()).toList();
+
+    late List<Learner_Skills> list = [];
+
+    if (allData.length > 0) {
+      try {
+        //a list that loops through every element and assigns it to the object
+        //learner_task
+        list = allData.map((document) {
+          Learner_Skills learnersk = Learner_Skills.fromJson(document);
+          return (learnersk);
+        }).toList();
+      } catch (Exception) {
+        print("no skill for this learner");
+      }
+    }
+    late List<Skill> skillsList = [];
+    if (list.length > 0) {
+      try {
+        list.forEach((ls) async {
+          print(ls.skill_id);
+
+          final checkSkill = await FirebaseFirestore.instance
+              .collection('skill')
+              .where('skill_id', isEqualTo: ls.skill_id)
+              .get();
+
+          if (checkSkill.size > 0) {
+            Skill s = new Skill(
+                skill_id: checkSkill.docs[0]['skill_id'],
+                name: checkSkill.docs[0]['name'],
+                image: checkSkill.docs[0]['image'],
+                date_completed: checkSkill.docs[0]['date_completed'],
+                is_completed: checkSkill.docs[0]['is_completed']);
+
+            skillsList.add(s);
+            print(skillsList.length);
+          }
+        });
+      } catch (error) {
+        print(error);
+      }
+    } else {
+      print("the list is empty");
+    }
+    print("skills list:");
+    print(skillsList.length);
+    print(skillsList);
+    return skillsList;
+  }
 }
-
-//--------------------------
-//TO DO:
-//view subtask details
-//update subtasks
-//delete task
-//CRUD for rest
