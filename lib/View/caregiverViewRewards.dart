@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:fyp_application/Model/Reward.dart';
 import 'package:fyp_application/View/Components/addNewRewardCaregiver.dart';
 import 'package:fyp_application/View/Components/buttonImageComp.dart';
+import 'package:fyp_application/api/firebase_api.dart';
 
 import 'Components/caregiverRewardComp.dart';
 import 'Components/rewardStarComp.dart';
 
 class caregiverRewards extends StatefulWidget {
-  const caregiverRewards({super.key});
+  final String learner_id;
+  const caregiverRewards({super.key, required this.learner_id});
 
   @override
   State<caregiverRewards> createState() => _caregiverRewardsState();
 }
+
+int totalPoints = 0;
 
 class _caregiverRewardsState extends State<caregiverRewards> {
   @override
@@ -72,34 +77,63 @@ class _caregiverRewardsState extends State<caregiverRewards> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            // containerList.map(((e) => e)).toList() -> a map to iterate through array
-                            //when pressed add it to array and this array has all the comp from DB too
-                            caregiverRewardComp(
-                              text: "A trip to adventure land!",
-                              image: "lib/assets/footballClipart.png",
-                              reward: '15',
-                            ),
-                            caregiverRewardComp(
-                              text: "A trip to adventure land!",
-                              image: "lib/assets/footballClipart.png",
-                              reward: '15',
-                            ),
-                            caregiverRewardComp(
-                              text: "A trip to adventure land!",
-                              image: "lib/assets/footballClipart.png",
-                              reward: '15',
-                            ),
-                            caregiverRewardComp(
-                              text: "A trip to adventure land!",
-                              image: "lib/assets/footballClipart.png",
-                              reward: '15',
-                            ),
-                            caregiverRewardComp(
-                              text: "A trip to adventure land!",
-                              image: "lib/assets/footballClipart.png",
-                              reward: '15',
-                            ),
-                            // caregiverReminderComp(reminder: "Pray daily prayers"),
+                            FutureBuilder<List<Reward>>(
+                              future:
+                                  FirebaseApi.getAllRewards(widget.learner_id),
+                              builder: (context, snapshot) {
+                                // if (snapshot.hasData) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.done) {
+                                  if (snapshot.hasData) {
+                                    print("okayyyy: ");
+                                    print(snapshot.data!);
+                                    List<Reward> rewards = snapshot.data!;
+                                    // print(skills);
+                                    return ListView.builder(
+                                        itemCount: rewards.length,
+                                        shrinkWrap: true,
+                                        scrollDirection: Axis.vertical,
+                                        itemBuilder: ((context, index) {
+                                          final doc = rewards[index];
+                                          print(doc.name);
+                                          return caregiverRewardComp(
+                                            rewardObj:doc,
+                                            text: doc.name,
+                                            image: doc.image,
+                                            reward: doc.points.toString(),
+                                          );
+                                        }));
+                                  } else {
+                                    return Container(
+                                        margin: EdgeInsets.all(20),
+                                        child: Center(
+                                          child: Text(
+                                            "No rewards assigned...",
+                                            style: TextStyle(
+                                                color: Colors.grey,
+                                                fontSize: 15),
+                                          ),
+                                        ));
+                                  }
+                                } else if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return Container(
+                                      margin: EdgeInsets.all(15),
+                                      child: Center(
+                                          child: CircularProgressIndicator()));
+                                } else {
+                                  return Container(
+                                      margin: EdgeInsets.all(20),
+                                      child: Center(
+                                        child: Text(
+                                          "No rewards assigned...",
+                                          style: TextStyle(
+                                              color: Colors.grey, fontSize: 15),
+                                        ),
+                                      ));
+                                }
+                              },
+                            )
                           ])),
                 ))),
                 Container(
@@ -107,10 +141,10 @@ class _caregiverRewardsState extends State<caregiverRewards> {
                     child: buttonImage(
                         image: "lib/assets/starTotal.png",
                         text: "Add Reward",
-                        function:() {
-                      showDialog(
-                          context: context,
-                          builder: (context) => addNewRewardCaregiver());                         
+                        function: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) => addNewRewardCaregiver(learner_id:widget.learner_id));
                           //should be able to view a pop up for adding a new reward
                         },
                         color: Color.fromARGB(255, 66, 135, 123)),
@@ -144,35 +178,62 @@ class _caregiverRewardsState extends State<caregiverRewards> {
                                   )),
                               Container(
                                 height: MediaQuery.of(context).size.height / 5,
-                                child:
-                                    Expanded(
-                                        child: SafeArea(
-                                            child: ListView(
-                                                padding: EdgeInsets.only(
-                                                    top: 10,
-                                                    left: 13,
-                                                    right: 13),
-                                                shrinkWrap: true,
-                                                scrollDirection: Axis.vertical,
-                                                children: [
-                                      Center(
-                                          child: Wrap(children: [
-                                            //a loop to go over the size of the rewards array of the learner and put in the reward the reward amount
-                                        rewardStarComp(reward: 5),
-                                        rewardStarComp(reward: 15),
-                                        rewardStarComp(reward: 25),
-                                        rewardStarComp(reward: 65),
-                                        rewardStarComp(reward: 5),
-                                        rewardStarComp(reward: 5),
-                                        rewardStarComp(reward: 5),
-                                      ]))
-                                    ]))),
+                                child: FutureBuilder<List<int>>(
+                                    future: FirebaseApi.getRewardsPoints(
+                                        widget.learner_id),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasData) {
+                                        final rewards = snapshot.data;
+                                        // setState(() {
+                                          totalPoints = rewards!.fold(
+                                              0,
+                                              (previous, current) =>
+                                                  previous + current);
+                                        // });
+                                        print(rewards);
+                                        return Expanded(
+                                          //fix the design layout
+                                          child: SafeArea(
+                                              child: GridView.builder(
+                                            itemCount: snapshot.data!.length,
+                                            padding: EdgeInsets.only(top: 20),
+                                            shrinkWrap: true,
+                                            scrollDirection: Axis.vertical,
+                                            itemBuilder: (context, index) {
+                                              final doc = snapshot.data![index];
+                                              return Center(
+                                                  child: Wrap(children: [
+                                                rewardStarComp(reward: doc),
+                                              ]));
+                                            },
+                                            gridDelegate:
+                                                new SliverGridDelegateWithFixedCrossAxisCount(
+                                                    crossAxisCount: 2,
+                                                    childAspectRatio: 1,
+                                                    crossAxisSpacing: 0,
+                                                    mainAxisSpacing: 10),
+                                          )),
+                                        );
+                                      } else {
+                                        return Container(
+                                            margin: EdgeInsets.all(20),
+                                            child: Center(
+                                              child: Text(
+                                                "No rewarded points achieved yet...",
+                                                style: TextStyle(
+                                                    color: Colors.grey,
+                                                    fontSize: 15),
+                                              ),
+                                            ));
+                                      }
+                                    }),
                               ),
                               Container(
                                 margin: EdgeInsets.all(15),
                                 alignment: Alignment.center,
                                 child: Text(
-                                  "Total points earned: " + "20",
+                                  "Total points earned: " +
+                                      totalPoints.toString(),
                                   style: TextStyle(
                                       color: Colors.black,
                                       decoration: TextDecoration.underline,

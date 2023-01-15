@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:fyp_application/api/firebase_api.dart';
+
+import '../../Model/Reminder.dart';
 
 class caregiverReminderComp extends StatefulWidget {
-  final String reminder;
-  const caregiverReminderComp({super.key, required this.reminder});
+  final Reminder? reminder;
+  const caregiverReminderComp({super.key, this.reminder});
 
   @override
   State<caregiverReminderComp> createState() => _caregiverReminderCompState();
 }
+
+TextEditingController reminderNameController = new TextEditingController();
 
 class _caregiverReminderCompState extends State<caregiverReminderComp> {
   @override
@@ -26,16 +31,22 @@ class _caregiverReminderCompState extends State<caregiverReminderComp> {
             padding: EdgeInsets.only(left: 20, top: 5, right: 5),
             child: Container(
               child: TextField(
+                  controller: reminderNameController,
                   textAlign: TextAlign.left,
                   readOnly: false,
                   onChanged: (value) {
+                    setState(() {
+                      reminderNameController.text = value;
+                    });
                     //save to DB
                   },
                   showCursor: true,
                   cursorColor: Color.fromARGB(255, 66, 135, 123),
                   decoration: InputDecoration(
                     border: InputBorder.none,
-                    hintText: widget.reminder,
+                    hintText: widget.reminder!.name == ""||widget.reminder!.name == null
+                        ? "Edit to add a reminder"
+                        : widget.reminder!.name,
                     hintStyle: TextStyle(
                         color: Color.fromARGB(255, 0, 0, 0),
                         fontWeight: FontWeight.w500,
@@ -58,7 +69,9 @@ class _caregiverReminderCompState extends State<caregiverReminderComp> {
                   height: 15,
                 ),
               ),
-              onTap: () {
+              onTap: () async {
+                await FirebaseApi.updateReminder(
+                    widget.reminder!.reminder_id, widget.reminder!.name);
                 //save to DB
               },
             ),
@@ -72,7 +85,7 @@ class _caregiverReminderCompState extends State<caregiverReminderComp> {
                 ),
               ),
               onTap: () {
-                //delete from DB
+                FirebaseApi.deleteReminder(widget.reminder!);
               },
             )
           ],

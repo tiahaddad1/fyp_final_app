@@ -79,20 +79,30 @@ class _caregiverSkillsState extends State<caregiverSkills> {
                         FutureBuilder<List<Skill>>(
                           future: FirebaseApi.getAllSkills(widget.learner_id),
                           builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              List<Skill> skills = snapshot.data!;
-                              print(skills);
-                              return ListView.builder(
-                                  itemCount: skills.length,
-                                  shrinkWrap: true,
-                                  scrollDirection: Axis.vertical,
-                                  itemBuilder: ((context, index) {
-                                    final doc = skills[index];
-                                    print(doc.name);
-                                    return caregiverSkillComp(
-                                        image: doc.image, name: doc.name);
-                                  }));
-                            } else {
+                            // if (snapshot.hasData) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.done) {
+                                print("okayyyy: ");
+                                print(snapshot.data!);
+                                List<Skill> skills = snapshot.data!;
+                                print(skills);
+                                return ListView.builder(
+                                    itemCount: skills.length,
+                                    shrinkWrap: true,
+                                    scrollDirection: Axis.vertical,
+                                    itemBuilder: ((context, index) {
+                                      final doc = skills[index];
+                                      print(doc.name);
+                                      return caregiverSkillComp(
+                                        skill: doc,
+                                        skill_id:doc.skill_id,
+                                          image: doc.image, name: doc.name);
+                                    }));
+                              }
+                              else if(snapshot.connectionState==ConnectionState.waiting){
+                                return Center(child: CircularProgressIndicator());
+                              }
+                             else {
                               return Container(
                                   margin: EdgeInsets.all(20),
                                   child: Center(

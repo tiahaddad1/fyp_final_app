@@ -1,27 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:fyp_application/Model/Reminder.dart';
 import 'package:fyp_application/View/Components/buttonComponent.dart';
 import 'package:fyp_application/View/Components/buttonImageComp.dart';
 import 'package:fyp_application/View/Components/caregiverReminderComp.dart';
+import 'package:fyp_application/api/firebase_api.dart';
 
 class caregiverReminders extends StatefulWidget {
-  const caregiverReminders({super.key});
+  final String learner_id;
+  const caregiverReminders({super.key, required this.learner_id});
 
   @override
   State<caregiverReminders> createState() => _caregiverRemindersState();
 }
 
 class _caregiverRemindersState extends State<caregiverReminders> {
-  bool clicked = false;
-  List<Widget> containerList = [];
-  returnComp() {
-      containerList.add(caregiverReminderComp(reminder: "Add new Reminder"));
-  }
-Widget _getListWidgets(List<Widget> yourList){
-  containerList.add(caregiverReminderComp(reminder: "Add new Reminder"));
-   return Row(children: yourList.map((i) => i).toList());
- }
+  // bool clicked = false;
+  // List<Widget> containerList = [];
+  // returnComp() {
+  //   containerList.add(caregiverReminderComp(reminder: "Add new Reminder"));
+  // }
+
+  // Widget _getListWidgets(List<Widget> yourList) {
+  //   containerList.add(caregiverReminderComp(reminder: "Add new Reminder"));
+  //   return Row(children: yourList.map((i) => i).toList());
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -83,25 +87,133 @@ Widget _getListWidgets(List<Widget> yourList){
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                    // containerList.map(((e) => e)).toList() -> a map to iterate through array
-                    //when pressed add it to array and this array has all the comp from DB too
-                    caregiverReminderComp(reminder: "Pray daily prayers"),
-                    // caregiverReminderComp(reminder: "Pray daily prayers"),
+                  FutureBuilder<List<Reminder>>(
+                    future: FirebaseApi.getAllReminders(widget.learner_id),
+                    builder: (context, snapshot) {
+                      // if (snapshot.hasData) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        if (snapshot.hasData) {
+                          print("okayyyy: ");
+                          print(snapshot.data!);
+                          List<Reminder> reminders = snapshot.data!;
+                          // print(skills);
+                          return ListView.builder(
+                              itemCount: reminders.length,
+                              shrinkWrap: true,
+                              scrollDirection: Axis.vertical,
+                              itemBuilder: ((context, index) {
+                                final doc = reminders[index];
+                                print(doc.name);
+                                return caregiverReminderComp(
+                                  reminder: doc,
+                                );
+                              }));
+                        } else {
+                          return Container(
+                              margin: EdgeInsets.all(20),
+                              child: Center(
+                                child: Text(
+                                  "No reminders assigned...",
+                                  style: TextStyle(
+                                      color: Colors.grey, fontSize: 15),
+                                ),
+                              ));
+                        }
+                        // print("okayyyy: ");
+                        // print(snapshot.data!);
+                        // List<Reminder> reminders = snapshot.data!;
+                        // // print(skills);
+                        // return ListView.builder(
+                        //     itemCount: reminders.length,
+                        //     shrinkWrap: true,
+                        //     scrollDirection: Axis.vertical,
+                        //     itemBuilder: ((context, index) {
+                        //       final doc = reminders[index];
+                        //       print(doc.name);
+                        //       return caregiverReminderComp(
+                        //         reminder: doc,
+                        //        );
+                        //     }));
+                      } else if (snapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return Container(
+                            margin: EdgeInsets.all(15),
+                            child: Center(child: CircularProgressIndicator()));
+                      } else {
+                        return Container(
+                            margin: EdgeInsets.all(20),
+                            child: Center(
+                              child: Text(
+                                "No reminders assigned...",
+                                style:
+                                    TextStyle(color: Colors.grey, fontSize: 15),
+                              ),
+                            ));
+                      }
+                    },
+                  )
 
-         ] )),
+                  // containerList.map(((e) => e)).toList() -> a map to iterate through array
+                  //when pressed add it to array and this array has all the comp from DB too
+                  // caregiverReminderComp(),
+                  // caregiverReminderComp(reminder: "Pray daily prayers"),
+                ])),
           ),
           Container(
               child: buttonImage(
                   image: "lib/assets/bellImage.png",
                   text: "Add Reminder",
-                  function: {
-                    returnComp(),
-                    print(containerList),
-                    setState(
-                      () {
-                        clicked = true;
-                      },
-                    )
+                  function: () async {
+                    // returnComp();
+                    // print(containerList);
+                    // setState(
+                    //   () {
+                    //     clicked = true;
+                    //   },
+                    // );
+                    try {
+                      Reminder reminder = Reminder(reminder_id: "", name: "");
+                      await FirebaseApi.addReminder(
+                          reminder, widget.learner_id);
+                      if (true) {
+                        showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                                  title: Text(
+                                    "Reminder added!",
+                                    style: TextStyle(
+                                        color: Color.fromARGB(255, 0, 0, 0),
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 20),
+                                  ),
+                                  content: Image.asset(
+                                    'lib/assets/check.png',
+                                    alignment: Alignment.center,
+                                    height: 55,
+                                    width: 55,
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                        child: Text("Okay"),
+                                        onPressed: () async {
+                                          Navigator.pop(context);
+                                          await FirebaseApi.getAllReminders(
+                                              widget.learner_id);
+                                        })
+                                  ],
+                                ));
+                      }
+                    } catch (error) {
+                      print(error);
+                      final snackBarC = SnackBar(
+                          content: Text(
+                              "Couldn't create reminder. Please try again later."),
+                          action: SnackBarAction(
+                            label: 'Undo',
+                            onPressed: () {},
+                          ));
+                      ScaffoldMessenger.of(context).showSnackBar(snackBarC);
+                    }
                   },
                   color: Color.fromARGB(255, 66, 135, 123)),
               alignment: Alignment.center),

@@ -1015,12 +1015,12 @@ addTaskDetails(
                                   print("here-2");
                                   final snackBarC = SnackBar(
                                       content: Text(
-                                          "An internal issue has occured! Please try again later."));
+                                          "An internal issue has occured! Please try again later."),
                                   action:
                                   SnackBarAction(
                                     label: 'Undo',
                                     onPressed: () {},
-                                  );
+                                  ));
                                   ScaffoldMessenger.of(context)
                                       .showSnackBar(snackBarC);
                                 }

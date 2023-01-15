@@ -1,17 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:fyp_application/api/firebase_api.dart';
+
+import '../../Model/Skill.dart';
 
 class caregiverSkillComp extends StatefulWidget {
+  final Skill skill;
+  final String skill_id;
   final String image;
   final String name;
 
   const caregiverSkillComp(
-      {super.key, required this.image, required this.name});
+      {super.key,
+      required this.skill,
+      required this.skill_id,
+      required this.image,
+      required this.name});
 
   @override
   State<caregiverSkillComp> createState() => _caregiverSkillCompState();
 }
+
+TextEditingController nameController = TextEditingController();
 
 class _caregiverSkillCompState extends State<caregiverSkillComp> {
   bool checked = false;
@@ -42,10 +53,13 @@ class _caregiverSkillCompState extends State<caregiverSkillComp> {
                 padding: EdgeInsets.only(left: 20, top: 5, right: 5),
                 child: Container(
                   child: TextField(
+                      controller: nameController,
                       textAlign: TextAlign.left,
                       readOnly: false,
                       onChanged: (value) {
-                        //save to DB
+                        setState(() {
+                          nameController.text = value;
+                        });
                       },
                       showCursor: true,
                       cursorColor: Color.fromARGB(255, 66, 135, 123),
@@ -74,7 +88,9 @@ class _caregiverSkillCompState extends State<caregiverSkillComp> {
                       height: 15,
                     ),
                   ),
-                  onTap: () {
+                  onTap: () async{
+                    await FirebaseApi.updateSkill(
+                        widget.skill_id, nameController.text, checked);
                     //save to DB
                   },
                 ),
@@ -87,8 +103,8 @@ class _caregiverSkillCompState extends State<caregiverSkillComp> {
                       height: 15,
                     ),
                   ),
-                  onTap: () {
-                    //delete from DB
+                  onTap: () async{
+                    await FirebaseApi.deleteSkill(widget.skill);
                   },
                 )
               ],

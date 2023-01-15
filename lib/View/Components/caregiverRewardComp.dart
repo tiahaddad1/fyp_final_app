@@ -2,14 +2,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:fyp_application/api/firebase_api.dart';
+
+import '../../Model/Reward.dart';
 
 class caregiverRewardComp extends StatefulWidget {
+  final Reward rewardObj;
   final String text;
   final String image;
   final String reward;
 
   const caregiverRewardComp({
     super.key,
+    required this.rewardObj,
     required this.text,
     required this.image,
     required this.reward,
@@ -18,6 +23,9 @@ class caregiverRewardComp extends StatefulWidget {
   @override
   State<caregiverRewardComp> createState() => _caregiverRewardCompState();
 }
+
+final rewardNameController = TextEditingController();
+final pointsController = TextEditingController();
 
 class _caregiverRewardCompState extends State<caregiverRewardComp> {
   @override
@@ -61,8 +69,16 @@ class _caregiverRewardCompState extends State<caregiverRewardComp> {
               ),
             )),
             // padding: EdgeInsets.only(left:5,right:2,top7),
-            child: Text(
-              widget.text,
+            child: TextField(
+              controller: rewardNameController,
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: widget.text,
+                hintStyle: TextStyle(
+                    color: Color.fromARGB(255, 0, 0, 0),
+                    fontSize: 16,
+                    fontFamily: "Fredoka-Medium"),
+              ),
               style: TextStyle(
                   fontFamily: "Fredoka-Medium",
                   color: Colors.black,
@@ -83,7 +99,16 @@ class _caregiverRewardCompState extends State<caregiverRewardComp> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("+" + widget.reward,
+                  TextField(
+                      controller: pointsController,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "+" + widget.reward,
+                        hintStyle: TextStyle(
+                            color: Color.fromARGB(255, 80, 169, 154),
+                            fontSize: 20,
+                            fontFamily: "Fredoka-Medium"),
+                      ),
                       style: TextStyle(
                           fontFamily: "Fredoka-Medium",
                           color: Color.fromARGB(255, 80, 169, 154),
@@ -102,8 +127,12 @@ class _caregiverRewardCompState extends State<caregiverRewardComp> {
                             height: 15,
                           ),
                         ),
-                        onTap: () {
-                          //save to DB
+                        onTap: () async {
+                          await FirebaseApi.updateReward(
+                              widget.rewardObj.reward_id,
+                              rewardNameController.text,
+                              int.parse(pointsController.text));
+                          //update and save to DB
                         },
                       ),
                       GestureDetector(
@@ -115,7 +144,8 @@ class _caregiverRewardCompState extends State<caregiverRewardComp> {
                             height: 15,
                           ),
                         ),
-                        onTap: () {
+                        onTap: () async {
+                          await FirebaseApi.deleteReward(widget.rewardObj);
                           //delete from DB
                         },
                       )
