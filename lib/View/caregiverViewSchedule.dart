@@ -137,10 +137,12 @@ class _caregiverScheduleState extends State<caregiverSchedule> {
                   //     crossAxisAlignment: CrossAxisAlignment.start,
                   //     children: [
                   FutureBuilder<List<Task>>(
-                      future: FirebaseApi.getAllTasks(_selectedDate,widget.learner_id),
+                      future: FirebaseApi.getAllTasks(
+                          _selectedDate, widget.learner_id),
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           List<Task> taskss = snapshot.data!;
+                          print(taskss);
                           if (taskss.isNotEmpty) {
                             print("taskss.isNotEmpty: " +
                                 taskss.isNotEmpty.toString());

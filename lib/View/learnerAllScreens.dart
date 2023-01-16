@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:fyp_application/Model/Learner.dart';
 import 'package:fyp_application/View/Components/taskComponent.dart';
 import 'package:fyp_application/View/learnerHome.dart';
 import 'package:fyp_application/View/learnerProfile.dart';
@@ -8,6 +9,8 @@ import 'package:fyp_application/View/learnerReminders.dart';
 import 'package:fyp_application/View/learnerSkills.dart';
 import 'package:fyp_application/View/taskScreen.dart';
 
+import '../Provider/User-provider.dart';
+import '../api/firebase_api.dart';
 import 'accomplishScreen.dart';
 
 class learnerAllScreens extends StatefulWidget {
@@ -18,6 +21,12 @@ class learnerAllScreens extends StatefulWidget {
 }
 
 class _learnerAllScreensState extends State<learnerAllScreens> {
+  // String currentUser = UserProvider.getUserEmail();
+  // Future<Learner> returnLearnerObj() async {
+  //   return await FirebaseApi.getCurrentLearner(currentUser)!;
+  // }
+
+
   int index = 0;
   final screens = [
     learnerHome(),
@@ -29,7 +38,7 @@ class _learnerAllScreensState extends State<learnerAllScreens> {
   ];
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(

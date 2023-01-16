@@ -16,6 +16,13 @@ class caregiverReminders extends StatefulWidget {
 }
 
 class _caregiverRemindersState extends State<caregiverReminders> {
+  late List<Reminder> reminders;
+  @override
+  void setState(VoidCallback fn) {
+    reminders;
+    // TODO: implement setState
+    super.setState(fn);
+  }
   // bool clicked = false;
   // List<Widget> containerList = [];
   // returnComp() {
@@ -95,7 +102,7 @@ class _caregiverRemindersState extends State<caregiverReminders> {
                         if (snapshot.hasData) {
                           print("okayyyy: ");
                           print(snapshot.data!);
-                          List<Reminder> reminders = snapshot.data!;
+                           reminders = snapshot.data!;
                           // print(skills);
                           return ListView.builder(
                               itemCount: reminders.length,

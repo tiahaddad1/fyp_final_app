@@ -17,9 +17,16 @@ class caregiverRewards extends StatefulWidget {
   State<caregiverRewards> createState() => _caregiverRewardsState();
 }
 
-int totalPoints = 0;
-
 class _caregiverRewardsState extends State<caregiverRewards> {
+  late List<int> rewards;
+  late int totalPoints = 0;
+  @override
+  void setState(_) {
+    // TODO: implement setState
+    rewards;
+    totalPoints;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -97,7 +104,7 @@ class _caregiverRewardsState extends State<caregiverRewards> {
                                           final doc = rewards[index];
                                           print(doc.name);
                                           return caregiverRewardComp(
-                                            rewardObj:doc,
+                                            rewardObj: doc,
                                             text: doc.name,
                                             image: doc.image,
                                             reward: doc.points.toString(),
@@ -144,7 +151,8 @@ class _caregiverRewardsState extends State<caregiverRewards> {
                         function: () {
                           showDialog(
                               context: context,
-                              builder: (context) => addNewRewardCaregiver(learner_id:widget.learner_id));
+                              builder: (context) => addNewRewardCaregiver(
+                                  learner_id: widget.learner_id));
                           //should be able to view a pop up for adding a new reward
                         },
                         color: Color.fromARGB(255, 66, 135, 123)),
@@ -183,20 +191,23 @@ class _caregiverRewardsState extends State<caregiverRewards> {
                                         widget.learner_id),
                                     builder: (context, snapshot) {
                                       if (snapshot.hasData) {
-                                        final rewards = snapshot.data;
-                                        // setState(() {
-                                          totalPoints = rewards!.fold(
-                                              0,
-                                              (previous, current) =>
-                                                  previous + current);
-                                        // });
+                                        rewards = snapshot.data!;
+                                        totalPoints = rewards.fold(
+                                            0,
+                                            (previous, current) =>
+                                                previous + current);
+                                        setState(() {
+                                          totalPoints;
+                                        });
+                                        print(totalPoints);
                                         print(rewards);
-                                        return Expanded(
+                                        return Column(children: [Expanded(
                                           //fix the design layout
                                           child: SafeArea(
                                               child: GridView.builder(
                                             itemCount: snapshot.data!.length,
-                                            padding: EdgeInsets.only(top: 20),
+                                            padding: EdgeInsets.only(
+                                                top: 20, left: 10, right: 10),
                                             shrinkWrap: true,
                                             scrollDirection: Axis.vertical,
                                             itemBuilder: (context, index) {
@@ -208,12 +219,25 @@ class _caregiverRewardsState extends State<caregiverRewards> {
                                             },
                                             gridDelegate:
                                                 new SliverGridDelegateWithFixedCrossAxisCount(
-                                                    crossAxisCount: 2,
+                                                    crossAxisCount: 6,
                                                     childAspectRatio: 1,
                                                     crossAxisSpacing: 0,
-                                                    mainAxisSpacing: 10),
+                                                    mainAxisSpacing: 1),
                                           )),
-                                        );
+                                        ),
+                                        Container(
+                                margin: EdgeInsets.all(15),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  "Total points earned: " +
+                                      totalPoints.toString(),
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      decoration: TextDecoration.underline,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                              )]);
                                       } else {
                                         return Container(
                                             margin: EdgeInsets.all(20),
@@ -228,19 +252,19 @@ class _caregiverRewardsState extends State<caregiverRewards> {
                                       }
                                     }),
                               ),
-                              Container(
-                                margin: EdgeInsets.all(15),
-                                alignment: Alignment.center,
-                                child: Text(
-                                  "Total points earned: " +
-                                      totalPoints.toString(),
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      decoration: TextDecoration.underline,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                              )
+                              // Container(
+                              //   margin: EdgeInsets.all(15),
+                              //   alignment: Alignment.center,
+                              //   child: Text(
+                              //     "Total points earned: " +
+                              //         totalPoints.toString(),
+                              //     style: TextStyle(
+                              //         color: Colors.black,
+                              //         decoration: TextDecoration.underline,
+                              //         fontSize: 12,
+                              //         fontWeight: FontWeight.w600),
+                              //   ),
+                              // )
                             ],
                           )))))
         ],

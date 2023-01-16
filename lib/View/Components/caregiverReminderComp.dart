@@ -11,9 +11,10 @@ class caregiverReminderComp extends StatefulWidget {
   State<caregiverReminderComp> createState() => _caregiverReminderCompState();
 }
 
-TextEditingController reminderNameController = new TextEditingController();
+
 
 class _caregiverReminderCompState extends State<caregiverReminderComp> {
+  TextEditingController reminderNameController = new TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -34,12 +35,6 @@ class _caregiverReminderCompState extends State<caregiverReminderComp> {
                   controller: reminderNameController,
                   textAlign: TextAlign.left,
                   readOnly: false,
-                  onChanged: (value) {
-                    setState(() {
-                      reminderNameController.text = value;
-                    });
-                    //save to DB
-                  },
                   showCursor: true,
                   cursorColor: Color.fromARGB(255, 66, 135, 123),
                   decoration: InputDecoration(
@@ -71,7 +66,7 @@ class _caregiverReminderCompState extends State<caregiverReminderComp> {
               ),
               onTap: () async {
                 await FirebaseApi.updateReminder(
-                    widget.reminder!.reminder_id, widget.reminder!.name);
+                    widget.reminder!.reminder_id, reminderNameController.text);
                 //save to DB
               },
             ),

@@ -263,6 +263,24 @@ class FirebaseApi {
     return c;
   }
 
+  static Future<Learner>? getCurrentLearner(String email) async {
+    final a = await FirebaseFirestore.instance
+        .collection('learner')
+        .where('email', isEqualTo: email)
+        .get();
+    Learner l = new Learner(
+        user_id: a.docs[0]['learnerID'],
+        first_name: a.docs[0]['firstName'],
+        last_name: a.docs[0]['lastName'],
+        email: a.docs[0]['email'],
+        password: a.docs[0]['password'],
+        about_description: a.docs[0]['about_description'],
+        profile_pic: a.docs[0]['profile_pic'],
+        birth_date: a.docs[0]['birth_date'],
+        caregiver_assigned: a.docs[0]['caregiverAssigned']);
+    return l;
+  }
+
   static updateImage(String image, String email) async {
     final a = await FirebaseFirestore.instance
         .collection('caregiver')
@@ -324,6 +342,27 @@ class FirebaseApi {
     );
     final docUser =
         FirebaseFirestore.instance.collection('caregiver').doc(c.user_id);
+    await docUser.update({'about_description': desc});
+  }
+
+  static updateDescriptionLearner(String desc) async {
+    final a = await FirebaseFirestore.instance
+        .collection('learner')
+        .where('email', isEqualTo: UserProvider.getUserEmail())
+        .get();
+    Learner l = new Learner(
+        user_id: a.docs[0]['learnerID'],
+        first_name: a.docs[0]['firstName'],
+        last_name: a.docs[0]['lastName'],
+        email: a.docs[0]['email'],
+        password: a.docs[0]['password'],
+        about_description: a.docs[0]['about_description'],
+        profile_pic: a.docs[0]['profile_pic'],
+        birth_date: a.docs[0]['birth_date'],
+        caregiver_assigned: a.docs[0]['caregiverAssigned']);
+
+    final docUser =
+        FirebaseFirestore.instance.collection('learner').doc(l.user_id);
     await docUser.update({'about_description': desc});
   }
 
@@ -955,6 +994,8 @@ class FirebaseApi {
               subtasks: checkTask.docs[0]['subtasks'],
             );
             taskss.add(ta);
+            print("size before:");
+            print(taskss.length);
           }
         });
       } catch (error) {
@@ -963,7 +1004,82 @@ class FirebaseApi {
     } else {
       print("the list is empty");
     }
+    print("size after:");
+    print(taskss.length);
     return taskss;
+  }
+
+  static Future<List<t.Task>> getAllTasksLearner(
+      DateTime selectedDate, String learner_id) async {
+    //pass the selected date
+    //select the task table and take the tasks from the selecte ddate
+    //return that list
+
+//should be this:
+    // String? currentL = await LearnerProvider.readFromLocalStorage();
+//what works:
+    // String currentL = "JzEyiITsGIuF4YM46TTx";
+    // print("TIAAAA: "+learner_id);
+    // print("current learner is: " + currentL);
+    String d = selectedDate.toString().substring(0, 10);
+    DateTime selectedDateString = DateFormat("yyyy-MM-dd").parse(d);
+    String formatD = DateFormat("M/dd/yyyy").format(selectedDateString);
+    // print(DateTime.parse(d));
+
+    final learnertasks = await FirebaseFirestore.instance
+        .collection('learner_tasks')
+        .where('user_id', isEqualTo: learner_id)
+        .get();
+
+    final allData =
+        learnertasks.docs.map((learnertask) => learnertask.data()).toList();
+    late List<Learner_Tasks> list = [];
+
+    if (allData.length > 0) {
+      try {
+        print("1");
+        //a list that loops through every element and assigns it to the object
+        //learner_task
+        list = allData.map((document) {
+          Learner_Tasks learnertask = Learner_Tasks.fromJson(document);
+          return (learnertask);
+        }).toList();
+      } catch (Exception) {
+        print("list is empty, so null");
+      }
+    }
+    late List<t.Task> taskss = [];
+
+    // if (list.length > 0) {
+    //   try {
+
+    return Future.wait(list.map((lt) async {
+      // print("2");
+      final checkTask = await FirebaseFirestore.instance
+          .collection('task')
+          .where('task_id', isEqualTo: lt.task_id) //equals to the learner
+          .where('date', isEqualTo: formatD) //equals to the selected date
+          .get();
+
+      t.Task ta = new t.Task(
+        task_id: checkTask.docs[0]['task_id'],
+        name: checkTask.docs[0]['name'],
+        description: checkTask.docs[0]['description'],
+        date: checkTask.docs[0]['date'],
+        start_time: checkTask.docs[0]['start_time'],
+        end_time: checkTask.docs[0]['end_time'],
+        rewards: checkTask.docs[0]['rewards'],
+        reminder: checkTask.docs[0]['reminder'],
+        video: checkTask.docs[0]['video'],
+        subtasks: checkTask.docs[0]['subtasks'],
+      );
+      taskss.add(ta);
+      return Future.value(ta);
+    })).then((List<t.Task> taskss) {
+      print(taskss.length);
+      print(taskss);
+      return taskss;
+    });
   }
 
   //SKILLS related methods//
@@ -1041,7 +1157,7 @@ class FirebaseApi {
   }
 
   static Future<List<Skill>> getAllSkills(String learner_id) async {
-    print(learner_id);
+    // print(learner_id);
     final learnerSkills = await FirebaseFirestore.instance
         .collection('learner_skills')
         .where('user_id', isEqualTo: learner_id)
@@ -1064,39 +1180,86 @@ class FirebaseApi {
         print("no skill for this learner");
       }
     }
-    late List<Skill> skillsList = [];
+    print("list:");
+    print(list);
+
+    List<Skill> skillsList = [];
+
+    return Future.wait(list.map((ls) async {
+      final checkSkill = await FirebaseFirestore.instance
+          .collection('skill')
+          .where('skill_id', isEqualTo: ls.skill_id)
+          .get();
+      Skill s = new Skill(
+          skill_id: checkSkill.docs[0]['skill_id'],
+          name: checkSkill.docs[0]['name'],
+          image: checkSkill.docs[0]['image'],
+          date_completed: checkSkill.docs[0]['date_completed'],
+          is_completed: checkSkill.docs[0]['is_completed']);
+      print("im hereeeee");
+      skillsList.add(s);
+      return Future.value(s);
+    })).then((List<Skill> skills) {
+      return skills;
+    });
+
     // if (list.length > 0) {
-    try {
-      list.forEach((ls) async {
-        print(ls.skill_id);
+    // try {
+    // Future.wait(list.map((ls) async {
 
-        final checkSkill = await FirebaseFirestore.instance
-            .collection('skill')
-            .where('skill_id', isEqualTo: ls.skill_id)
-            .get();
+    //   final checkSkill = await FirebaseFirestore.instance
+    //       .collection('skill')
+    //       .where('skill_id', isEqualTo: ls.skill_id)
+    //       .get();
 
-        // if (checkSkill.size > 0) {
-        Skill s = new Skill(
-            skill_id: checkSkill.docs[0]['skill_id'],
-            name: checkSkill.docs[0]['name'],
-            image: checkSkill.docs[0]['image'],
-            date_completed: checkSkill.docs[0]['date_completed'],
-            is_completed: checkSkill.docs[0]['is_completed']);
+    //   // if (checkSkill.size > 0) {
+    //   Skill s = new Skill(
+    //       skill_id: checkSkill.docs[0]['skill_id'],
+    //       name: checkSkill.docs[0]['name'],
+    //       image: checkSkill.docs[0]['image'],
+    //       date_completed: checkSkill.docs[0]['date_completed'],
+    //       is_completed: checkSkill.docs[0]['is_completed']);
+    //   print("im hereeeee");
+    //   // print(s);
+    //   skillsList.add(s);
+    // })).then((_) {
+    //   print(skillsList.length);
+    //   return skillsList;
+    // });
 
-        skillsList.add(s);
-        print(skillsList.length);
-        // }
-      });
-      print(skillsList);
-    } catch (error) {
-      print(error);
-    }
+    // list.forEach((ls) async {
+    //   //print(ls.skill_id);
+
+    //   final checkSkill = await FirebaseFirestore.instance
+    //       .collection('skill')
+    //       .where('skill_id', isEqualTo: ls.skill_id)
+    //       .get();
+
+    //   // if (checkSkill.size > 0) {
+    //   Skill s = new Skill(
+    //       skill_id: checkSkill.docs[0]['skill_id'],
+    //       name: checkSkill.docs[0]['name'],
+    //       image: checkSkill.docs[0]['image'],
+    //       date_completed: checkSkill.docs[0]['date_completed'],
+    //       is_completed: checkSkill.docs[0]['is_completed']);
+    //   print("im hereeeee");
+    //   // print(s);
+    //   skillsList.add(s);
+    //   // print(skillsList.length);
+    //   print(skillsList.length);
+    //   // }
+    // });
+    // print(skillsList);
+    // print(skillsList.length);
+    // } catch (error) {
+    //   print(error);
+    // }
     // } else {
     //   print("the list is empty");
     // }
     print("skills list:");
     print(skillsList.length);
-    print(skillsList);
+    // print(skillsList);
     return skillsList;
   }
 
@@ -1191,29 +1354,45 @@ class FirebaseApi {
     }
     late List<Reminder> remindersList = [];
     // if (list.length > 0) {
-    try {
-      list.forEach((lr) async {
-        print(lr.reminder_id);
+    // try {
+    return Future.wait(list.map((lr) async {
+      final checkReminder = await FirebaseFirestore.instance
+          .collection('reminder')
+          .where('reminder_id', isEqualTo: lr.reminder_id)
+          .get();
+      Reminder r = new Reminder(
+        reminder_id: checkReminder.docs[0]['reminder_id'],
+        name: checkReminder.docs[0]['name'],
+      );
 
-        final checkReminder = await FirebaseFirestore.instance
-            .collection('reminder')
-            .where('reminder_id', isEqualTo: lr.reminder_id)
-            .get();
+      remindersList.add(r);
+      return Future.value(r);
+    })).then((List<Reminder> reminderss) {
+      return reminderss;
+    });
 
-        // if (checkSkill.size > 0) {
-        Reminder r = new Reminder(
-          reminder_id: checkReminder.docs[0]['reminder_id'],
-          name: checkReminder.docs[0]['name'],
-        );
+    list.forEach((lr) async {
+      print(lr.reminder_id);
 
-        remindersList.add(r);
-        print(remindersList.length);
-        // }
-      });
-      print(remindersList);
-    } catch (error) {
-      print(error);
-    }
+      final checkReminder = await FirebaseFirestore.instance
+          .collection('reminder')
+          .where('reminder_id', isEqualTo: lr.reminder_id)
+          .get();
+
+      // if (checkSkill.size > 0) {
+      Reminder r = new Reminder(
+        reminder_id: checkReminder.docs[0]['reminder_id'],
+        name: checkReminder.docs[0]['name'],
+      );
+
+      remindersList.add(r);
+      print(remindersList.length);
+      // }
+    });
+    print(remindersList);
+    // } catch (error) {
+    //   print(error);
+    // }
     // } else {
     //   print("the list is empty");
     // }
@@ -1322,36 +1501,24 @@ class FirebaseApi {
     }
     late List<Reward> rewardsList = [];
     // if (list.length > 0) {
-    try {
-      list.forEach((lr) async {
-        print(lr.reward_id);
+    // try {
+    return Future.wait(list.map((lr) async {
+      final checkReward = await FirebaseFirestore.instance
+          .collection('reward')
+          .where('reward_id', isEqualTo: lr.reward_id)
+          .get();
+      Reward rew = new Reward(
+        reward_id: checkReward.docs[0]['reward_id'],
+        name: checkReward.docs[0]['name'],
+        image: checkReward.docs[0]['image'],
+        points: checkReward.docs[0]['points'],
+      );
 
-        final checkReward = await FirebaseFirestore.instance
-            .collection('reward')
-            .where('reward_id', isEqualTo: lr.reward_id)
-            .get();
-
-        // if (checkSkill.size > 0) {
-        Reward rew = new Reward(
-          reward_id: checkReward.docs[0]['reward_id'],
-          name: checkReward.docs[0]['name'],
-          image: checkReward.docs[0]['image'],
-          points: checkReward.docs[0]['points'],
-        );
-
-        rewardsList.add(rew);
-        print(rewardsList.length);
-        // }
-      });
-    } catch (error) {
-      print(error);
-    }
-    // } else {
-    //   print("the list is empty");
-    // }
-    print("rewards list:");
-    print(rewardsList.length);
-    return rewardsList;
+      rewardsList.add(rew);
+      return Future.value(rew);
+    })).then((List<Reward> rewardss) {
+      return rewardss;
+    });
   }
 
   static Future<List<int>> getRewardsPoints(String learner_id) async {
@@ -1359,11 +1526,11 @@ class FirebaseApi {
 
     List<Reward> allrewards = await getAllRewards(learner_id);
 
-    allrewards.forEach((reward) {
+    return Future.wait(allrewards.map((reward) async {
       points.add(reward.points);
+      return Future.value(reward.points);
+    })).then((List<int> pointss) {
+      return pointss;
     });
-    print("all the points: ");
-    print(points);
-    return points;
   }
 }

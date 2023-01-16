@@ -24,6 +24,7 @@ class learnerLogin extends StatefulWidget {
       return "";
     }
   }
+
   @override
   State<learnerLogin> createState() => _learnerLogin();
 }
@@ -39,11 +40,12 @@ bool loggedIn = false;
 final userRole = UserProvider.getUserRole();
 
 class _learnerLogin extends State<learnerLogin> {
-    String urlImage = "";
+  String urlImage = "";
 
   Future<String> getUrlImage() async {
     return await this.urlImage;
   }
+
   @override
   Widget build(BuildContext context) {
     final _formKey = GlobalKey<FormState>();
@@ -85,7 +87,8 @@ class _learnerLogin extends State<learnerLogin> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(top:15,left:15,right:15,bottom:25),
+                  padding:
+                      EdgeInsets.only(top: 15, left: 15, right: 15, bottom: 25),
                   child: Container(
                     color: Color.fromARGB(151, 255, 255, 255),
                     child: TextFormField(
@@ -104,7 +107,9 @@ class _learnerLogin extends State<learnerLogin> {
                     child: new TextButton(
                         onPressed: () async {
                           if (passwordControllerLearner.text.isEmpty ||
-                              emailControllerLearner.text.isEmpty || passwordControllerLearner.text==""||emailControllerLearner.text=="") {
+                              emailControllerLearner.text.isEmpty ||
+                              passwordControllerLearner.text == "" ||
+                              emailControllerLearner.text == "") {
                             showDialog(
                                 context: context,
                                 builder: (context) => AlertDialog(
@@ -158,28 +163,25 @@ class _learnerLogin extends State<learnerLogin> {
                                       emailControllerLearner.text,
                                       passwordControllerLearner.text) ==
                                   true) {
-
                                 try {
-                                  await AuthService.signUp(
-                                        "L-" +
-                                              emailControllerLearner.text
-                                                  .trim(),
-                                         passwordControllerLearner
-                                              .text
-                                              .trim(),context);
+                                  await AuthService.login(
+                                      "L-" + emailControllerLearner.text.trim(),
+                                      passwordControllerLearner.text.trim(),
+                                      context);
                                   print("Signed Up!");
                                 } on FirebaseAuthException catch (e) {
+                                  print(e);
                                   print("Error with signing up!");
                                 }
                                 if (true) {
-
                                   print("yes");
+                                  navigatorKey.currentState!.popUntil(
+                               (route) => route.isFirst);
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => learnerHome()));
                                 }
-
                               } else {
                                 showDialog(
                                     context: context,
@@ -225,7 +227,8 @@ class _learnerLogin extends State<learnerLogin> {
                                 RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(5.0),
                                     side: BorderSide(
-                                        color: Color.fromARGB(255, 4, 37, 52)))))))
+                                        color:
+                                            Color.fromARGB(255, 4, 37, 52)))))))
               ])));
     }
 
@@ -233,71 +236,68 @@ class _learnerLogin extends State<learnerLogin> {
         navigatorKey: navigatorKey,
         debugShowCheckedModeBanner: false,
         home: Scaffold(
-          key: scaffoldKey,
-          appBar:
-              // loggedIn == true && userRole=="l"
-              //     ? null
-              //     :
-              AppBar(
-                  elevation: 0.0,
-                  backgroundColor: Color.fromARGB(255, 180, 208, 229),
-                  automaticallyImplyLeading: false,
-                  leadingWidth: 100,
-                  leading: ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      elevation: 0.0,
-                      primary: Colors.transparent,
-                    ),
-                    icon: Icon(Icons.arrow_back_ios_new,
-                        color: Color.fromARGB(222, 0, 0, 0)),
-                    onPressed: () => Navigator.of(context).pop(),
-                    label: const Text(
-                      "Go Back",
-                      style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
-                    ),
-                  )),
-          body:
-
-              StreamBuilder<User?>(
-                  stream: FirebaseAuth.instance.authStateChanges(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
-                    } else if (snapshot.hasError) {
-                      return Container(
-                          color: Colors.white,
-                          alignment: Alignment.bottomCenter,
-                          child: Column(children: [
-                            Image.asset(
-                              "lib/assets/issue.png",
-                              width: 100,
-                              height: 200,
-                            ),
-                            Padding(
-                                padding: EdgeInsets.all(60),
-                                child: Text(
-                                  "An issue has occured, please refresh the app.",
-                                  style: TextStyle(
-                                    color: Color.fromARGB(255, 171, 31, 21),
-                                    decoration: TextDecoration.none,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ))
-                          ]));
-                    } else if (snapshot.hasData) {
-                      if (userRole == "l") {
-                        loggedIn = true;
-                        return learnerHome();
-                      } else {
-                        return loginScreen();
-                      }
+            key: scaffoldKey,
+            appBar:
+                // loggedIn == true && userRole=="l"
+                //     ? null
+                //     :
+                AppBar(
+                    elevation: 0.0,
+                    backgroundColor: Color.fromARGB(255, 180, 208, 229),
+                    automaticallyImplyLeading: false,
+                    leadingWidth: 100,
+                    leading: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        elevation: 0.0,
+                        primary: Colors.transparent,
+                      ),
+                      icon: Icon(Icons.arrow_back_ios_new,
+                          color: Color.fromARGB(222, 0, 0, 0)),
+                      onPressed: () => Navigator.of(context).pop(),
+                      label: const Text(
+                        "Go Back",
+                        style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+                      ),
+                    )),
+            body: StreamBuilder<User?>(
+                stream: FirebaseAuth.instance.authStateChanges(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Container(
+                        color: Colors.white,
+                        alignment: Alignment.bottomCenter,
+                        child: Column(children: [
+                          Image.asset(
+                            "lib/assets/issue.png",
+                            width: 100,
+                            height: 200,
+                          ),
+                          Padding(
+                              padding: EdgeInsets.all(60),
+                              child: Text(
+                                "An issue has occured, please refresh the app.",
+                                style: TextStyle(
+                                  color: Color.fromARGB(255, 171, 31, 21),
+                                  decoration: TextDecoration.none,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ))
+                        ]));
+                  } else if (snapshot.hasData) {
+                    if (userRole == "l") {
+                      loggedIn = true;
+                      return learnerHome();
                     } else {
-                      loggedIn = false;
-             return loginScreen(); 
-              // loginScreen(),
-          }
-          } )
-        ));
+                      return loginScreen();
+                    }
+                  } else {
+                    loggedIn = false;
+                    return loginScreen();
+                    // loginScreen(),
+                  }
+                })));
   }
 }

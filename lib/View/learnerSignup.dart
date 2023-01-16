@@ -669,7 +669,7 @@ class _learnerSignupState extends State<learnerSignup> {
                                         password: Crypt.sha256(
                                                 passwordController.text)
                                             .toString(),
-                                        profile_pic: "",
+                                        profile_pic: ppUpload!,
                                         about_description: "",
                                         birth_date: DateFormat.yMd()
                                             .format(dateNow!)

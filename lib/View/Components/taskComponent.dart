@@ -6,10 +6,13 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../Model/Task.dart';
+
 class taskComponent extends StatefulWidget {
+  final Task task;
   const taskComponent({
     super.key,
-    task, //make required once backend done
+    required this.task, //make required once backend done
   });
 
   @override
@@ -27,7 +30,7 @@ class _taskComponentState extends State<taskComponent> {
   String? taskStatus;
   Color? textColor;
   Color? titleColor;
-  late VideoPlayerController _controller;
+  late VideoPlayerController _controller=VideoPlayerController.file(File(widget.task.video));
   final picker = ImagePicker();
   late File _video;
   bool vid = false;
@@ -70,7 +73,7 @@ class _taskComponentState extends State<taskComponent> {
 
     //GET THE VIDEO FROM DB
     final video = await picker.getVideo(source: ImageSource.gallery);
-    _video = File(video!.path);
+    _video = File(widget.task.video);
     _controller = VideoPlayerController.file(_video)
       ..initialize().then((_) {
         //     // _controller.play();
@@ -107,7 +110,7 @@ class _taskComponentState extends State<taskComponent> {
                   child: Text(
                     taskStatus ?? "Later",
                     style: TextStyle(
-                        color: titleColor??Color.fromARGB(255, 92,91,91),
+                        color: titleColor ?? Color.fromARGB(255, 92, 91, 91),
                         fontFamily: "FredokaOne-Regular",
                         fontSize: 28),
                   ),
@@ -116,9 +119,9 @@ class _taskComponentState extends State<taskComponent> {
                   padding: EdgeInsets.only(right: 20),
                   child: Text(
                     // task.startTime,
-                    "21:00",
+                    widget.task.start_time,
                     style: TextStyle(
-                        color: titleColor??Color.fromARGB(255, 92,91,91),
+                        color: titleColor ?? Color.fromARGB(255, 92, 91, 91),
                         fontFamily: "FredokaOne-Regular",
                         fontSize: 28),
                   ),
@@ -139,17 +142,18 @@ class _taskComponentState extends State<taskComponent> {
                         child: AspectRatio(
                           aspectRatio: 3 / 2,
                           // child: VideoPlayer(_controller),
+                          child: VideoPlayer(VideoPlayerController.file(File(widget.task.video))),
                         ))),
                 Container(
                   width: 150,
                   height: 100,
                   padding: EdgeInsets.only(left: 10),
-                  child: Text("Brush your teeth gently.",
+                  child: Text(widget.task.description,
                       // Text(task.description,
                       style: TextStyle(
                         fontFamily: "FredokaOne-Regular",
                         color: textColor ?? Color.fromARGB(255, 235, 235, 235),
-                        fontSize: 23,
+                        fontSize: 20,
                       )),
                 ),
               ],
@@ -162,7 +166,7 @@ class _taskComponentState extends State<taskComponent> {
                       padding: EdgeInsets.only(left: 80),
                       child: InkWell(
                         onTap: () {
-                          // _controller.play();
+                          _controller.play();
                         },
                         child: Image.asset(
                           'lib/assets/play-button.png',
@@ -174,7 +178,7 @@ class _taskComponentState extends State<taskComponent> {
                       padding: EdgeInsets.only(left: 20),
                       child: InkWell(
                         onTap: () {
-                          // _controller.pause();
+                          _controller.pause();
                         },
                         child: Image.asset(
                           'lib/assets/pause-button.png',

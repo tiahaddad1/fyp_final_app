@@ -22,9 +22,10 @@ class caregiverSkillComp extends StatefulWidget {
   State<caregiverSkillComp> createState() => _caregiverSkillCompState();
 }
 
-TextEditingController nameController = TextEditingController();
+
 
 class _caregiverSkillCompState extends State<caregiverSkillComp> {
+  TextEditingController nameController = TextEditingController();
   bool checked = false;
   @override
   Widget build(BuildContext context) {
@@ -39,6 +40,7 @@ class _caregiverSkillCompState extends State<caregiverSkillComp> {
             spreadRadius: 1)
       ], borderRadius: BorderRadius.circular(15), color: Colors.white),
       child: CheckboxListTile(
+        // selected: widget.skill.is_completed,
           // title: Text(widget.reminder.name),
           title:
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
@@ -46,8 +48,8 @@ class _caregiverSkillCompState extends State<caregiverSkillComp> {
                 padding: EdgeInsets.only(left: 5, right: 2, top: 3, bottom: 7),
                 child: Image.network(
                   widget.image,
-                  width: 35,
-                  height: 35,
+                  width: 40, //was 35
+                  height: 40, //was 35
                 )),
             Padding(
                 padding: EdgeInsets.only(left: 20, top: 5, right: 5),
@@ -56,11 +58,6 @@ class _caregiverSkillCompState extends State<caregiverSkillComp> {
                       controller: nameController,
                       textAlign: TextAlign.left,
                       readOnly: false,
-                      onChanged: (value) {
-                        setState(() {
-                          nameController.text = value;
-                        });
-                      },
                       showCursor: true,
                       cursorColor: Color.fromARGB(255, 66, 135, 123),
                       decoration: InputDecoration(
@@ -110,7 +107,7 @@ class _caregiverSkillCompState extends State<caregiverSkillComp> {
               ],
             )
           ]),
-          value: checked,
+          value: widget.skill.is_completed,
           controlAffinity: ListTileControlAffinity.leading,
           onChanged: (bool? b) {
             setState(() {

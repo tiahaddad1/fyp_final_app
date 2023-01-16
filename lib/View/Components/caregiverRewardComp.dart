@@ -24,10 +24,11 @@ class caregiverRewardComp extends StatefulWidget {
   State<caregiverRewardComp> createState() => _caregiverRewardCompState();
 }
 
-final rewardNameController = TextEditingController();
-final pointsController = TextEditingController();
 
 class _caregiverRewardCompState extends State<caregiverRewardComp> {
+
+final rewardNameController = TextEditingController();
+final pointsController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -48,7 +49,11 @@ class _caregiverRewardCompState extends State<caregiverRewardComp> {
             width: 60,
             height: 70,
             padding: EdgeInsets.all(5),
-            child: Image.asset(widget.image),
+            child: Image.network(
+              widget.image,
+              height: 32,
+              width: 35,
+            ),
             decoration: BoxDecoration(
                 border: Border(
               right: BorderSide(
@@ -58,8 +63,9 @@ class _caregiverRewardCompState extends State<caregiverRewardComp> {
             )),
           ),
           Container(
+            padding: EdgeInsets.only(left: 10),
             alignment: Alignment.center,
-            width: 200,
+            width: 260,
             height: 70,
             decoration: BoxDecoration(
                 border: Border(
@@ -86,14 +92,14 @@ class _caregiverRewardCompState extends State<caregiverRewardComp> {
             ),
           ),
           Container(
-              padding: EdgeInsets.only(top: 5),
+              padding: EdgeInsets.only(top: 5, left: 15),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.only(
                     topRight: Radius.circular(20),
                     bottomRight: Radius.circular(20)),
                 color: Color.fromARGB(255, 224, 227, 238),
               ),
-              width: 60,
+              width: 65,
               height: 70,
               alignment: Alignment.center,
               child: Column(
@@ -120,7 +126,7 @@ class _caregiverRewardCompState extends State<caregiverRewardComp> {
                       GestureDetector(
                         child: Padding(
                           padding:
-                              EdgeInsets.only(top: 10, right: 7, bottom: 10),
+                              EdgeInsets.only( right: 7),
                           child: Image.asset(
                             "lib/assets/editCont.png",
                             width: 15,
@@ -137,7 +143,7 @@ class _caregiverRewardCompState extends State<caregiverRewardComp> {
                       ),
                       GestureDetector(
                         child: Padding(
-                          padding: EdgeInsets.only(bottom: 5, top: 5),
+                          padding: EdgeInsets.only(),
                           child: Image.asset(
                             "lib/assets/delete.png",
                             width: 15,

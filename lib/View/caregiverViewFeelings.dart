@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:fyp_application/View/Components/feelingsComponent.dart';
+import 'package:fyp_application/View/feelingsPopUp.dart';
 import 'package:path_provider/path_provider.dart';
 // import 'package:simple_permissions/simple_permissions.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -86,10 +87,17 @@ class _caregiverFeelingsState extends State<caregiverFeelings> {
                               ),
                             ),
                             Padding(
-                              child: Image.asset(
-                                "lib/assets/feelingsDetailIcon.png",
-                                width: 60,
-                                height: 60,
+                              child: GestureDetector(
+                                child: Image.asset(
+                                  "lib/assets/feelingsDetailIcon.png",
+                                  width: 60,
+                                  height: 60,
+                                ),
+                                onTap: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) => feelingsPopUp());
+                                },
                               ),
                               padding: EdgeInsets.only(left: 5, right: 25),
                             )
@@ -221,8 +229,8 @@ class _caregiverFeelingsState extends State<caregiverFeelings> {
       row.add(getData()[i].feelingsRate);
       rows.add(row);
     }
-    String dir = (await getApplicationDocumentsDirectory()).absolute.path +
-        "/documents";
+    String dir =
+        (await getApplicationDocumentsDirectory()).absolute.path + "/documents";
 
     String file = "$dir";
     print(" FILE " + file);

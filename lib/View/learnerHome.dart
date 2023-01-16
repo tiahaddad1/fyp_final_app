@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/gestures.dart';
@@ -5,7 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:fyp_application/View/learnerSchedule.dart';
+import 'package:fyp_application/api/firebase_api.dart';
 import 'package:intl/intl.dart';
+
+import '../Model/Learner.dart';
+import '../Provider/User-provider.dart';
 
 class learnerHome extends StatefulWidget {
   const learnerHome({super.key});
@@ -56,6 +61,7 @@ final String date = DateFormat("dd-MM-yyyy").format(DateTime.now());
 final String nOrD = DateFormat("a").format(DateTime.now());
 
 class _learnerHomeState extends State<learnerHome> {
+  String currentUser = UserProvider.getUserEmail();
   late FileImage image;
 
   @override
@@ -63,60 +69,84 @@ class _learnerHomeState extends State<learnerHome> {
     return ListView(
       children: [
         Container(
-          margin: EdgeInsets.only(bottom: 5),
-          decoration: new BoxDecoration(
-              gradient: new LinearGradient(
-                  stops: [0.02, 0.02],
-                  colors: [Color.fromARGB(255, 64, 84, 155), colorByTime()]),
-              borderRadius: new BorderRadius.all(const Radius.circular(6.0))),
-          height: 150,
-          child: Row(children: [
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Padding(
-                padding: EdgeInsets.only(top: 25, right: 15, left: 15),
-                child: RichText(
-                    text: TextSpan(
-                  style: TextStyle(
-                    color: textColor(),
-                  ), //apply style to all
-                  children: [
-                    TextSpan(
-                        text: greeting(),
-                        style:
-                            TextStyle(fontFamily: "DMSans-Bold", fontSize: 21)),
-                    TextSpan(
-                        text: ", USER",
-                        style: TextStyle(
-                            fontFamily: "DMSans-Medium",
-                            fontWeight: FontWeight.bold,
-                            fontSize: 21)),
-                  ],
-                )),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 10, bottom: 10, left: 15,right:5),
-                child: Text(
-                  "Today: " + day + " , " + date,
-                  style: TextStyle(color: textColor(), fontSize: 13),
-                ),
-              ),
-            ]),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10), // Image border
-              child: SizedBox.fromSize(
-                size: Size.fromRadius(50), // Image radius
-                child: Image.asset("lib/assets/user1.png", fit: BoxFit.cover),
-              ),
-            ),
-            // Container(
-            //     height: 90,
-            //     width: 100,
-            //     // padding: EdgeInsets.only(top: 20),
-            //     child: Image.asset("lib/assets/user1.png",fit: BoxFit.fill),
-            //     decoration: BoxDecoration(
-            //         borderRadius: BorderRadius.all(Radius.circular(40))))
-          ]),
-        ),
+            margin: EdgeInsets.only(bottom: 5),
+            decoration: new BoxDecoration(
+                gradient: new LinearGradient(
+                    stops: [0.02, 0.02],
+                    colors: [Color.fromARGB(255, 64, 84, 155), colorByTime()]),
+                borderRadius: new BorderRadius.all(const Radius.circular(6.0))),
+            height: 150,
+            child: FutureBuilder<Learner>(
+              future: FirebaseApi.getCurrentLearner(currentUser),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  print(snapshot.data!.first_name);
+                  return Row(children: [
+                    Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding:
+                                EdgeInsets.only(top: 25, right: 15, left: 15),
+                            child: RichText(
+                                text: TextSpan(
+                              style: TextStyle(
+                                color: textColor(),
+                              ), //apply style to all
+                              children: [
+                                TextSpan(
+                                    text: greeting(),
+                                    style: TextStyle(
+                                        fontFamily: "DMSans-Bold",
+                                        fontSize: 21)),
+                                TextSpan(
+                                    text: ", " + snapshot.data!.first_name,
+                                    style: TextStyle(
+                                        fontFamily: "DMSans-Medium",
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 21)),
+                              ],
+                            )),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(
+                                top: 10, bottom: 10, left: 15, right: 5),
+                            child: Text(
+                              "Today: " + day + " , " + date,
+                              style:
+                                  TextStyle(color: textColor(), fontSize: 13),
+                            ),
+                          ),
+                        ]),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10), // Image border
+                      child: SizedBox.fromSize(
+                        size: Size.fromRadius(50), // Image radius
+                        child: Image.network(snapshot.data!.profile_pic,
+                            fit: BoxFit.cover),
+                      ),
+                    ),
+                    // Container(
+                    //     height: 90,
+                    //     width: 100,
+                    //     // padding: EdgeInsets.only(top: 20),
+                    //     child: Image.asset("lib/assets/user1.png",fit: BoxFit.fill),
+                    //     decoration: BoxDecoration(
+                    //         borderRadius: BorderRadius.all(Radius.circular(40))))
+                  ]);
+                } else {
+                  return Container(
+                    color: Color.fromARGB(255, 230, 231, 232),
+                    child: Center(
+                        child: Image.asset(
+                      "lib/assets/noData.png",
+                      width: 35,
+                      height: 35,
+                    )),
+                  );
+                }
+              },
+            )),
         Container(
             decoration: new BoxDecoration(
                 gradient: new LinearGradient(stops: [

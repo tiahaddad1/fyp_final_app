@@ -16,6 +16,12 @@ class caregiverSkills extends StatefulWidget {
 }
 
 class _caregiverSkillsState extends State<caregiverSkills> {
+  List<Skill> skills = [];
+  @override
+  void setState(_) {
+    skills;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,30 +85,34 @@ class _caregiverSkillsState extends State<caregiverSkills> {
                         FutureBuilder<List<Skill>>(
                           future: FirebaseApi.getAllSkills(widget.learner_id),
                           builder: (context, snapshot) {
+                            // List<Skill> skills =[];
                             // if (snapshot.hasData) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.done) {
-                                print("okayyyy: ");
-                                print(snapshot.data!);
-                                List<Skill> skills = snapshot.data!;
-                                print(skills);
-                                return ListView.builder(
-                                    itemCount: skills.length,
-                                    shrinkWrap: true,
-                                    scrollDirection: Axis.vertical,
-                                    itemBuilder: ((context, index) {
-                                      final doc = skills[index];
-                                      print(doc.name);
-                                      return caregiverSkillComp(
+                            // if (snapshot.connectionState ==
+                            //     ConnectionState.done) {
+                            if (snapshot.hasData) {
+                              // print("okayyyy: ");
+                              // print(snapshot.data!);
+                              skills = snapshot.data!;
+                              print("here here");
+                              print(skills.length);
+                              return ListView.builder(
+                                  itemCount: skills.length,
+                                  shrinkWrap: true,
+                                  scrollDirection: Axis.vertical,
+                                  itemBuilder: ((context, index) {
+                                    final doc = skills[index];
+                                    print(doc.name);
+                                    return caregiverSkillComp(
                                         skill: doc,
-                                        skill_id:doc.skill_id,
-                                          image: doc.image, name: doc.name);
-                                    }));
-                              }
-                              else if(snapshot.connectionState==ConnectionState.waiting){
-                                return Center(child: CircularProgressIndicator());
-                              }
-                             else {
+                                        skill_id: doc.skill_id,
+                                        image: doc.image,
+                                        name: doc.name);
+                                  }));
+                            }
+                            // else if(snapshot.connectionState==ConnectionState.waiting){
+                            else if (snapshot.hasError) {
+                              return Center(child: CircularProgressIndicator());
+                            } else {
                               return Container(
                                   margin: EdgeInsets.all(20),
                                   child: Center(
