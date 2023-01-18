@@ -1011,47 +1011,37 @@ class FirebaseApi {
 
   static Future<List<t.Task>> getAllTasksLearner(
       DateTime selectedDate, String learner_id) async {
-    //pass the selected date
-    //select the task table and take the tasks from the selecte ddate
-    //return that list
-
-//should be this:
-    // String? currentL = await LearnerProvider.readFromLocalStorage();
-//what works:
-    // String currentL = "JzEyiITsGIuF4YM46TTx";
-    // print("TIAAAA: "+learner_id);
-    // print("current learner is: " + currentL);
     String d = selectedDate.toString().substring(0, 10);
     DateTime selectedDateString = DateFormat("yyyy-MM-dd").parse(d);
     String formatD = DateFormat("M/dd/yyyy").format(selectedDateString);
-    // print(DateTime.parse(d));
 
     final learnertasks = await FirebaseFirestore.instance
         .collection('learner_tasks')
         .where('user_id', isEqualTo: learner_id)
         .get();
 
-    final allData =
-        learnertasks.docs.map((learnertask) => learnertask.data()).toList();
+    final allData = await Future.wait(learnertasks.docs
+        .map((learnertask) async => learnertask.data())
+        .toList());
+
+    // final allData =
+    //     learnertasks.docs.map((learnertask) => learnertask.data()).toList();
     late List<Learner_Tasks> list = [];
 
-    if (allData.length > 0) {
-      try {
-        print("1");
-        //a list that loops through every element and assigns it to the object
-        //learner_task
-        list = allData.map((document) {
-          Learner_Tasks learnertask = Learner_Tasks.fromJson(document);
-          return (learnertask);
-        }).toList();
-      } catch (Exception) {
-        print("list is empty, so null");
-      }
+    // if (allData.length > 0) {
+    try {
+      print("1");
+      //a list that loops through every element and assigns it to the object
+      //learner_task
+      list = allData.map((document) {
+        Learner_Tasks learnertask = Learner_Tasks.fromJson(document);
+        return (learnertask);
+      }).toList();
+    } catch (Exception) {
+      print("list is empty, so null");
     }
+    // }
     late List<t.Task> taskss = [];
-
-    // if (list.length > 0) {
-    //   try {
 
     return Future.wait(list.map((lt) async {
       // print("2");
@@ -1074,7 +1064,7 @@ class FirebaseApi {
         subtasks: checkTask.docs[0]['subtasks'],
       );
       taskss.add(ta);
-      return Future.value(ta);
+      return await Future.value(ta);
     })).then((List<t.Task> taskss) {
       print(taskss.length);
       print(taskss);

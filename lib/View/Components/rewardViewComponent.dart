@@ -40,7 +40,7 @@ class _rewardViewComponentState extends State<rewardViewComponent> {
             width: 60,
             height: 70,
             padding: widget.addNew==false?EdgeInsets.all(5):EdgeInsets.only(left: 12,right: 5,top: 7,bottom: 5),
-            child: widget.addNew==false?Image.asset(widget.image):Image.asset("lib/assets/addImage.png"),
+            child: widget.addNew==false?Image.network(widget.image):Image.asset("lib/assets/addImage.png"),
             decoration: BoxDecoration(
                 border: Border(
               right: BorderSide(
@@ -51,7 +51,7 @@ class _rewardViewComponentState extends State<rewardViewComponent> {
           ),
           Container(
             alignment: Alignment.center,
-            width: 230,
+            width:  widget.addNew==false?230:180,
             height: 70,
             decoration: BoxDecoration(
                 border: Border(

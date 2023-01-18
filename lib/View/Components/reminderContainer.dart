@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
+import '../../Model/Reminder.dart';
+
 class reminderContainer extends StatefulWidget {
+  final Reminder reminder;
   const reminderContainer(
-      {super.key, reminder}); //make required once backend done
+      {super.key, required this.reminder}); //make required once backend done
 
   @override
   State<reminderContainer> createState() => _reminderContainerState();
@@ -19,7 +22,7 @@ class _reminderContainerState extends State<reminderContainer> {
       child: CheckboxListTile(
           // title: Text(widget.reminder.name),
           title: Text(
-            "Pray daily prayers",
+            widget.reminder.name,
             style: TextStyle(
                 fontFamily: "Cambay-Regular",
                 fontSize: 20,

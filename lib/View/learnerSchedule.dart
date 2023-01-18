@@ -25,7 +25,6 @@ class _learnerScheduleState extends State<learnerSchedule> {
     tasks;
   }
 
-
   @override
   void setState(VoidCallback fn) {
     // TODO: implement setState
@@ -76,8 +75,9 @@ class _learnerScheduleState extends State<learnerSchedule> {
                       DateTime.now(), snapshot.data!.user_id),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
+                      print(snapshot.data![0].name);
                       setState(() {
-                        tasks=snapshot.data!;
+                        tasks = snapshot.data!;
                       });
                       print("hello");
                       return ListView.builder(

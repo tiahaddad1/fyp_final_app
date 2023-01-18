@@ -1,18 +1,61 @@
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:fyp_application/Model/Reward.dart';
+import 'package:image_picker/image_picker.dart';
 
+import '../../api/firebase_api.dart';
 import 'closeButton.dart';
 
 class newRewardComponent extends StatefulWidget {
-  const newRewardComponent({super.key});
+  final String learner;
+  const newRewardComponent({super.key, required this.learner});
 
   @override
   State<newRewardComponent> createState() => _newRewardComponentState();
 }
 
 class _newRewardComponentState extends State<newRewardComponent> {
+  final rewardController = TextEditingController();
+  final rewardPoints = TextEditingController();
+
+  File? image;
+  late String pic = "";
+  late String urlDownload = "";
+  Future capture() async {
+    try {
+      // ignore: deprecated_member_use
+      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (image == null) return;
+
+      final imageTemp = File(image.path);
+      setState(() => this.image = imageTemp); //was imageTemp
+      final path = "rewardImages/${rewardController.text}";
+      final ref = FirebaseStorage.instance.ref().child(path);
+      final uploadFile = await ref.putFile(File(image.path));
+      urlDownload = (await uploadFile.ref.getDownloadURL());
+      pic = urlDownload;
+      setState((() {
+        pic = urlDownload;
+      }));
+      print(pic);
+      print(urlDownload);
+      return urlDownload;
+      // final MediaSource s = ModalRoute.of(context).media;
+      // if (media == null) {
+      //   return;
+      // } else {
+      //   fileMedia = media;
+      // }
+    } on PlatformException catch (e) {
+      print("Failed to pick image: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -40,6 +83,7 @@ class _newRewardComponentState extends State<newRewardComponent> {
                   ),
                   Padding(
                     child: TextField(
+                      controller: rewardController,
                       cursorColor: Color.fromARGB(255, 100, 100, 100),
                       decoration: InputDecoration(
                         filled: true,
@@ -74,6 +118,7 @@ class _newRewardComponentState extends State<newRewardComponent> {
                           padding: EdgeInsets.only(left: 5, bottom: 10),
                         ),
                         TextField(
+                          controller: rewardPoints,
                           keyboardType: TextInputType.number,
                           inputFormatters: <TextInputFormatter>[
                             FilteringTextInputFormatter.digitsOnly
@@ -108,8 +153,8 @@ class _newRewardComponentState extends State<newRewardComponent> {
                           padding: EdgeInsets.only(left: 5, bottom: 10),
                         ),
                         GestureDetector(
-                          onTap: () {
-                            //upload image!
+                          onTap: () async{
+                            await capture();
                           },
                           child: Container(
                               decoration: BoxDecoration(
@@ -134,10 +179,63 @@ class _newRewardComponentState extends State<newRewardComponent> {
                   width: 95,
                   height: 40,
                   child: ElevatedButton(
-                    onPressed: () {
-                      onPressed:
-                      Navigator.of(context).pop;
-                      //add details to db
+                    onPressed: () async {
+                      print(widget.learner);
+                      if (rewardController.text.isNotEmpty && urlDownload != "") {
+                        // Navigator.of(context).pop;
+                        Reward newReward = new Reward(
+                            image: pic,
+                            reward_id: "",
+                            points: int.parse(rewardPoints.text),
+                            name: rewardController.text);
+                        await FirebaseApi.addReward(newReward, widget.learner);
+
+                        if (true) {
+                          rewardController.clear();
+                          Navigator.pop(context);
+                          showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                    title: Text(
+                                      "Nice job, you created a new reward!",
+                                      style: TextStyle(
+                                          color: Color.fromARGB(255, 0, 0, 0),
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 20),
+                                    ),
+                                    content: Image.asset(
+                                      'lib/assets/check.png',
+                                      alignment: Alignment.center,
+                                      height: 45,
+                                      width: 45,
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                          child: Text("Okay"),
+                                          onPressed: () =>
+                                              Navigator.pop(context))
+                                    ],
+                                  ));
+                        }
+                      } else {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text("Missing information"),
+                                content: Text(
+                                    "Please put all the information! Thank you :)"),
+                                actions: [
+                                  TextButton(
+                                    child: Text("Okay"),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  )
+                                ],
+                              );
+                            });
+                      }
                     },
                     child: Padding(
                       child: Text("Done",
