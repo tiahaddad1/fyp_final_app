@@ -70,20 +70,22 @@ class _addTaskScreenState extends State<addTaskScreen> {
   bool vid = false;
   late VideoPlayerController _controller;
   String? urlDownload;
-  File? _video;
+  String? _video;
   // late File _video = File("");
   videoChooser() async {
     // ignore: deprecated_member_use
     final video = await picker.getVideo(source: ImageSource.gallery);
-    _video = File(video!.path);
-    _controller = VideoPlayerController.file(_video!)
+    // _video = File(video!.path);
+    _video = video!.path;
+    _controller = VideoPlayerController.file(File(_video!))
       ..initialize().then((_) async {
         setState(() {
-          _video = File(video.path);
+          // _video = File(video.path);
+          _video = video.path;
         });
         final path = "taskVideos/${taskTitleController.text}";
         final ref = FirebaseStorage.instance.ref().child(path);
-        final uploadFile = await ref.putFile(_video!);
+        final uploadFile = await ref.putFile(File(_video!));
         urlDownload = (await uploadFile.ref.getDownloadURL());
         // _controller.play();
       });
@@ -835,7 +837,7 @@ class _addTaskScreenState extends State<addTaskScreen> {
                                       snapshot.data == null
                                           ? "no learner"
                                           : snapshot.data!,
-                                      _video!);
+                                      urlDownload!);
                                   print("problem1");
                                 },
                                 color: Color.fromARGB(255, 66, 135, 123));
@@ -890,7 +892,7 @@ addTaskDetails(
   List<Subtask>? subtaskss,
   BuildContext context,
   String learner_id,
-  File? _video,
+  String? _video,
 ) {
   print("problem2");
   // print("Video: " + _video!.path);
@@ -971,7 +973,7 @@ addTaskDetails(
                                     rewards: int.parse(taskRewardsController),
                                     end_time: endTimeController,
                                     reminder: int.parse(taskReminderController),
-                                    video: _video.toString(),
+                                    video: _video,
                                     subtasks: [
                                       "",
                                       ""
@@ -1016,11 +1018,10 @@ addTaskDetails(
                                   final snackBarC = SnackBar(
                                       content: Text(
                                           "An internal issue has occured! Please try again later."),
-                                  action:
-                                  SnackBarAction(
-                                    label: 'Undo',
-                                    onPressed: () {},
-                                  ));
+                                      action: SnackBarAction(
+                                        label: 'Undo',
+                                        onPressed: () {},
+                                      ));
                                   ScaffoldMessenger.of(context)
                                       .showSnackBar(snackBarC);
                                 }
@@ -1052,7 +1053,8 @@ addTaskDetails(
             rewards: int.parse(taskRewardsController),
             end_time: endTimeController,
             reminder: int.parse(taskReminderController),
-            video: _video.toString(),
+            video: _video,
+            // video:urlDownload,
             subtasks: ["", ""]); //creates the subtask object as well
         try {
           print(subtaskss.isEmpty);

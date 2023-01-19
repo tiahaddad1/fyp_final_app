@@ -1009,6 +1009,62 @@ class FirebaseApi {
     return taskss;
   }
 
+  static Future<List<t.Task>> getAllTasks2(String learner_id) async {
+    print(learner_id);
+    final learnerTasks = await FirebaseFirestore.instance
+        .collection('learner_tasks')
+        .where('user_id', isEqualTo: learner_id)
+        .get();
+
+    final allData = learnerTasks.docs
+        .map((learnerTasks) => learnerTasks.data())
+        .toList();
+
+    late List<Learner_Tasks> list = [];
+
+    if (allData.length > 0) {
+      try {
+        //a list that loops through every element and assigns it to the object
+        //learner_task
+        list = allData.map((document) {
+          Learner_Tasks learnerrm = Learner_Tasks.fromJson(document);
+          return (learnerrm);
+        }).toList();
+      } catch (Exception) {
+        print("no task for this learner");
+      }
+    }
+    late List<t.Task> remindersList = [];
+    // if (list.length > 0) {
+    // try {
+    return Future.wait(list.map((lr) async {
+      final checkTask = await FirebaseFirestore.instance
+          .collection('task')
+          .where('task_id', isEqualTo: lr.task_id)
+          .get();
+      t.Task ta = new t.Task(
+        task_id: checkTask.docs[0]['task_id'],
+        name: checkTask.docs[0]['name'],
+        description: checkTask.docs[0]['description'],
+        date: checkTask.docs[0]['date'],
+        start_time: checkTask.docs[0]['start_time'],
+        end_time: checkTask.docs[0]['end_time'],
+        rewards: checkTask.docs[0]['rewards'],
+        reminder: checkTask.docs[0]['reminder'],
+        video: checkTask.docs[0]['video'],
+        subtasks: checkTask.docs[0]['subtasks'],
+      );
+
+      remindersList.add(ta);
+      return Future.value(ta);
+    })).then((List<t.Task> reminderss) {
+      return reminderss;
+    });
+  }
+
+
+
+
   static Future<List<t.Task>> getAllTasksLearner(
       DateTime selectedDate, String learner_id) async {
     String d = selectedDate.toString().substring(0, 10);
@@ -1043,7 +1099,7 @@ class FirebaseApi {
     // }
     late List<t.Task> taskss = [];
 
-    return Future.wait(list.map((lt) async {
+    return (Future.wait(list.map((lt) async {
       // print("2");
       final checkTask = await FirebaseFirestore.instance
           .collection('task')
@@ -1065,7 +1121,7 @@ class FirebaseApi {
       );
       taskss.add(ta);
       return await Future.value(ta);
-    })).then((List<t.Task> taskss) {
+    }))).then((List<t.Task> taskss) {
       print(taskss.length);
       print(taskss);
       return taskss;
@@ -1360,36 +1416,6 @@ class FirebaseApi {
     })).then((List<Reminder> reminderss) {
       return reminderss;
     });
-
-    list.forEach((lr) async {
-      print(lr.reminder_id);
-
-      final checkReminder = await FirebaseFirestore.instance
-          .collection('reminder')
-          .where('reminder_id', isEqualTo: lr.reminder_id)
-          .get();
-
-      // if (checkSkill.size > 0) {
-      Reminder r = new Reminder(
-        reminder_id: checkReminder.docs[0]['reminder_id'],
-        name: checkReminder.docs[0]['name'],
-      );
-
-      remindersList.add(r);
-      print(remindersList.length);
-      // }
-    });
-    print(remindersList);
-    // } catch (error) {
-    //   print(error);
-    // }
-    // } else {
-    //   print("the list is empty");
-    // }
-    print("reminder list:");
-    print(remindersList.length);
-    print(remindersList);
-    return remindersList;
   }
 
   //REWARDS related methods//

@@ -71,14 +71,15 @@ class _learnerScheduleState extends State<learnerSchedule> {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return FutureBuilder<List<Task>>(
-                  future: FirebaseApi.getAllTasksLearner(
-                      DateTime.now(), snapshot.data!.user_id),
+                  future: FirebaseApi.getAllTasks2(
+                      snapshot.data!.user_id),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       print(snapshot.data![0].name);
-                      setState(() {
-                        tasks = snapshot.data!;
-                      });
+                      tasks = snapshot.data!;
+                      // setState(() {
+                      //   tasks = snapshot.data!;
+                      // });
                       print("hello");
                       return ListView.builder(
                           itemCount: tasks.length,

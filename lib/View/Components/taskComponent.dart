@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../Model/Task.dart';
@@ -26,45 +27,62 @@ class taskComponent extends StatefulWidget {
 // }
 
 class _taskComponentState extends State<taskComponent> {
+  
   final currentTime = new DateTime.now();
   String? taskStatus;
   Color? textColor;
   Color? titleColor;
-  late VideoPlayerController _controller=VideoPlayerController.file(File(widget.task.video));
+  late VideoPlayerController _controller =
+      VideoPlayerController.file(File(widget.task.video));
   final picker = ImagePicker();
   late File _video;
   bool vid = false;
 
   List<Color> colorPalette() {
+    print(widget.task.video);
     List<Color> colors = [];
     //DELETE LATER WHEN LOGIC IMPLEMENTED
-    colors.add(Color.fromARGB(255, 168, 167, 166));
-    colors.add(Color.fromARGB(255, 168, 167, 166));
-
-    // int minutes=int.parse(task.startTime.split(":")[1]);
-    // int hours=int.parse(task.startTime.split(":")[0]);
-    // if(task.startTime>currentTime){
-    //   colors.add(Color.fromARGB(255, 149, 149, 149));
-    //   colors.add(Color.fromARGB(255, 100, 100, 99));
-    // taskStatus="Done";
-    // textColor=Color.fromARGB(255, 234,255,235);
-    // titleColor=Color.fromARGB(255, 11,126,15);
-
-    // }
-    //   else if(task.startTime<currentTime && task.endTime<currentTime){
-    //   colors.add(Color.fromARGB(255, 237,180,96));
-    //   colors.add(Color.fromARGB(255, 237,180,96));
-    // taskStatus="Next";
-    // textColor=Color.fromARGB(255, 255,244,222);
-    // titleColor=Color.fromARGB(255, 140,93,5);
-    // }
-    // else if(hours>=currentTime.hour && minutes-30<currentTime.minute){
-    // colors.add(Color.fromARGB(255, 168,167,166));
-    // colors.add(Color.fromARGB(255, 168,167,166));
-    // taskStatus="Later";
-    // textColor=Color.fromARGB(255, 235,235,235);
-    // titleColor=Color.fromARGB(255, 92,91,91);
-    // }
+    // colors.add(Color.fromARGB(255, 168, 167, 166));
+    // colors.add(Color.fromARGB(255, 168, 167, 166));
+    DateFormat formatter = DateFormat("HH:mm a");
+    DateTime current = DateTime(
+        currentTime.year,
+        currentTime.month,
+        currentTime.day, currentTime.hour, currentTime.minute, currentTime.second);
+    DateTime startTime = DateTime(
+        currentTime.year,
+        currentTime.month,
+        currentTime.day,
+        formatter.parse(widget.task.start_time).hour,
+        formatter.parse(widget.task.start_time).minute,
+        formatter.parse(widget.task.start_time).second);
+    DateTime endTime = formatter.parse(widget.task.end_time);
+    print(startTime);
+    print(currentTime);
+    print(startTime.compareTo(currentTime));
+    int minutes = startTime.minute;
+    int hours = startTime.hour;
+    if (startTime.compareTo(currentTime) == -1) {
+      colors.add(Color.fromARGB(255, 167, 216, 126));
+      colors.add(Color.fromARGB(255, 167, 216, 126));
+      taskStatus = "Done";
+      textColor = Color.fromARGB(255, 234, 255, 235);
+      titleColor = Color.fromARGB(255, 11, 126, 15);
+    } else if (startTime.compareTo(currentTime) == 1) {
+      colors.add(Color.fromARGB(255, 237, 180, 96));
+      colors.add(Color.fromARGB(255, 237, 180, 96));
+      taskStatus = "Next";
+      textColor = Color.fromARGB(255, 255, 244, 222);
+      titleColor = Color.fromARGB(255, 140, 93, 5);
+    } else {
+      colors.add(Color.fromARGB(255, 168, 167, 166));
+      colors.add(Color.fromARGB(255, 168, 167, 166));
+      taskStatus = "Later";
+      textColor = Color.fromARGB(255, 235, 235, 235);
+      titleColor = Color.fromARGB(255, 92, 91, 91);
+      // }
+      // return colors;
+    }
     return colors;
   }
 
@@ -131,19 +149,22 @@ class _taskComponentState extends State<taskComponent> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                InkWell(
-                    onTap: () {
-                      videoPlayer();
-                      vid = true;
-                    },
-                    child: Container(
-                        width: 200,
-                        height: 100,
-                        child: AspectRatio(
-                          aspectRatio: 3 / 2,
-                          // child: VideoPlayer(_controller),
-                          child: VideoPlayer(VideoPlayerController.file(File(widget.task.video))),
-                        ))),
+                // InkWell(
+                //     onTap: () {
+                //       videoPlayer();
+                //       vid = true;
+                //     },
+                //     child:
+                Container(
+                    width: 200,
+                    height: 100,
+                    child: AspectRatio(
+                      aspectRatio: 3 / 2,
+                      child: VideoPlayer(_controller),
+                      // child: VideoPlayer(
+                      //     VideoPlayerController(File(widget.task.video))),
+                    )),
+                // ),
                 Container(
                   width: 150,
                   height: 100,

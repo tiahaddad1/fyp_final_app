@@ -121,9 +121,6 @@ flutter:
     - family: Lato-Regular
       fonts:
         - asset: lib/assets/fonts/Lato-Regular.ttf
-    # - family: RampartOne
-    #   fonts:
-    #     - asset: lib/assets/fonts/RampartOne-Regular.ttf
     - family: FredokaOne-Regular
       fonts:
         - asset: lib/assets/fonts/FredokaOne-Regular.ttf
