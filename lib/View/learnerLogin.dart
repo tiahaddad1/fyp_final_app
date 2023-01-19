@@ -67,7 +67,7 @@ class _learnerLogin extends State<learnerLogin> {
                       "Log In!",
                       style: TextStyle(
                         color: Color.fromARGB(255, 4, 37, 52),
-                        fontFamily: 'RampartOne',
+                        fontFamily: 'Fredoka-Medium',
                         fontSize: 35,
                       ),
                     ),
