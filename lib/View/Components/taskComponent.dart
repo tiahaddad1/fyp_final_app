@@ -27,7 +27,6 @@ class taskComponent extends StatefulWidget {
 // }
 
 class _taskComponentState extends State<taskComponent> {
-  
   final currentTime = new DateTime.now();
   String? taskStatus;
   Color? textColor;
@@ -48,7 +47,10 @@ class _taskComponentState extends State<taskComponent> {
     DateTime current = DateTime(
         currentTime.year,
         currentTime.month,
-        currentTime.day, currentTime.hour, currentTime.minute, currentTime.second);
+        currentTime.day,
+        currentTime.hour,
+        currentTime.minute,
+        currentTime.second);
     DateTime startTime = DateTime(
         currentTime.year,
         currentTime.month,
@@ -57,9 +59,8 @@ class _taskComponentState extends State<taskComponent> {
         formatter.parse(widget.task.start_time).minute,
         formatter.parse(widget.task.start_time).second);
     DateTime endTime = formatter.parse(widget.task.end_time);
-    print(startTime);
-    print(currentTime);
-    print(startTime.compareTo(currentTime));
+    print(startTime.hour.compareTo(currentTime.hour + 1));
+
     int minutes = startTime.minute;
     int hours = startTime.hour;
     if (startTime.compareTo(currentTime) == -1) {
@@ -68,20 +69,20 @@ class _taskComponentState extends State<taskComponent> {
       taskStatus = "Done";
       textColor = Color.fromARGB(255, 234, 255, 235);
       titleColor = Color.fromARGB(255, 11, 126, 15);
-    } else if (startTime.compareTo(currentTime) == 1) {
+    } else if (startTime.hour.compareTo(currentTime.hour + 1) == 0) {
       colors.add(Color.fromARGB(255, 237, 180, 96));
       colors.add(Color.fromARGB(255, 237, 180, 96));
       taskStatus = "Next";
       textColor = Color.fromARGB(255, 255, 244, 222);
       titleColor = Color.fromARGB(255, 140, 93, 5);
-    } else {
+      // }
+      // return colors;
+    } else if (startTime.compareTo(currentTime) == 1) {
       colors.add(Color.fromARGB(255, 168, 167, 166));
       colors.add(Color.fromARGB(255, 168, 167, 166));
       taskStatus = "Later";
       textColor = Color.fromARGB(255, 235, 235, 235);
       titleColor = Color.fromARGB(255, 92, 91, 91);
-      // }
-      // return colors;
     }
     return colors;
   }
@@ -134,6 +135,7 @@ class _taskComponentState extends State<taskComponent> {
                   ),
                 ),
                 Container(
+                  margin: EdgeInsets.only(bottom: 10),
                   padding: EdgeInsets.only(right: 20),
                   child: Text(
                     // task.startTime,
@@ -179,6 +181,20 @@ class _taskComponentState extends State<taskComponent> {
                 ),
               ],
             ),
+            Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+              Container(
+                width: 100,
+                height: 35,
+                padding: EdgeInsets.only(left: 10, right: 5),
+                child: Text(widget.task.date,
+                    // Text(task.description,
+                    style: TextStyle(
+                      fontFamily: "FredokaOne-SemiBold",
+                      color: textColor ?? Color.fromARGB(255, 174, 174, 174),
+                      fontSize: 18,
+                    )),
+              ),
+            ]),
             if (vid == true)
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,

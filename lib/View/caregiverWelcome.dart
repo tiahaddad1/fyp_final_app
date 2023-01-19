@@ -20,8 +20,8 @@ class _caregiverWelcomeState extends State<caregiverWelcome> {
   @override
   initState() {
     super.initState();
-    //_controller = VideoPlayerController.network(
-    //'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4')
+    // _controller = VideoPlayerController.network(
+    // 'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4')
     _controller = VideoPlayerController.asset('lib/assets/backgroundVid.mp4')
       ..initialize().then((_) {
         _controller.play();

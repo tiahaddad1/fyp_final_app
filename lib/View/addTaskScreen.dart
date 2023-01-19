@@ -79,14 +79,17 @@ class _addTaskScreenState extends State<addTaskScreen> {
     _video = video!.path;
     _controller = VideoPlayerController.file(File(_video!))
       ..initialize().then((_) async {
-        setState(() {
-          // _video = File(video.path);
-          _video = video.path;
-        });
         final path = "taskVideos/${taskTitleController.text}";
         final ref = FirebaseStorage.instance.ref().child(path);
         final uploadFile = await ref.putFile(File(_video!));
         urlDownload = (await uploadFile.ref.getDownloadURL());
+        _video = urlDownload;
+        print("OMGG");
+        print(urlDownload);
+        setState(() {
+          // _video = File(video.path);
+          _video = urlDownload;
+        });
         // _controller.play();
       });
   }
@@ -645,7 +648,7 @@ class _addTaskScreenState extends State<addTaskScreen> {
                             children: [
                               InkWell(
                                   onTap: () async {
-                                    await videoChooser();
+                                    await Future.wait(videoChooser());
                                     print("pleaseeeeee");
                                     print(_video);
                                     // setState(
@@ -837,7 +840,7 @@ class _addTaskScreenState extends State<addTaskScreen> {
                                       snapshot.data == null
                                           ? "no learner"
                                           : snapshot.data!,
-                                      urlDownload!);
+                                      _video!);
                                   print("problem1");
                                 },
                                 color: Color.fromARGB(255, 66, 135, 123));
@@ -894,7 +897,8 @@ addTaskDetails(
   String learner_id,
   String? _video,
 ) {
-  print("problem2");
+  print("TIA LOOK HERE");
+  print(_video);
   // print("Video: " + _video!.path);
   //add task details to database and create new task
   if (taskTitleController.text.isEmpty ||

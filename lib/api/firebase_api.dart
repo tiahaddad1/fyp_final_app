@@ -1009,16 +1009,20 @@ class FirebaseApi {
     return taskss;
   }
 
-  static Future<List<t.Task>> getAllTasks2(String learner_id) async {
+  static Future<List<t.Task>> getAllTasks2(
+      String learner_id, DateTime selectedDate) async {
+    String d = selectedDate.toString().substring(0, 10);
+    DateTime selectedDateString = DateFormat("yyyy-MM-dd").parse(d);
+    String formatD = DateFormat("M/dd/yyyy").format(selectedDateString);
+    print(formatD);
     print(learner_id);
     final learnerTasks = await FirebaseFirestore.instance
         .collection('learner_tasks')
         .where('user_id', isEqualTo: learner_id)
         .get();
 
-    final allData = learnerTasks.docs
-        .map((learnerTasks) => learnerTasks.data())
-        .toList();
+    final allData =
+        learnerTasks.docs.map((learnerTasks) => learnerTasks.data()).toList();
 
     late List<Learner_Tasks> list = [];
 
@@ -1041,6 +1045,7 @@ class FirebaseApi {
       final checkTask = await FirebaseFirestore.instance
           .collection('task')
           .where('task_id', isEqualTo: lr.task_id)
+          // .where('date', isEqualTo: formatD) not working something i can talk about...
           .get();
       t.Task ta = new t.Task(
         task_id: checkTask.docs[0]['task_id'],
@@ -1056,14 +1061,13 @@ class FirebaseApi {
       );
 
       remindersList.add(ta);
+      print(remindersList.length);
       return Future.value(ta);
     })).then((List<t.Task> reminderss) {
+      print(reminderss.length);
       return reminderss;
     });
   }
-
-
-
 
   static Future<List<t.Task>> getAllTasksLearner(
       DateTime selectedDate, String learner_id) async {

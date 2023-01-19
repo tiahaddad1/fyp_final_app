@@ -44,7 +44,7 @@ class _learnerScheduleState extends State<learnerSchedule> {
             leadingWidth: 100,
             title: Align(
               child: Text(
-                "Today's Schedule",
+                "My Schedule",
                 style: TextStyle(
                   fontSize: 25,
                   color: Color.fromARGB(255, 62, 81, 140),
@@ -72,7 +72,7 @@ class _learnerScheduleState extends State<learnerSchedule> {
             if (snapshot.hasData) {
               return FutureBuilder<List<Task>>(
                   future: FirebaseApi.getAllTasks2(
-                      snapshot.data!.user_id),
+                      snapshot.data!.user_id,DateTime.now()),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       print(snapshot.data![0].name);

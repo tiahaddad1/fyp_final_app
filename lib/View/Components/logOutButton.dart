@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
+import '../../api/firebase_api.dart';
+
 class logOutButton extends StatefulWidget {
   const logOutButton({super.key});
 
@@ -23,7 +25,31 @@ class _logOutButton extends State<logOutButton> {
                 Color.fromARGB(255, 251, 251, 251)),
           ),
           onPressed: (() {
-            FirebaseAuth.instance.signOut();
+            showDialog(  
+              context: context,  
+              builder: (BuildContext context) {  
+              return  
+              AlertDialog(
+                title: Text("Log out?"),
+                content: Text(
+                    "Are you sure you want to log out of your account?"),
+                actions: [
+                  TextButton(
+                    child: Text("Yes, I am sure"),
+                    onPressed: () {
+                      FirebaseAuth.instance.signOut();
+                    },
+                  ),
+                  TextButton(
+                    child: Text("Cancel"),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  )
+                ],
+              );    },  
+  );
+            // FirebaseAuth.instance.signOut();
           }),
           child: Container(
             child: Text("Log Out",

@@ -201,8 +201,12 @@ class _scheduleTaskCompState extends State<scheduleTaskComp> {
                         height: 80,
                         child: _controller.value.isInitialized
                             ? AspectRatio(
-                                aspectRatio: _controller.value.aspectRatio,
-                                child: VideoPlayer(VideoPlayerController.network(snapshot.data!)),
+                              aspectRatio: 3 / 2,
+                                // aspectRatio: _controller.value.aspectRatio,
+                                // child: VideoPlayer(VideoPlayerController.network(snapshot.data!)),
+                                child:VideoPlayer(
+                                                  VideoPlayerController.network(
+                                                      snapshot.data!)),
                               )
                             : Container(),
                       );

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
 
@@ -8,8 +9,10 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:fyp_application/View/learnerSchedule.dart';
 import 'package:fyp_application/api/firebase_api.dart';
 import 'package:intl/intl.dart';
+import 'package:video_player/video_player.dart';
 
 import '../Model/Learner.dart';
+import '../Model/Task.dart';
 import '../Provider/User-provider.dart';
 
 class learnerHome extends StatefulWidget {
@@ -61,6 +64,14 @@ final String date = DateFormat("dd-MM-yyyy").format(DateTime.now());
 final String nOrD = DateFormat("a").format(DateTime.now());
 
 class _learnerHomeState extends State<learnerHome> {
+  int count = 0;
+
+  @override
+  void initState() {
+    count;
+    super.initState();
+  }
+
   String currentUser = UserProvider.getUserEmail();
   late FileImage image;
 
@@ -195,135 +206,217 @@ class _learnerHomeState extends State<learnerHome> {
               ],
             )),
         Expanded(
-            child: Container(
-                margin: EdgeInsets.only(top: 5),
-                decoration: new BoxDecoration(
-                    gradient: new LinearGradient(stops: [
-                      0.02,
-                      0.02
-                    ], colors: [
-                      Color.fromARGB(255, 64, 84, 155),
-                      Color.fromARGB(201, 242, 241, 241)
-                    ]),
-                    borderRadius:
-                        new BorderRadius.all(const Radius.circular(6.0))),
-                child: Column(
-                  // mainAxisAlignment: MainAxisAlignment.start,
-                  // crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Padding(
-                              padding: EdgeInsets.only(left: 8),
-                              child: Row(children: [
-                                IconButton(
-                                  // alignment: Alignment.topRight,
-                                  iconSize: 13,
-                                  icon: Icon(
-                                    Icons.arrow_back_ios,
-                                    color: Color.fromARGB(255, 0, 0, 0),
-                                  ),
-                                  onPressed: () {},
-                                ),
-                                Text(
-                                  "Previous Task",
-                                  style: TextStyle(
-                                    color: Color.fromARGB(255, 0, 0, 0),
-                                    decoration: TextDecoration.underline,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ])),
+          child: FutureBuilder<Learner>(
+              future: FirebaseApi.getCurrentLearner(currentUser),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return FutureBuilder<List<Task>>(
+                      future: FirebaseApi.getAllTasks2(
+                          snapshot.data!.user_id, DateTime.now()),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          print(snapshot.data![count].video);
+                          return Container(
+                              margin: EdgeInsets.only(top: 5),
+                              decoration: new BoxDecoration(
+                                  gradient: new LinearGradient(stops: [
+                                    0.02,
+                                    0.02
+                                  ], colors: [
+                                    Color.fromARGB(255, 64, 84, 155),
+                                    Color.fromARGB(201, 242, 241, 241)
+                                  ]),
+                                  borderRadius: new BorderRadius.all(
+                                      const Radius.circular(6.0))),
+                              child: Column(
+                                // mainAxisAlignment: MainAxisAlignment.start,
+                                // crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Padding(
+                                            padding: EdgeInsets.only(left: 8),
+                                            child: Row(children: [
+                                              IconButton(
+                                                // alignment: Alignment.topRight,
+                                                iconSize: 13,
+                                                icon: Icon(
+                                                  Icons.arrow_back_ios,
+                                                  color: Color.fromARGB(
+                                                      255, 0, 0, 0),
+                                                ),
+                                                onPressed: () {
+                                                  // print(count);
+                                                  if (count > 0) {
+                                                    setState(() {
+                                                      count = count - 1;
+                                                    });
+                                                    // count = count-1;
+                                                  } else {
+                                                    setState(() {
+                                                      count = 0;
+                                                    });
+                                                    // count = 0;
+                                                  }
+                                                },
+                                              ),
+                                              Text(
+                                                "Previous Task",
+                                                style: TextStyle(
+                                                  color: Color.fromARGB(
+                                                      255, 0, 0, 0),
+                                                  decoration:
+                                                      TextDecoration.underline,
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                            ])),
 
-                          Row(children: [
-                            Text(
-                              "Next Task",
-                              style: TextStyle(
-                                color: Color.fromARGB(255, 0, 0, 0),
-                                decoration: TextDecoration.underline,
-                                fontSize: 14,
-                              ),
-                            ),
-                            IconButton(
-                              // alignment: Alignment.topRight,
-                              iconSize: 13,
-                              icon: Icon(
-                                Icons.arrow_forward_ios,
-                                color: Color.fromARGB(255, 0, 0, 0),
-                              ),
-                              onPressed: () {},
-                            ),
-                          ]),
-                          //),
-                        ]),
-                    Container(
-                      padding: EdgeInsets.only(top: 10, left: 30),
-                      alignment: Alignment.topLeft,
-                      child: Text("Task Title",
-                          style: TextStyle(
-                            color: Color.fromARGB(255, 0, 0, 0),
-                            fontSize: 23,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: "DMSans-Medium",
-                          )),
+                                        Row(children: [
+                                          Text(
+                                            "Next Task",
+                                            style: TextStyle(
+                                              color:
+                                                  Color.fromARGB(255, 0, 0, 0),
+                                              decoration:
+                                                  TextDecoration.underline,
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                          IconButton(
+                                            // alignment: Alignment.topRight,
+                                            iconSize: 13,
+                                            icon: Icon(
+                                              Icons.arrow_forward_ios,
+                                              color:
+                                                  Color.fromARGB(255, 0, 0, 0),
+                                            ),
+                                            onPressed: () {
+                                              print(snapshot.data![count]
+                                                  .getName());
+                                              print("next");
+                                              // print(count);
+                                              if (count <
+                                                  snapshot.data!.length) {
+                                                setState(() {
+                                                  count = count + 1;
+                                                });
+                                                // count = count+1;
+                                              } else {
+                                                setState(() {
+                                                  count = 0;
+                                                });
+                                                // count = 0;
+                                              }
+                                            },
+                                          ),
+                                        ]),
+                                        //),
+                                      ]),
+                                  Container(
+                                    padding: EdgeInsets.only(top: 10, left: 30),
+                                    alignment: Alignment.topLeft,
+                                    child: Text(snapshot.data![count].name,
+                                        style: TextStyle(
+                                          color: Color.fromARGB(255, 0, 0, 0),
+                                          fontSize: 23,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: "DMSans-Medium",
+                                        )),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                          margin: EdgeInsets.only(
+                                              left: 20, top: 20, bottom: 10),
+                                          child: Text("Now",
+                                              style: TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 39, 125, 43),
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                                fontFamily: "Chivo-Regular",
+                                              )),
+                                          padding: EdgeInsets.all(10)),
+                                      Container(
+                                        margin: EdgeInsets.only(
+                                            right: 20, top: 20, bottom: 20),
+                                        padding: EdgeInsets.all(10),
+                                        child: Text(
+                                            snapshot.data![count].start_time,
+                                            style: TextStyle(
+                                              color: Color.fromARGB(
+                                                  255, 39, 125, 43),
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              fontFamily: "Chivo-Regular",
+                                            )),
+                                      ),
+                                    ],
+                                  ),
+                                  Align(
+                                      alignment: Alignment.center,
+                                      child: Container(
+                                        height: 200,
+                                        width: 350,
+                                        padding: EdgeInsets.all(15),
+                                        child: Container(
+                                            width: 200,
+                                            height: 100,
+                                            child: AspectRatio(
+                                              aspectRatio: 3 / 2,
+                                              child: VideoPlayer(
+                                                  VideoPlayerController.network(
+                                                      snapshot.data![count]
+                                                          .video)),
+                                              // child: VideoPlayer(
+                                              //     VideoPlayerController(File(widget.task.video))),
+                                            )),
+                                      )),
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: Container(
+                                        margin: EdgeInsets.only(top: 10),
+                                        height: 100,
+                                        width: 350,
+                                        padding: EdgeInsets.all(15),
+                                        color:
+                                            Color.fromARGB(199, 231, 228, 228),
+                                        child: Text(
+                                            snapshot.data![count].description,
+                                            style: TextStyle(
+                                              color:
+                                                  Color.fromARGB(255, 0, 0, 0),
+                                              fontSize: 18,
+                                              fontFamily: "Chivo-Regular",
+                                            ))),
+                                  )
+                                ],
+                              ));
+                        } else {
+                          return Container(
+                              margin: EdgeInsets.only(top: 30),
+                              child:
+                                  Center(child: CircularProgressIndicator()));
+                        }
+                      });
+                } else {
+                  return Container(
+                    margin: EdgeInsets.all(50),
+                    child: Text(
+                      "Hooray! You have no tasks for today!",
+                      style: TextStyle(color: Colors.grey, fontSize: 15),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                            margin:
-                                EdgeInsets.only(left: 20, top: 20, bottom: 10),
-                            child: Text("Now",
-                                style: TextStyle(
-                                  color: Color.fromARGB(255, 39, 125, 43),
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: "Chivo-Regular",
-                                )),
-                            padding: EdgeInsets.all(10)),
-                        Container(
-                          margin:
-                              EdgeInsets.only(right: 20, top: 20, bottom: 20),
-                          padding: EdgeInsets.all(10),
-                          child: Text("Time",
-                              style: TextStyle(
-                                color: Color.fromARGB(255, 39, 125, 43),
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: "Chivo-Regular",
-                              )),
-                        ),
-                      ],
-                    ),
-                    Align(
-                        alignment: Alignment.center,
-                        child: Container(
-                            height: 200,
-                            width: 350,
-                            padding: EdgeInsets.all(15),
-                            child: Image.asset(
-                              "lib/assets/footballTaskImage.jpeg",
-                              width: 350,
-                              height: 350,
-                            ))),
-                    Align(
-                      alignment: Alignment.center,
-                      child: Container(
-                          margin: EdgeInsets.only(top: 10),
-                          height: 100,
-                          width: 350,
-                          padding: EdgeInsets.all(15),
-                          color: Color.fromARGB(199, 231, 228, 228),
-                          child: Text("some data here..",
-                              style: TextStyle(
-                                color: Color.fromARGB(255, 0, 0, 0),
-                                fontSize: 18,
-                                fontFamily: "Chivo-Regular",
-                              ))),
-                    )
-                  ],
-                ))),
+                  );
+                }
+              }),
+
+          //here
+        )
       ],
     );
   }
