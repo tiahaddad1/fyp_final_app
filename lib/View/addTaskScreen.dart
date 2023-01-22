@@ -71,11 +71,9 @@ class _addTaskScreenState extends State<addTaskScreen> {
   late VideoPlayerController _controller;
   String? urlDownload;
   String? _video;
-  // late File _video = File("");
   videoChooser() async {
     // ignore: deprecated_member_use
     final video = await picker.getVideo(source: ImageSource.gallery);
-    // _video = File(video!.path);
     _video = video!.path;
     _controller = VideoPlayerController.file(File(_video!))
       ..initialize().then((_) async {
@@ -84,13 +82,10 @@ class _addTaskScreenState extends State<addTaskScreen> {
         final uploadFile = await ref.putFile(File(_video!));
         urlDownload = (await uploadFile.ref.getDownloadURL());
         _video = urlDownload;
-        print("OMGG");
         print(urlDownload);
         setState(() {
-          // _video = File(video.path);
           _video = urlDownload;
         });
-        // _controller.play();
       });
   }
 
