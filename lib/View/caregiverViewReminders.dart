@@ -7,9 +7,13 @@ import 'package:fyp_application/View/Components/buttonImageComp.dart';
 import 'package:fyp_application/View/Components/caregiverReminderComp.dart';
 import 'package:fyp_application/api/firebase_api.dart';
 
+import '../Model/Learner.dart';
+
 class caregiverReminders extends StatefulWidget {
   final String learner_id;
-  const caregiverReminders({super.key, required this.learner_id});
+  final Learner learner;
+  const caregiverReminders(
+      {super.key, required this.learner_id, required this.learner});
 
   @override
   State<caregiverReminders> createState() => _caregiverRemindersState();
@@ -66,7 +70,7 @@ class _caregiverRemindersState extends State<caregiverReminders> {
               Padding(
                 padding: EdgeInsets.only(left: 15, right: 10),
                 child: Text(
-                  "Liam" + "'s daily reminders:",
+                  widget.learner.first_name.substring(0,1).toUpperCase()+widget.learner.first_name.substring(1) + "'s daily reminders:",
                   style: TextStyle(
                       fontFamily: "Cabin-Regular",
                       fontSize: 25,
@@ -102,7 +106,7 @@ class _caregiverRemindersState extends State<caregiverReminders> {
                         if (snapshot.hasData) {
                           print("okayyyy: ");
                           print(snapshot.data!);
-                           reminders = snapshot.data!;
+                          reminders = snapshot.data!;
                           // print(skills);
                           return ListView.builder(
                               itemCount: reminders.length,

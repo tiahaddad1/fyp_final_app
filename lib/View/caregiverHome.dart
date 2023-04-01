@@ -486,7 +486,6 @@ class _caregiverHomeState extends State<caregiverHome> {
                   final learners = snapshot.data;
                   print(learners);
                   return Expanded(
-                    //fix the design layout
                     child: SafeArea(
                         child: GridView.builder(
                       itemCount: snapshot.data!.length,
@@ -509,22 +508,7 @@ class _caregiverHomeState extends State<caregiverHome> {
                               childAspectRatio: 1,
                               crossAxisSpacing: 0,
                               mainAxisSpacing: 10),
-                      // children: [
-                      //   Center(
-                      //       child: Wrap(
-
-                      //         children:learners.map(learnerInfoCard).toList()
-                      // children: learners.map((e) {
-                      //   return learnerInfoCard(data: e);
-                      // })
-                      // [
-                      //   learnerInfoCard(snapshot.data),
-                      //   learnerInfoCard(),
-                      //   learnerInfoCard(),
-                      // ],
                     )),
-                    // addNewLearnerComp(context)
-                    // ],
                   );
                 } else {
                   return 
@@ -534,43 +518,11 @@ class _caregiverHomeState extends State<caregiverHome> {
                       width: 50,
                       height: 55,
                     ),
-                    // CircularProgressIndicator(), //show a text in the middle
-                    //that there is no data
                   ),margin: EdgeInsets.all(30));
                 }
               }),
           addNewLearnerComp(context)
         ]));
   }
-  // else{
-  //   return Center(child: CircularProgressIndicator(),);
-  // }
 }
-          // )
-              //future builder here
-              //once learner account created, make sure to show all learners
-              //associated to a therapist
 
-              //     SafeArea(
-              //         child: ListView(
-              //   padding: EdgeInsets.only(top: 20),
-              //   shrinkWrap: true,
-              //   scrollDirection: Axis.vertical,
-              //   children: [
-              //     Center(
-              //         child: Wrap(
-              //       children: [
-              //         learnerInfoCard(),
-              //         learnerInfoCard(),
-              //         learnerInfoCard(),
-              //       ],
-              //     )),
-              //     addNewLearnerComp(context)
-              //   ],
-              // ))
-//               )
-//         ],
-//       ),
-//     );
-//   }
-// }

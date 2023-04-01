@@ -261,26 +261,6 @@ class _editSubtaskScreenState extends State<editSubtaskScreen> {
                 }
               },
             ),
-            // subtaskCont(
-            //     "One",
-            //     subtask1TitleController,
-            //     subtaskStartTimeController,
-            //     subtaskDurationController,
-            //     subtask1RewardController,
-            //     tapped,
-            //     capture,
-            //     image,
-            //     imagePath),
-            // subtaskCont(
-            //     "Two",
-            //     subtask2TitleController,
-            //     subtaskStartTimeController,
-            //     subtaskDurationController,
-            //     subtask2RewardController,
-            //     tapped2,
-            //     capture2,
-            //     image2,
-            //     imagePath2),
             GestureDetector(
               onTap: () {
                 try {

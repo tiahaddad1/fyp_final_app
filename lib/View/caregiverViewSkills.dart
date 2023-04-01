@@ -7,9 +7,12 @@ import 'package:fyp_application/View/Components/buttonImageComp.dart';
 import 'package:fyp_application/View/Components/caregiverSkillComp.dart';
 import 'package:fyp_application/api/firebase_api.dart';
 
+import '../Model/Learner.dart';
+
 class caregiverSkills extends StatefulWidget {
   final String learner_id;
-  const caregiverSkills({super.key, required this.learner_id});
+  final Learner learner;
+  const caregiverSkills({super.key, required this.learner_id, required this.learner});
 
   @override
   State<caregiverSkills> createState() => _caregiverSkillsState();
@@ -53,7 +56,7 @@ class _caregiverSkillsState extends State<caregiverSkills> {
               Padding(
                 padding: EdgeInsets.only(left: 25, right: 10),
                 child: Text(
-                  "Liam" + "'s skills:",
+                  widget.learner.first_name.substring(0,1).toUpperCase()+widget.learner.first_name.substring(1) + "'s skills:",
                   style: TextStyle(
                       fontFamily: "Cabin-Regular",
                       fontSize: 25,

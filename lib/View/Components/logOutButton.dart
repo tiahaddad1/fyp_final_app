@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:fyp_application/View/userRole.dart';
 
 import '../../api/firebase_api.dart';
 
@@ -38,6 +39,10 @@ class _logOutButton extends State<logOutButton> {
                     child: Text("Yes, I am sure"),
                     onPressed: () {
                       FirebaseAuth.instance.signOut();
+                              Navigator.push(
+            context, MaterialPageRoute(builder: (context) => userRoleScreen()));
+        //navigates to add new learner screen
+      
                     },
                   ),
                   TextButton(

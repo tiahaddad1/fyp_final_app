@@ -24,13 +24,6 @@ final navigatorKey = GlobalKey<NavigatorState>();
 final userRole = UserProvider.getUserRole();
 
 class _logInCaregiver extends State<logInCaregiver> {
-  // @override
-  // void dispose() {
-  //   emailController.dispose();
-  //   passwordController.dispose();
-
-  //   super.dispose();
-  // }
 
   @override
   initState() {
@@ -185,14 +178,14 @@ class logInDetails extends StatelessWidget {
                                   emailController.text,
                                   passwordController.text) ==
                               true) {
-                            showDialog(
-                                context: context,
-                                barrierDismissible: false,
-                                builder: (context) =>
-                                    Center(child: 
-                                    CircularProgressIndicator())
+                            // showDialog(
+                            //     context: context,
+                            //     barrierDismissible: false,
+                            //     builder: (context) =>
+                            //         Center(child: 
+                            //         CircularProgressIndicator())
                                     
-                                    );
+                            //         );
                             try {
                               await AuthService.login(
                                   "C-" + emailController.text.trim(),

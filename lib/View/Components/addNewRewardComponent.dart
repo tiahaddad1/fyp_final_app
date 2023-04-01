@@ -181,7 +181,7 @@ class _newRewardComponentState extends State<newRewardComponent> {
                   child: ElevatedButton(
                     onPressed: () async {
                       print(widget.learner);
-                      if (rewardController.text.isNotEmpty && urlDownload != "") {
+                      if (rewardController.text.isNotEmpty) {
                         // Navigator.of(context).pop;
                         Reward newReward = new Reward(
                             image: pic,

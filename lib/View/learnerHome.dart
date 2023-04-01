@@ -300,9 +300,14 @@ class _learnerHomeState extends State<learnerHome> {
                                               // print(count);
                                               if (count <
                                                   snapshot.data!.length) {
-                                                setState(() {
+                                                if (count !=
+                                                    snapshot.data!.length -
+                                                        1) {
+                                                              setState(() {
                                                   count = count + 1;
                                                 });
+                                                        }
+                                                
                                                 // count = count+1;
                                               } else {
                                                 setState(() {
@@ -371,8 +376,8 @@ class _learnerHomeState extends State<learnerHome> {
                                               aspectRatio: 3 / 2,
                                               child: VideoPlayer(
                                                   VideoPlayerController.network(
-                                                      snapshot.data![count]
-                                                          .video)),
+                                                      snapshot
+                                                          .data![count].video)),
                                               // child: VideoPlayer(
                                               //     VideoPlayerController(File(widget.task.video))),
                                             )),

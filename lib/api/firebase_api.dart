@@ -343,6 +343,8 @@ class FirebaseApi {
     final docUser =
         FirebaseFirestore.instance.collection('caregiver').doc(c.user_id);
     await docUser.update({'about_description': desc});
+
+    return c.about_description;
   }
 
   static updateDescriptionLearner(String desc) async {
@@ -383,6 +385,7 @@ class FirebaseApi {
   }
 
   static deleteCaregiver(String caregiverEmail) async {
+    bool val = false;
     //locating caregiver
     final queryCar = await FirebaseFirestore.instance
         .collection('caregiver')
@@ -394,6 +397,7 @@ class FirebaseApi {
       Caregiver caregiver = Caregiver.fromJson(element);
       try {
         UserProvider.user!.delete();
+        val = true;
         FirebaseAuth.instance.signOut();
       } catch (error) {
         print("ERROR with deleting current user: " + error.toString());
@@ -418,7 +422,10 @@ class FirebaseApi {
           .collection("caregiver")
           .doc(caregiver.user_id)
           .delete()
-          .then((value) => print("deleted!"));
+          .then((value) {
+        print("deleted!");
+        val = true;
+      });
 //delete from storage
       final path = "profilephoto/${caregiver.user_id}";
       final ref = FirebaseStorage.instance.ref().child(path);
@@ -427,6 +434,7 @@ class FirebaseApi {
           .then((value) => print("deleted image!"))
           .catchError((error) => {print(error)});
     });
+    return val;
   }
 
   static Future<String> getPPStatus(email) async {
@@ -609,7 +617,6 @@ class FirebaseApi {
   //TASK related methods//
   static addTaskAndSubtasks(
       t.Task task, List<Subtask> subtasks, String learner_id) async {
-    print("here??");
     try {
       final docOfTask = FirebaseFirestore.instance.collection('task').doc();
       task.task_id = docOfTask.id;
@@ -621,7 +628,6 @@ class FirebaseApi {
       await docOfTask.set(task.toJson());
 
       if (true) {
-        print("tat hete??");
         if (subtasks.isNotEmpty) {
           final docOfSubtask1 =
               FirebaseFirestore.instance.collection('subtask').doc();
@@ -667,14 +673,12 @@ class FirebaseApi {
           .delete()
           .then((value) => print("subtask ${no} deleted!"));
 
-      //  subtasks.forEach((String title) {
       final path = "subtaskImages/${updateSubtask.docs[0]['name']}";
       final ref = FirebaseStorage.instance.ref().child(path);
       ref
           .delete()
           .then((value) => print("deleted!"))
           .catchError((error) => {print(error)});
-      // });
     });
 
     await FirebaseFirestore.instance
@@ -689,29 +693,6 @@ class FirebaseApi {
         .delete()
         .then((value) => print("deleted task video!"))
         .catchError((error) => {print(error)});
-    //put deleteSubtask() method here
-
-    // final sub1 = await FirebaseFirestore.instance
-    //     .collection("subtask")
-    //     .where('subtask_id', isEqualTo: task.task_id + "-subtask" + "one")
-    //     .get();
-
-    // final sub2 = await FirebaseFirestore.instance
-    //     .collection("subtask")
-    //     .where('subtask_id', isEqualTo: task.task_id + "-subtask" + "two")
-    //     .get();
-
-    // await FirebaseFirestore.instance
-    //     .collection("subtask")
-    //     .doc(sub1.docs[0].id)
-    //     .delete()
-    //     .then((value) => print("subtask1 deleted!"));
-
-    // await FirebaseFirestore.instance
-    //     .collection("subtask")
-    //     .doc(sub2.docs[0].id)
-    //     .delete()
-    //     .then((value) => print("subtask2 deleted!"));
 
     final learnertask = await FirebaseFirestore.instance
         .collection("learner_tasks")
@@ -723,15 +704,6 @@ class FirebaseApi {
         .doc(learnertask.docs[0].id)
         .delete()
         .then((value) => print("learner_tasks deleted!"));
-
-    // subtasks.forEach((String title) {
-    //   final path = "subtaskImages/${title}";
-    //   final ref = FirebaseStorage.instance.ref().child(path);
-    //   ref
-    //       .delete()
-    //       .then((value) => print("deleted!"))
-    //       .catchError((error) => {print(error)});
-    // });
   }
 
   static updateTask(
@@ -1038,7 +1010,7 @@ class FirebaseApi {
         print("no task for this learner");
       }
     }
-    late List<t.Task> remindersList = [];
+    late List<t.Task> taskList = [];
     // if (list.length > 0) {
     // try {
     return Future.wait(list.map((lr) async {
@@ -1060,12 +1032,12 @@ class FirebaseApi {
         subtasks: checkTask.docs[0]['subtasks'],
       );
 
-      remindersList.add(ta);
-      print(remindersList.length);
+      taskList.add(ta);
+      print(taskList.length);
       return Future.value(ta);
-    })).then((List<t.Task> reminderss) {
-      print(reminderss.length);
-      return reminderss;
+    })).then((List<t.Task> tasksss) {
+      print(tasksss.length);
+      return tasksss;
     });
   }
 

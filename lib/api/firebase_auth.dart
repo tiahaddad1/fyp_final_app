@@ -10,10 +10,14 @@ class AuthService {
 
   static Future login(
       String email, String password, BuildContext context) async {
-    showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => Center(child: CircularProgressIndicator()));
+    // showDialog(
+    //     context: context,
+    //     barrierDismissible: false,
+    //     builder:(context) {
+    //       return Center(child: CircularProgressIndicator());
+          
+    //     });
+        // navigatorKey.currentState!.popUntil((route) => route.isFirst);
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: email.trim(), password: password.trim());
@@ -26,10 +30,10 @@ class AuthService {
 
   static Future signUp(
       String email, String password, BuildContext context) async {
-    showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => Center(child: CircularProgressIndicator()));
+    // showDialog(
+    //     context: context,
+    //     barrierDismissible: false,
+    //     builder: (context) => Center(child: CircularProgressIndicator()));
     try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: email.trim(), password: password.trim());

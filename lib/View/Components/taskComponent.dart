@@ -191,7 +191,7 @@ class _taskComponentState extends State<taskComponent> {
                     style: TextStyle(
                       fontFamily: "FredokaOne-SemiBold",
                       color: textColor ?? Color.fromARGB(255, 174, 174, 174),
-                      fontSize: 18,
+                      fontSize: 16,
                     )),
               ),
             ]),

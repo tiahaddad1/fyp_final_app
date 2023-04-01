@@ -29,8 +29,7 @@ class _userRoleScreenState extends State<userRoleScreen> {
                 backgroundColor: Color.fromARGB(255, 255, 255, 255),
                 automaticallyImplyLeading: false,
                 leadingWidth: 100),
-            body: 
-            Column(
+            body: Column(
               children: [
                 Align(
                     alignment: Alignment.center,
@@ -66,7 +65,7 @@ class _userRoleScreenState extends State<userRoleScreen> {
                     image: "learnerRole",
                     borderColour: Color.fromARGB(255, 190, 166, 221),
                     // page: learnerAllScreens())
-                page: learnerLogin())
+                    page: learnerLogin())
               ],
             )));
   }

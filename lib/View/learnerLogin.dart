@@ -12,12 +12,6 @@ class learnerLogin extends StatefulWidget {
   const learnerLogin({super.key});
 
   String saveImage() {
-    // if (success == true && await urlImage != "") {
-    //   print(await urlImage);
-    //   return await urlImage;
-    // } else {
-    //   return "";
-    // }
     if (success == true && i != "") {
       return i;
     } else {
@@ -175,8 +169,8 @@ class _learnerLogin extends State<learnerLogin> {
                                 }
                                 if (true) {
                                   print("yes");
-                                  navigatorKey.currentState!.popUntil(
-                               (route) => route.isFirst);
+                                  navigatorKey.currentState!
+                                      .popUntil((route) => route.isFirst);
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -262,9 +256,7 @@ class _learnerLogin extends State<learnerLogin> {
             body: StreamBuilder<User?>(
                 stream: FirebaseAuth.instance.authStateChanges(),
                 builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
+                  if (snapshot.hasError) {
                     return Container(
                         color: Colors.white,
                         alignment: Alignment.bottomCenter,

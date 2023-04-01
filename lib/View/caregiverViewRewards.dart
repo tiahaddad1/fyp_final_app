@@ -6,12 +6,14 @@ import 'package:fyp_application/View/Components/addNewRewardCaregiver.dart';
 import 'package:fyp_application/View/Components/buttonImageComp.dart';
 import 'package:fyp_application/api/firebase_api.dart';
 
+import '../Model/Learner.dart';
 import 'Components/caregiverRewardComp.dart';
 import 'Components/rewardStarComp.dart';
 
 class caregiverRewards extends StatefulWidget {
   final String learner_id;
-  const caregiverRewards({super.key, required this.learner_id});
+  final Learner learner;
+  const caregiverRewards({super.key, required this.learner_id, required this.learner});
 
   @override
   State<caregiverRewards> createState() => _caregiverRewardsState();
@@ -61,7 +63,7 @@ class _caregiverRewardsState extends State<caregiverRewards> {
                 Padding(
                   padding: EdgeInsets.only(left: 35, right: 10),
                   child: Text(
-                    "Liam" + "'s rewards:",
+                    widget.learner.first_name.substring(0,1).toUpperCase()+widget.learner.first_name.substring(1) + "'s rewards:",
                     style: TextStyle(
                         fontFamily: "Cabin-Regular",
                         fontSize: 25,

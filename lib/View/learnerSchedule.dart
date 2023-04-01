@@ -72,8 +72,9 @@ class _learnerScheduleState extends State<learnerSchedule> {
             if (snapshot.hasData) {
               return FutureBuilder<List<Task>>(
                   future: FirebaseApi.getAllTasks2(
-                      snapshot.data!.user_id,DateTime.now()),
+                      snapshot.data!.user_id, DateTime.now()),
                   builder: (context, snapshot) {
+                    print(snapshot.data);
                     if (snapshot.hasData) {
                       print(snapshot.data![0].name);
                       tasks = snapshot.data!;

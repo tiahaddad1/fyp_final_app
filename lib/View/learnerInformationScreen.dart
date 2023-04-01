@@ -290,15 +290,15 @@ class _learnerInfoScreenState extends State<learnerInfoScreen> {
                     learnerDetailComp(
                         image: "lib/assets/pinDetailIcon.png",
                         name: "Reminders",
-                        page: caregiverReminders(learner_id:widget.learner.user_id)),
+                        page: caregiverReminders(learner_id:widget.learner.user_id, learner:widget.learner)),
                     learnerDetailComp(
                         image: "lib/assets/skillDetailIcon.png",
                         name: "Skills",
-                        page: caregiverSkills(learner_id:widget.learner.user_id)),
+                        page: caregiverSkills(learner_id:widget.learner.user_id, learner:widget.learner)),
                     learnerDetailComp(
                         image: "lib/assets/rewardDetailIcon.png",
                         name: "Rewards",
-                        page: caregiverRewards(learner_id:widget.learner.user_id)),
+                        page: caregiverRewards(learner_id:widget.learner.user_id, learner:widget.learner)),
                   ],
                 ))
               ],

@@ -27,33 +27,12 @@ final passwordController = TextEditingController();
 final repasswordController = TextEditingController();
 final navigatorKey = GlobalKey<NavigatorState>();
 
-// navigateToLogin(BuildContext context){
-// Navigator.push(
-//           context,
-//           MaterialPageRoute(
-//             builder: (context) =>
-//             caregiverLogin()));
-// }
 
 class _signUpCaregiverState extends State<signUpCaregiver> {
   @override
   initState() {
     super.initState();
   }
-  //   Future signUpF(String email, String password, BuildContext context) async {
-  //   showDialog(
-  //       context: context,
-  //       barrierDismissible: false,
-  //       builder: (context) => Center(child: CircularProgressIndicator()));
-  //   try {
-  //     await FirebaseAuth.instance.createUserWithEmailAndPassword(
-  //         email: email.trim(), password: password.trim());
-  //     print("Signed Up!");
-  //   } on FirebaseAuthException catch (e) {
-  //     print("Error with signing up!");
-  //   }
-  //   navigatorKey.currentState!.popUntil((route) => route.isFirst);
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +53,6 @@ class _signUpCaregiverState extends State<signUpCaregiver> {
             backgroundColor: Color.fromARGB(255, 66, 135, 123),
             automaticallyImplyLeading: false,
             leadingWidth: 100,
-            // title: Text("Sign Up"),
             leading: ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
                   elevation: 0.0,
@@ -366,18 +344,6 @@ class enterDetails extends StatelessWidget {
                                           .showSnackBar(snackBarC);
                                     }
                                   },
-                                  // child: buttonComponent(
-                                  //   colour: Color.fromARGB(255, 66, 135, 123),
-                                  //   text: "Sign Up",
-                                  //   function: () => {
-                                  //     if(true)
-                                  //     Navigator.push(
-                                  //         context,
-                                  //         MaterialPageRoute(
-                                  //             builder: (context) =>
-                                  //                 logInCaregiver()))
-                                  //   },
-                                  // ),
                                 )),
                           ],
                         ))
