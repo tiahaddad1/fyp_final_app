@@ -21,13 +21,19 @@ samples, guidance on mobile development, and a full API reference.
 
 ## Running the application
 
-To run the application, Flutter must be installed on your idle. For instance, the developer developed and ran the application on VS Code. Flutter is installed on their device and is an extension in the idle.
+To run the application, Flutter must be installed on your device AND the Simulator must be installed too (please be aware that the developer had XCode installed on their device (MACOS)). Also, the developer developed and ran the application on VS Code. Flutter is installed on their device and is an extension in the idle.
 
 Furthermore, to build and run the project, please ensure that:
 
 1. You are in the main file (project's directory -> lib -> main) then, navigate to:
    the menu bar > Run > Run without debugging
 2. The phone simulator (iOS) is connected to VS Code. The developer worked on an iPhone 13 Pro phone simulator when developing the application. For more information on how to install/link a simulator to your idle, please refer to the following link: https://www.youtube.com/watch?v=z3MIW5wq-RY&ab_channel=HeyFlutter%E2%80%A4com
+
+Please note that if 'Launching...' takes a long time, then delete the 'cache' folder from flutter's bin folder. For instance, Go to:
+
+1. flutter folder > bin folder > cache folder
+2. Then, in the project's terminal in the idle, run 'flutter clean' in the project root directory
+   Also, if an error appears at the first run, please re-run and build the project again.
 
 The project should run accordingly without errors; however, if you experience any errors, please search it up online or you can contact the developer via GitHub or either emails:
 
